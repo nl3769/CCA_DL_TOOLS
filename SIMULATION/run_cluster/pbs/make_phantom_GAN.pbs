@@ -1,0 +1,25 @@
+#!/bin/sh
+
+#PBS -l walltime=03:00:00
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=20GB
+#PBS -e /home/laine/PROJECTS_IO/SIMULATION/LOG/MAKE_PHANTOM/$dname.err
+#PBS -o /home/laine/PROJECTS_IO/SIMULATION/LOG/MAKE_PHANTOM/$dname.out
+#PBS -m ae
+#PBS -M laine@creatis.insa-lyon.fr
+
+# --- RUN THE SCRIPT
+cd /misc/raid/home/laine/REPOSITORIES/carotid_US_DL_tool/SIMULATION/mtl_cores
+
+echo $pfolder
+echo $dname
+echo $pres
+echo $info
+echo $soft
+echo $acq_mode
+echo $nb_img
+
+process="matlab -r fct_run_parameters_GAN('$pfolder','$dname','$pres','$info','$soft','$acq_mode','$nb_img')"
+
+echo $process
+$process
