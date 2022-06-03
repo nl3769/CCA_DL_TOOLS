@@ -55,7 +55,7 @@ if __name__ == '__main__':
     """ execute le code sur le cluster pour un plusieurs fantomes contenu dans un même répertoire. """
 
     path_shell = '/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/run_cluster/shell/cluster_full_pipeline.sh'
-    fname = '/home/laine/PROJECTS_IO/SIMULATION/CUBS/tech_012'
+    fname = '/home/laine/PROJECTS_IO/SIMULATION/CUBS/tech_008'
     folders = os.listdir(fname)
     folders.sort()
     ic(folders)

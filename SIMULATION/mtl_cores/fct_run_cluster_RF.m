@@ -1,7 +1,7 @@
 function fct_run_cluster_RF(pres)
 
     % --- add path
-    run('../package_utils/add_path.m')
+    run(fullfile('..', 'mtl_utils', 'add_path.m'))
 
     % --- get phantom name
     RF_name = fct_list_mat_files(pres, 'raw_');

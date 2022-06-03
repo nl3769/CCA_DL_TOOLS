@@ -59,7 +59,7 @@ function fct_run_parameters(varargin)
     
 
     if ~isdeployed
-        run(fullfile('..', 'package_utils', 'add_path.m'));
+        run(fullfile('..', 'mtl_utils', 'add_path.m'));
     end
 
     software = soft; % SIMUS, FIELD

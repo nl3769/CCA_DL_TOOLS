@@ -8,13 +8,12 @@ set(0, 'DefaultFigureWindowStyle', 'docked');
 addpath(fullfile('..', 'package_cores/'));
 
 % --- path to results
-path_res='/home/laine/Desktop/TEST_SEG/momo';
+path_res='/home/laine/cluster/PROJECTS_IO/SIMULATION/CUBS/tech_008';
 files_ = list_files(path_res);
 
 % files{1}=files_{3};
 files=files_;
 for id=1:1:length(files)
-    id=2
     pres_ = fullfile(path_res, files{id});
     fct_run_image_reconstruction(pres_, false);
 end

@@ -9,7 +9,7 @@
 #PBS -M laine@creatis.insa-lyon.fr
 
 # --- RUN THE SCRIPT
-cd /misc/raid/home/laine/REPOSITORIES/carotid_US_DL_tool/SIMULATION/mtl_cores
+cd /misc/raid/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/mtl_cores
 
 echo $pfolder
 echo $dname

@@ -1,6 +1,7 @@
 import os
-import package_utils.fold_handler as pfh
 import random
+
+import package_utils.fold_handler as pfh
 
 def split_data(pdata, pres, training_part, validation_part, testing_part):
     """ Store path directories of each images. data are splitted according to patient instead of patches numbers. """

@@ -2,7 +2,7 @@ function fct_run_image_reconstruction(pres, flag_cluster)
     
     % --- add path
     if ~isdeployed
-        run('add_path.m')
+        run(fullfile('..', 'mtl_utils', 'add_path.m'))
     end
     
     % --- get .mat in folders

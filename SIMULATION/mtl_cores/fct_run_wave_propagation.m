@@ -23,7 +23,7 @@ function fct_run_wave_propagation(varargin)
 
     % --- add path
     if ~isdeployed
-        run('../package_utils/add_path.m')
+        run(fullfile('..', 'mtl_utils', 'add_path.m'))
     end
 
     if isstring(id_tx)

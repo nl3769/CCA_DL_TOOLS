@@ -1,7 +1,7 @@
 function fct_run_parameters_GAN(pfolder, dname, pres, info, soft, acq_mode, nb_img)
     
     if ~isdeployed
-        addpath(fullfile('..', 'class/'));   
+        addpath(fullfile('..', 'mtl_class/'));   
     end
 
     software = soft; % SIMUS, FIELD

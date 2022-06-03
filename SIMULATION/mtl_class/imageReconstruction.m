@@ -43,7 +43,7 @@ classdef imageReconstruction < handle
                     [obj.RF_aperture, obj.probe, obj.sub_probe, obj.param, obj.phantom]=get_data(varargin{1}, varargin{2}, varargin{3}, varargin{4}, varargin{5}, varargin{6}, varargin{7});
                     obj.tsart = zeros(size(obj.RF_aperture, 1), 1);
                     obj.tcompensation = 0;
-%                    obj.param.path_res = '/home/laine/cluster/PROJECTS_IO/SIMULATION/CUBS/tech_001/tech_001_id_026_FIELD_3D';
+%                     obj.param.path_res = '/home/laine/cluster/PROJECTS_IO/SIMULATION/CUBS/tech_008/tech_008_id_010_FIELD_3D';
                     path_image_information=fullfile(obj.param.path_res, 'phantom', 'image_information.mat');
 %                     path_image_information= '/home/laine/cluster/PROJECTS_IO/SIMULATION/ANDRE_PATGO_25/ANS_MAR_FIELD_3D/phantom/image_information.mat';
                     image=load(path_image_information);
@@ -418,16 +418,9 @@ classdef imageReconstruction < handle
 %             if obj.param.TGC==true
 %                 obj.IQ=tgc(obj.IQ);
 %             end
-           
-            
-%             obj.IQ=abs(obj.IQ);
             
             % --- perform a low pass filtering
-%             obj.IQ=imgaussfilt(obj.IQ, 1, 'FilterSize', 3, 'Padding', 'symmetric');
-            
-            % --- normalization
-%             obj.IQ=obj.IQ/max(obj.IQ(:));
-            
+            obj.IQ=imgaussfilt(obj.IQ, 1, 'FilterSize', 3, 'Padding', 'symmetric');            
             % --- compute envelope
             obj.bmode = abs(obj.IQ); % real envelope
             % --- apply gamma correction
@@ -605,7 +598,7 @@ classdef imageReconstruction < handle
             for col=1:1:width
                obj.RF_final(:,col) = obj.RF_aperture{col}; 
             end
-            
+            addpath('../')
             obj.IQ=rf2iq(obj.RF_final, obj.probe);
 
             

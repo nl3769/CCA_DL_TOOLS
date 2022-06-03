@@ -9,6 +9,6 @@
 #PBS -m ae
 
 # --- RUN THE SCRIPT
-cd /misc/raid/home/laine/REPOSITORIES/carotid_US_DL_tool/SIMULATION/mtl_cores
+cd /misc/raid/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/mtl_cores
 instruction="matlab -r fct_run_wave_propagation('${path_param}','${path_phantom}','${flag_cluster}',${PBS_ARRAYID})"
 $instruction

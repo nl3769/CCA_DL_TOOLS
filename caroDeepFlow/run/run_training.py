@@ -10,18 +10,19 @@ import math
 import random
 import wandb
 
-import torch.optim						    as optim
-import numpy							    as np
+import torch.optim				    as optim
+import numpy					    as np
 import package_dataloader.utils 		    as pdlu
 import package_network.network 			    as pnn
 import package_loss.lossSeg 			    as plls
 import package_loss.lossFlow 			    as plll
 import package_logger.logger 			    as plog
-import package_utils.pytorch_processing     as pupp
-from tqdm 								    import tqdm
-
-from icecream 							    import ic
+import package_utils.pytorch_processing             as pupp
 import package_debug.visualisation 		    as pdv
+
+from tqdm 				            import tqdm
+from icecream 				            import ic
+
 
 ################################
 # --- RUN TRAINING ROUTINE --- #
