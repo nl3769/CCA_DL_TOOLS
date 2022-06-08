@@ -66,7 +66,7 @@ function fct_run_parameters(varargin)
     slice_spacing = 0.5e-4;
     nb_slice = 10;
     acquisition_mode = acq_mode; % scanline_based, synthetic_aperture 
-    scat_density = 0.02;
+    scat_density = 10;
     Nelement = 192;
     Nactive = 65;
     shift = 0;
@@ -105,10 +105,9 @@ function fct_run_parameters(varargin)
     phantom = createPhantom(pres_, get_extension(dname), roi);
     phantom.get_image(); 
     phantom.get_scatteres_from_img(); 
+%     phantom.phantom_tmp();
     phantom.extrusion(true);    
     phantom.remove_top_region(parameters.param.remove_top_region);
-    
-%     phantom.phantom_tmp();
     
     phantom.init_position();
     substr = fct_get_substr_id_seq(phantom.id_seq);

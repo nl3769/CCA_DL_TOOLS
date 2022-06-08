@@ -3,8 +3,8 @@
 #PBS -l walltime=00:10:00
 #PBS -l nodes=1:ppn=1
 #PBS -l mem=10GB
-#PBS -e /home/laine/PROJECTS_IO/SIMULATION/LOG/CLUSTER_DATA/${log_name}_cluster_RF.err
 #PBS -o /home/laine/PROJECTS_IO/SIMULATION/LOG/CLUSTER_DATA/${log_name}_cluster_RF.out
+#PBS -e /home/laine/PROJECTS_IO/SIMULATION/LOG/CLUSTER_DATA/${log_name}_cluster_RF.err
 #PBS -m ae
 #PBS -M laine@creatis.insa-lyon.fr
 
@@ -15,5 +15,5 @@ echo "########################################################"
 echo $PWD
 echo "########################################################"
 
-instruction="matlab -r fct_cluster_RF('${path_RF}')"
+instruction="matlab -r fct_run_cluster_RF('${path_RF}')"
 $instruction
