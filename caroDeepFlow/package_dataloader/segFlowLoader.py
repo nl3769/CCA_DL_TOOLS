@@ -8,7 +8,6 @@ class segFlowDataloader(Dataset):
 
     def __init__(self, param):
 
-        self.img_size = param.IMG_SIZE
         self.is_test = False
         self.flow_list = []
         self.image_list = []
@@ -36,7 +35,7 @@ class segFlowDataloader(Dataset):
             else:
                 name = os.path.join(name, key)
 
-        return I1, I2, M1, M2, OF, name
+        return I1, I2, M1, M2, OF, CF, name
 
     # ------------------------------------------------------------------------------------------------------------------
     def read_img(self, index):
@@ -65,7 +64,12 @@ class segFlowDataloader(Dataset):
         with open(self.CF_list[index][0], 'r') as f:
             CF = f.read()
 
-        return float(CF)
+        xCF = float(CF.split('\n')[0].split(' ')[-1])
+        yCF = float(CF.split('\n')[1].split(' ')[-1])
+        CF = {"xCF": xCF,
+              "yCF": yCF}
+
+        return CF
 
     # ------------------------------------------------------------------------------------------------------------------
     def __rmul__(self, v):

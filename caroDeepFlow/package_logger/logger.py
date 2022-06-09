@@ -377,20 +377,27 @@ class loggerClass():
         plt.axis('off')
         plt.title(r'M2 PRED', fontsize=ftsize)
 
+
+
         # ------ FLOW
         OF_gt_norm = np.sqrt(np.power(OF_gt[0,], 2) + np.power(OF_gt[1,], 2))
         OF_pred_norm = np.sqrt(np.power(OF_pred[0,], 2) + np.power(OF_pred[1,], 2))
+        vmin = min([np.min(OF_gt_norm), np.min(OF_pred_norm)])
+        vmax = min([np.max(OF_gt_norm), np.max(OF_pred_norm)])
         # -- OF GT
         plt.subplot2grid((4, 4), (2, 0), colspan=2,)
         plt.imshow(OF_gt_norm, cmap='hot')
         plt.axis('off')
         plt.colorbar()
+        plt.clim(vmin, vmax)
         plt.title(r'OF GT', fontsize=ftsize)
+
         # -- OF PRED
         plt.subplot2grid((4, 4), (2, 2), colspan=2)
         plt.imshow(OF_pred_norm, cmap='hot')
         plt.axis('off')
         plt.colorbar()
+        plt.clim(vmin, vmax)
         plt.title(r'OF PRED', fontsize=ftsize)
 
         plt.tight_layout()

@@ -10,8 +10,6 @@ class Parameters:
                  BATCH_SIZE,
                  NB_EPOCH,
                  VALIDATION,
-                 MIXED_PRECISION,
-                 IMG_SIZE,
                  DROPOUT,
                  GAMMA,
                  ADD_NOISE,
@@ -23,8 +21,12 @@ class Parameters:
                  POSITION_ONLY,
                  POSITION_AND_CONTENT,
                  NUM_HEAD,
+                 ADVENTICIA_DIM,
                  USER,
-                 EXPNAME
+                 EXPNAME,
+                 DEVICE,
+                 RESTORE_CHECKPOINT,
+                 FEATURES
 ):
 
         self.PDATA = PDATA
@@ -35,8 +37,6 @@ class Parameters:
         self.BATCH_SIZE = BATCH_SIZE
         self.NB_EPOCH = NB_EPOCH
         self.VALIDATION = VALIDATION
-        self.MIXED_PRECISION = MIXED_PRECISION
-        self.IMG_SIZE = IMG_SIZE
         self.DROPOUT = DROPOUT
         self.GAMMA = GAMMA
         self.ADD_NOISE = ADD_NOISE
@@ -46,7 +46,11 @@ class Parameters:
         self.ALTERNATE_COORDINATE = ALTERNATE_COORDINATE
         self.WORKERS = WORKERS
         self.POSITION_ONLY = POSITION_ONLY
-        self.POSITION_AND_CONTENT = POSITION_AND_CONTENT,
+        self.POSITION_AND_CONTENT = POSITION_AND_CONTENT
         self.NUM_HEAD = NUM_HEAD
+        self.ADVENTICIA_DIM = ADVENTICIA_DIM
         self.USER = USER
         self.EXPNAME = EXPNAME
+        self.DEVICE = DEVICE
+        self.RESTORE_CHECKPOINT = RESTORE_CHECKPOINT
+        self.FEATURES = FEATURES

@@ -6,7 +6,7 @@
 import argparse
 import importlib
 import os
-from package_database.databaseHandler       import databaseHandler
+from package_database.gifMaker              import gifMaker
 from icecream                               import ic
 
 # -----------------------------------------------------------------------------------------------------------------------
@@ -30,8 +30,8 @@ def main():
     for simu in simulation:
         ic(simu)
         p.PDATA = os.path.join(PDATA, simu)
-        dataHandler = databaseHandler(p)
-        dataHandler()
+        gif = gifMaker(p)
+        gif()
 
 
 # -----------------------------------------------------------------------------------------------------------------------

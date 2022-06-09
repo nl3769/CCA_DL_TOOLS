@@ -3,10 +3,10 @@
 @Contact :   <nolann.laine@outlook.fr>
 '''
 
-from package_parameters.parameters_database import Parameters
-import package_utils.fold_handler as fh
+from shutil                                             import copyfile
+from package_parameters.parameters_database             import Parameters
+import package_utils.fold_handler                       as fh
 import os
-from shutil import copyfile
 
 # ****************************************************************
 # *** HOWTO
@@ -24,17 +24,18 @@ from shutil import copyfile
 def setParameters():
 
   p = Parameters(
-                PDATA='/home/laine/HDD/PROJECTS_IO/SIMULATION/CUBS',
-                # PDATA='/run/media/laine/HDD/PROJECTS_IO/SIMULATION/CUBS',      # PATH TO LOAD DATA
-                PRES='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/TEST',             # PATH TO SAVE DATABASE
+                PDATA='/home/laine/Documents/PROJECTS_IO/SIMULATION/CUBS/DONE',         # PATH TO LOAD DATA
+                PRES='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET_3MM_',     # PATH TO SAVE DATABASE
                 ROI_WIDTH = 3e-3,                                                       # SIZE OF THE ROI WIDTH
                 PIXEL_WIDTH = 128,                                                      # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW (IT IS EQUAL TO ROI_WIDTH)
                 PIXEL_HEIGHT = 256,                                                     # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW
-                SHIFT_X = 96,                                                           # X SHIFT TO GENERATE DATASET
+                SHIFT_X = 64,                                                           # X SHIFT TO GENERATE DATASET
                 SHIFT_Z = 50                                                            # Z SHIFT TO GENERATE DATASET
   )
 
+  pparam = os.path.join(p.PRES, 'parameters')
   fh.create_dir(p.PRES)
+  fh.create_dir(pparam)
 
   # --- Print all attributes in the console
   attrs = vars(p)
@@ -42,14 +43,14 @@ def setParameters():
   print('----------------------------------------------------------------')
 
   # --- Save a backup of the parameters so it can be tracked on Git, without requiring to be adapted by from other contributors
-  copyfile(os.path.join('package_parameters', os.path.basename(__file__)), os.path.join(p.PRES, 'get_parameters_database.py'))
+  copyfile(os.path.join('package_parameters', os.path.basename(__file__)), os.path.join(pparam, 'get_parameters_database.py'))
 
   # --- Modify the function name from "setParameters" to "getParameters"
-  fid = open(os.path.join(p.PRES, 'get_parameters_database.py'), 'rt')
+  fid = open(os.path.join(pparam, 'get_parameters_database.py'), 'rt')
   data = fid.read()
   data = data.replace('setParameters()', 'getParameters()')
   fid.close()
-  fid = open(os.path.join(p.PRES, 'get_parameters.py'), 'wt')
+  fid = open(os.path.join(pparam, 'get_parameters_database.py'), 'wt')
   fid.write(data)
   fid.close()
 

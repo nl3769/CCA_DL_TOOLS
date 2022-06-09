@@ -52,8 +52,8 @@ if __name__ == '__main__':
 
     ''' execute le code sur le cluster pour un plusieurs fantomes contenu dans un même répertoire. '''
 
-    path_shell = '/home/laine/REPOSITORIES/carotid_US_DL_tool/SIMULATION/run_cluster/shell/cluster_beamforming.sh'
-    fname = '/home/laine/PROJECTS_IO/SIMULATION/CUBS/TEST/tech_001'
+    path_shell = '/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/run_cluster/shell/cluster_beamforming.sh'
+    fname = '/home/laine/PROJECTS_IO/SIMULATION/SPOT_SCATTERERS/tech_001'
     folders = os.listdir(fname)
 
     for exp in folders:

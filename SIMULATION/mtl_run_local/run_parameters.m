@@ -1,13 +1,13 @@
 close all;
 clearvars;
 
-run(fullfile('..', 'package_utils', 'add_path.m'));
-
+run(fullfile('..', 'mtl_utils', 'add_path.m'));
+addpath(fullfile('..', 'mtl_cores'))
 % --- generate several sets of parameters according to the desired parameters.
 pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images';
 fnames = load_fnames(pdatabase);
 
-pres = '/home/laine/Desktop/TEST_SEG/momo';
+pres = '/home/laine/Desktop/TEST_PHANTOM';
 parameters = writeParameters();
 info = '';
 

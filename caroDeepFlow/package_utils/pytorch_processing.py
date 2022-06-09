@@ -3,10 +3,8 @@
 @Contact :   <nolann.laine@outlook.fr>
 '''
 
-import torch
-
 # ----------------------------------------------------------------------------------------------------------------------
-def treshold_mask(I, tresh):
+def treshold_mask(I, tresh=0.5):
     """ Binarize predicted . """
 
     I[I > tresh] = 1

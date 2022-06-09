@@ -1,6 +1,6 @@
 import torch
-import torch.nn.functional as F
-import package_network.grid_handler as gridHandler
+import torch.nn.functional                  as F
+import package_network.grid_handler         as gridHandler
 
 try:
     import alt_cuda_corr

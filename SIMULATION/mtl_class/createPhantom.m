@@ -764,10 +764,12 @@ classdef createPhantom < handle
 
         % ----------------------------------------------------------------------------------------------------------------------
         function phantom_tmp(obj)
-            k=10;
-            obj.data_scatt
-            z_pos=linspace(0, obj.data_scatt.z_max, k);
-            x_pos=linspace(obj.data_scatt.x_min, obj.data_scatt.x_max, k);
+            
+            k=5;
+
+            z_pos=linspace(obj.data_scatt.z_max*0.1, obj.data_scatt.z_max, k);
+            x_pos=linspace(obj.data_scatt.x_min,     obj.data_scatt.x_max, k);
+
             obj.data_scatt.y_scatt=[];
             obj.data_scatt.x_scatt=[];
             obj.data_scatt.z_scatt=[];
@@ -777,23 +779,13 @@ classdef createPhantom < handle
                 for j=1:k
                     obj.data_scatt.y_scatt=[obj.data_scatt.y_scatt; 0];
                     obj.data_scatt.z_scatt=[obj.data_scatt.z_scatt; z_pos(j)];
-                    obj.data_scatt.x_scatt=[obj.data_scatt.x_scatt; 0];
+                    obj.data_scatt.x_scatt=[obj.data_scatt.x_scatt; x_pos(i)];
                     obj.data_scatt.RC_scatt=[obj.data_scatt.RC_scatt; 1];
-                end
-            end
-            
-            for i=1:1:k
-                for j=1:k
-                obj.data_scatt.y_scatt=[obj.data_scatt.y_scatt; 0];
-                obj.data_scatt.z_scatt=[obj.data_scatt.z_scatt; z_pos(j)];
-                obj.data_scatt.x_scatt=[obj.data_scatt.x_scatt; -x_pos(j)];
-                obj.data_scatt.RC_scatt=[obj.data_scatt.RC_scatt; 1];
                 end
             end
 
             obj.data_scatt.z_scatt=obj.data_scatt.z_scatt+obj.param.shift;
             obj.data_scatt.depth_of_focus=max(obj.data_scatt.z_scatt);
-
             obj.data_scatt_moved = obj.data_scatt;
 
         end

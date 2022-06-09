@@ -29,7 +29,7 @@ class dataHandler(segFlowDataloader):
         with open(os.path.join(param.PSPLIT, fsplit[0]), 'r') as f:
             path = f.readlines()
 
-        path = [key.split('\n')[0] for key in path]
+        path = [os.path.join(param.PDATA, key.split('\n')[0]) for key in path]
 
         # --- subfolders
         subfolds = ['I1', 'I2', 'M1', 'M2', 'OF']
@@ -59,6 +59,7 @@ class dataHandler(segFlowDataloader):
                     self.flow_list.append([pOF])
                     self.CF_list.append([pCF])
 
-        self.image_list = self.image_list
-        self.mask_list = self.mask_list
-        self.flow_list = self.flow_list
+        self.image_list = self.image_list[:250]
+        self.mask_list = self.mask_list[:250]
+        self.flow_list = self.flow_list[:250]
+        self.CF_list = self.CF_list[:250]

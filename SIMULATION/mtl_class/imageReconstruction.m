@@ -411,10 +411,10 @@ classdef imageReconstruction < handle
                 obj.IQ=rf2iq(obj.RF_final, obj.probe);
             end
 
-%             % --- apply TGC
-%             if obj.param.TGC==true
-%                 obj.IQ=tgc(obj.IQ);
-%             end
+            % --- apply TGC
+            if obj.param.TGC==true
+                obj.IQ=tgc(obj.IQ);
+            end
             
             % --- compute envelope
             obj.bmode = abs(obj.IQ); % real envelope

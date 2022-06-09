@@ -2,10 +2,10 @@ import os
 import random
 import numpy as np
 
-import package_debug.visualisation as dbv
-import package_utils.flow_handler as pufh
-import package_utils.loader as pl
-import package_visualization.make_figure as pvmf
+import package_debug.visualisation                  as dbv
+import package_utils.flow_handler                   as pufh
+import package_utils.loader                         as pl
+import package_visualization.make_figure            as pvmf
 
 class databaseVisualization():
 
@@ -23,6 +23,9 @@ class databaseVisualization():
 
         patient = {}
         files = os.listdir(pdata)
+        if 'parameters' in files:
+            files.remove('parameters')
+
         fparam = [key for key in files if 'param' in key]
         for key in fparam:
             files.remove(key)
@@ -82,11 +85,11 @@ class databaseVisualization():
             argOF = np.arccos(np.divide(xof, normOF))
             argOF = np.rad2deg(argOF)
 
-            I1_warpped = pufh.warpper(data["OF"], data["I1"])
+            I2_warpped = pufh.warpper(data["OF"], data["I1"])
 
             tmp = patients[patient][key].split('/')[-1].split('.')[0]
             pres_ = os.path.join(pres, patient + "_" + tmp + ".png")
-            pvmf.make_figure(data["I1"], data["I2"], data["M1"], data["M2"], xof, zof, argOF, normOF, pres_)
+            pvmf.make_figure(data["I1"], data["I2"], data["M1"], data["M2"], I2_warpped, xof, zof, argOF, normOF, pres_)
 
     # ------------------------------------------------------------------------------------------------------------------
 

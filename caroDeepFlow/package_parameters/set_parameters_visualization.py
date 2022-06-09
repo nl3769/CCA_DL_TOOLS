@@ -3,10 +3,10 @@
 @Contact :   <nolann.laine@outlook.fr>
 '''
 
-from package_parameters.parameters_visualization import Parameters
-import package_utils.fold_handler as fh
+from shutil                                               import copyfile
+from package_parameters.parameters_visualization          import Parameters
+import package_utils.fold_handler                         as fh
 import os
-from shutil import copyfile
 
 # ****************************************************************
 # *** HOWTO
@@ -23,11 +23,13 @@ from shutil import copyfile
 def setParameters():
 
   p = Parameters(
-                PDATA='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/TEST',                # PATH TO LOAD DATA
-                PRES='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/VISUALIZATION',             # PATH TO SAVE DATABASE
+                PDATA='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET_6',                # PATH TO LOAD DATA
+                PRES='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET/VISUALIZATION',             # PATH TO SAVE DATABASE
   )
 
-  fh.create_dire(p.PRES)
+  pparam = os.path.join(p.PRES, 'parameters')
+  fh.create_dir(p.PRES)
+  fh.create_dir(pparam)
 
   # --- Print all attributes in the console
   attrs = vars(p)
@@ -35,14 +37,14 @@ def setParameters():
   print('----------------------------------------------------------------')
 
   # --- Save a backup of the parameters so it can be tracked on Git, without requiring to be adapted by from other contributors
-  copyfile(os.path.join('package_parameters', os.path.basename(__file__)), os.path.join(p.PRES, 'get_parameters_visualization.py'))
+  copyfile(os.path.join('package_parameters', os.path.basename(__file__)), os.path.join(pparam, 'get_parameters_visualization.py'))
 
   # --- Modify the function name from "setParameters" to "getParameters"
-  fid = open(os.path.join(p.PRES, 'get_parameters_visualization.py'), 'rt')
+  fid = open(os.path.join(pparam, 'get_parameters_visualization.py'), 'rt')
   data = fid.read()
   data = data.replace('setParameters()', 'getParameters()')
   fid.close()
-  fid = open(os.path.join(p.PRES, 'get_parameters.py'), 'wt')
+  fid = open(os.path.join(pparam, 'get_parameters.py'), 'wt')
   fid.write(data)
   fid.close()
 

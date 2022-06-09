@@ -12,8 +12,8 @@ class Dice(nn.Module):
     def forward(self, inputs, targets, smooth=1):
 
         # --- flatten label and prediction tensors
-        inputs = inputs.view(-1)
-        targets = targets.view(-1)
+        inputs = inputs.contiguous().view(-1)
+        targets = targets.contiguous().view(-1)
 
         intersection = (inputs * targets).sum()
         dice = (2 * intersection + smooth) / (inputs.sum() + targets.sum() + smooth)
@@ -28,15 +28,17 @@ class DiceBCELoss(nn.Module):
         super(DiceBCELoss, self).__init__()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def forward(self, inputs, targets, smooth=1):
+    def forward(self, inputs, targets, smooth=.1):
+
+        # --- compute binary cross entropy
+        BCE = F.binary_cross_entropy(inputs, targets, reduction='mean')
 
         # --- flatten label and prediction tensors
-        inputs = inputs.view(-1)
-        targets = targets.view(-1)
+        inputs = inputs.contiguous().view(-1)
+        targets = targets.contiguous().view(-1)
 
         intersection = (inputs * targets).sum()
         dice_loss = 1 - (2. * intersection + smooth) / (inputs.sum() + targets.sum() + smooth)
-        BCE = F.binary_cross_entropy(inputs, targets, reduction='mean')
         Dice_BCE = BCE + dice_loss
 
         return Dice_BCE
@@ -51,9 +53,7 @@ class BCE(nn.Module):
     # ------------------------------------------------------------------------------------------------------------------
     def forward(self, inputs, targets, smooth=1):
 
-        # --- flatten label and prediction tensors
-        inputs = inputs.view(-1)
-        targets = targets.view(-1)
+        # --- compute bi,ary cross entropy
         BCE = F.binary_cross_entropy(inputs, targets, reduction='mean')
 
         return BCE

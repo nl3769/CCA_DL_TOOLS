@@ -3,13 +3,35 @@
 @Contact :   <nolann.laine@outlook.fr>
 '''
 
-import numpy as                             np
-import package_utils.fold_handler as        fh
-import package_utils.loader as              ld
-import package_utils.signal_processing as   sp
-import package_utils.reader as              rd
-import package_utils.saver as               ps
 import os
+import numpy                                as np
+import package_utils.fold_handler           as fh
+import package_utils.loader                 as ld
+import package_utils.signal_processing      as sp
+import package_utils.reader                 as rd
+import package_utils.saver                  as ps
+
+from icecream                               import ic
+
+# ----------------------------------------------------------------------------------------------------------------------
+def get_path_GIF(path_data, seq, id):
+    """ Get path to create GIF. """
+    path = {}
+
+    path['I'] = []
+    path['MA'] = []
+    path['LI'] = []
+    path['CF'] = []
+    path['parameters'] = []
+    for id_seq in seq:
+
+        path['I'].append(path_data[id_seq]['path_image'])
+        path['MA'].append(path_data[id_seq]['path_MA'])
+        path['LI'].append(path_data[id_seq]['path_LI'])
+        path['CF'].append(path_data[id_seq]['image_information'])
+        path['parameters'].append(path_data[id_seq]['path_parameters'])
+
+    return path
 
 # ----------------------------------------------------------------------------------------------------------------------
 def get_path(path_data, pairs, id):
@@ -97,6 +119,38 @@ def load_data(path):
     return I1, I2, OF, LI1, LI2, MA1, MA2, CF, seg_dim, zstart
 
 # ----------------------------------------------------------------------------------------------------------------------
+def load_data_GIF(path):
+    """ Load data located in path directory. """
+
+    I = []
+    LI = []
+    MA = []
+    zstart = []
+    CF = []
+    seg_dim = []
+
+    for id_path in path:
+        if id_path == 'I':
+            for key in path[id_path]:
+                I.append(get_image(key))
+        elif id_path == 'MA':
+            for key in path[id_path]:
+                MA.append(get_seg(key, 'MA_val'))
+        elif id_path == 'LI':
+            for key in path[id_path]:
+                LI.append(get_seg(key, 'LI_val'))
+        elif id_path == 'parameters':
+            for key in path[id_path]:
+                zstart.append(get_zstart(key))
+        elif id_path == 'CF':
+            for key in path[id_path]:
+                CF_, seg_dim_ = get_CF(key)
+                CF.append(CF_)
+                seg_dim.append(seg_dim_)
+
+    return I, LI, MA, CF, seg_dim, zstart
+
+# ----------------------------------------------------------------------------------------------------------------------
 def preprocessing(I1, I2, OF, LI1, LI2,  MA1, MA2, pairs, roi_width, pixel_width, CF, zstart):
     """ Preprocess data in order to extract the ROI corresponding. """
 
@@ -132,15 +186,33 @@ def preprocessing(I1, I2, OF, LI1, LI2,  MA1, MA2, pairs, roi_width, pixel_width
     OF[..., 0] *= Odim[0]/Fdim[0]
     OF[..., 2] *= Odim[1] / Fdim[1]
 
-    return I1, I2, OF_, LI1, LI2, MA1, MA2
+    return I1, I2, OF_, LI1, LI2, MA1, MA2, rCF
+
+# ----------------------------------------------------------------------------------------------------------------------
+def preprocessing_GIF(I, LI, MA):
+    """ Preprocess data in order to extract the ROI corresponding. """
+
+    Odim = I[0].shape
+    LIo = []
+    MAo = []
+
+    # --- adapt segmentation to image dimension
+    for i in range(len(I)):
+        LIo_, MAo_ = adapt_segmentation(LI[i], MA[i], Odim)
+        LIo.append(LIo_)
+        MAo.append(MAo_)
+
+    return LIo, MAo
 
 # ----------------------------------------------------------------------------------------------------------------------
 def compute_real_CF(Odim, Fdim, CF_init):
     """ Compute the real pixel size as we can't reach the desired value because of rounding. """
 
     zcoef = Fdim[0] / Odim[0]
-    zCF = zcoef * CF_init
-    xCF = Fdim[1] / Odim[1] * CF_init
+    zCF = CF_init / zcoef
+
+    xcoef = Fdim[1] / Odim[1]
+    xCF = CF_init / xcoef
 
     CF = {"xCF": xCF,
           "zCF": zCF}
@@ -177,7 +249,7 @@ def adapt_segmentation(LI, MA, Odim):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def adapt_optical_flow(OF, Odim, zstart, CF):
-    """ Fit optical flow to the in-silico image. """
+    """ Fit optical flow to the in-silico image dimension. """
 
     height, width, _ = OF.shape
     height_q, width_q = Odim
@@ -233,8 +305,8 @@ def get_roi_borders(LI1, LI2, MA1, MA2):
     roi_right.append(MA1.nonzero()[0][-1])
     roi_right.append(MA2.nonzero()[0][-1])
 
-    roi = {"left": max(roi_left) + 30,
-           "right": min(roi_right) - 30}
+    roi = {"left": max(roi_left) + 5,
+           "right": min(roi_right) - 5}
 
     return roi
 
@@ -255,11 +327,13 @@ def image_interpoland(I, interp_factor):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def get_cropped_coordinates(roi_borders, pos1, pos2, shift_x, shift_z, roi_width, roi_height):
-    """ Compte position to get window. """
+    """ Compute position to get window. """
 
     nb_points = roi_borders['right'] - roi_borders['left']
     x = np.linspace(roi_borders['left'], roi_borders['right'], nb_points+1, dtype=int)
     pos = (pos1 + pos2) / 2
+
+
 
     coordinates = {}
     substr = 'pos_'
@@ -335,13 +409,15 @@ def data_extraction(LI1, LI2, MA1, MA2, I1, I2, OF, coordinates, pixel_width, pi
     for id, key in enumerate(coordinates.keys()):
 
         x, z = coordinates[key]
-        data['I1'].append(I1[z:z+pixel_height, x:x+pixel_width])
-        data['M1'].append(mask1[z:z + pixel_height, x:x + pixel_width])
-        data['I2'].append(I2[z:z + pixel_height, x:x + pixel_width])
-        data['M2'].append(mask2[z:z + pixel_height, x:x + pixel_width])
-        data['OF'].append(OF[z:z + pixel_height, x:x + pixel_width, :])
-        data['pname'].append(key)
-
+        if z+pixel_height < I1.shape[0] and x+pixel_width < I1.shape[1]:
+            data['I1'].append(I1[z:z+pixel_height, x:x+pixel_width])
+            data['M1'].append(mask1[z:z + pixel_height, x:x + pixel_width])
+            data['I2'].append(I2[z:z + pixel_height, x:x + pixel_width])
+            data['M2'].append(mask2[z:z + pixel_height, x:x + pixel_width])
+            data['OF'].append(OF[z:z + pixel_height, x:x + pixel_width, :])
+            data['pname'].append(key)
+        else:
+            ic('cannot process ' + key)
     return data
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -398,7 +474,36 @@ def save_data(data, CF, pres, pname):
                 psave_ = os.path.join(psave, key, data['pname'][id] + ".nii")
                 ps.write_nifty(data[key][id], psave_)
 
-            with open(os.path.join(psave, "CF.txt"), "w") as f:
-                f.write(str(CF))
+        with open(os.path.join(psave, "CF.txt"), "w") as f:
+            for key in CF.keys():
+                f.write(key + " " + str(CF[key]) + '\n')
 
+# ----------------------------------------------------------------------------------------------------------------------
+def add_annotation(I, LI, MA):
+
+    nbi = len(I)
+    I_a = []
+
+    for i in range(nbi):
+        I_ = I[i]
+        LI_ = LI[i]
+        MA_ = MA[i]
+        I_ = np.repeat(I_[:, :, np.newaxis], 3, axis=2)
+
+        id_LI = np.nonzero(LI_)[0]
+        id_MA = np.nonzero(MA_)[0]
+
+        for i in range(id_LI.shape[0]):
+            I_[round(LI_[id_LI[i]]), id_LI[i], 0] = 0
+            I_[round(LI_[id_LI[i]]), id_LI[i], 1] = 100
+            I_[round(LI_[id_LI[i]]), id_LI[i], 2] = 0
+
+        for i in range(id_MA.shape[0]):
+            I_[round(MA_[id_MA[i]]), id_MA[i], 0] = 0
+            I_[round(MA_[id_MA[i]]), id_MA[i], 1] = 0
+            I_[round(MA_[id_MA[i]]), id_MA[i], 2] = 100
+
+        I_a.append(I_)
+
+    return I_a
 # ----------------------------------------------------------------------------------------------------------------------
