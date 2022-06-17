@@ -72,18 +72,18 @@ class databaseHandler():
             # --- load data
             I1, I2, OF, LI1, LI2, MA1, MA2, CF, seg_dim, z_start = dbu.load_data(path)
             # --- get size of the original image
-            args_preprocessing = {'I1': I1,
-                                  'I2': I2,
-                                  'OF': OF,
-                                  'LI1': LI1,
-                                  'LI2': LI2,
-                                  'MA1': MA1,
-                                  'MA2': MA2,
-                                  'pairs': pairs[id],
-                                  'roi_width': self.parameters.ROI_WIDTH,
-                                  'pixel_width': self.parameters.PIXEL_WIDTH,
-                                  'CF': CF,
-                                  'zstart': z_start}
+            args_preprocessing = {'I1'          : I1,
+                                  'I2'          : I2,
+                                  'OF'          : OF,
+                                  'LI1'         : LI1,
+                                  'LI2'         : LI2,
+                                  'MA1'         : MA1,
+                                  'MA2'         : MA2,
+                                  'pairs'       : pairs[id],
+                                  'roi_width'   : self.parameters.ROI_WIDTH,
+                                  'pixel_width' : self.parameters.PIXEL_WIDTH,
+                                  'CF'          : CF,
+                                  'zstart'      : z_start}
             I1, I2, OF, LI1, LI2, MA1, MA2, rCF = dbu.preprocessing(**args_preprocessing)
             # --- get borders
             roi_borders = dbu.get_roi_borders(LI1, LI2, MA1, MA2)
@@ -92,25 +92,25 @@ class databaseHandler():
             # --- compute position for cropping
             mean1 = dbu.mean_pos(LI1, MA1)
             mean2 = dbu.mean_pos(LI2, MA2)
-            args_coordinates = {"roi_borders": roi_borders,
-                                "pos1": mean1,
-                                "pos2": mean2,
-                                "shift_x": self.parameters.SHIFT_X,
-                                "shift_z": self.parameters.SHIFT_Z,
-                                "roi_width": self.parameters.PIXEL_WIDTH,
-                                "roi_height": self.parameters.PIXEL_HEIGHT}
+            args_coordinates = {"roi_borders"   : roi_borders,
+                                "pos1"          : mean1,
+                                "pos2"          : mean2,
+                                "shift_x"       : self.parameters.SHIFT_X,
+                                "shift_z"       : self.parameters.SHIFT_Z,
+                                "roi_width"     : self.parameters.PIXEL_WIDTH,
+                                "roi_height"    : self.parameters.PIXEL_HEIGHT}
             coordinates = dbu.get_cropped_coordinates(**args_coordinates)
             # --- extract data
-            args_data_extraction = {"LI1": LI1,
-                                    "LI2": LI2,
-                                    "MA1": MA1,
-                                    "MA2": MA2,
-                                    "I1": I1,
-                                    "I2": I2,
-                                    "OF": OF,
-                                    "coordinates": coordinates,
-                                    "pixel_width": self.parameters.PIXEL_WIDTH,
-                                    "pixel_height": self.parameters.PIXEL_HEIGHT}
+            args_data_extraction = {"LI1"           : LI1,
+                                    "LI2"           : LI2,
+                                    "MA1"           : MA1,
+                                    "MA2"           : MA2,
+                                    "I1"            : I1,
+                                    "I2"            : I2,
+                                    "OF"            : OF,
+                                    "coordinates"   : coordinates,
+                                    "pixel_width"   : self.parameters.PIXEL_WIDTH,
+                                    "pixel_height"  : self.parameters.PIXEL_HEIGHT}
             data = dbu.data_extraction(**args_data_extraction)
             # --- save data
             if id+1 >= 100:

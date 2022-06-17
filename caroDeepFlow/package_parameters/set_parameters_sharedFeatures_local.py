@@ -23,12 +23,12 @@ from shutil import copyfile
 def setParameters():
 
   p = Parameters(
-                PDATA='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET_3MM_',                # PATH TO LOAD DATA
-                PRES='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/TRAINING_001',                 # PATH TO SAVE TRAINING RESULTS
+                PDATA='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET_3MM_00',                                # PATH TO LOAD DATA
+                PRES='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/',                                      # PATH TO SAVE TRAINING RESULTS
                 PSPLIT='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/SPLIT_DATA',
                 LEARNING_RATE = 0.0001,
-                EPOCH = 50,
-                BATCH_SIZE=8,                                                                       # size of a batch
+                EPOCH = 200,
+                BATCH_SIZE=8,                                                                      # size of a batch
                 NB_EPOCH=50,
                 VALIDATION=True,
                 DROPOUT=0.0,                                                                        # dropout during training
@@ -44,13 +44,13 @@ def setParameters():
                 NUM_HEAD=4,
                 ADVENTICIA_DIM=1,                                                                   # part of adventitia in mm
                 USER='LAINE',
-                EXPNAME='TEST_00',
+                EXPNAME='SHARED_FEATURES_00',
                 DEVICE='cuda',                                                                      # cuda/cpu
                 RESTORE_CHECKPOINT=True,
                 FEATURES='shared',                                                                  # shared or split
   )
 
-  pparam = os.path.join(p.PRES, 'parameters')
+  pparam = os.path.join(p.PRES, p.EXPNAME, 'parameters')
   fh.create_dir(p.PRES)
   fh.create_dir(pparam)
 

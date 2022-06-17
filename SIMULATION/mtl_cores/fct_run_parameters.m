@@ -66,7 +66,7 @@ function fct_run_parameters(varargin)
     slice_spacing = 0.5e-4;
     nb_slice = 10;
     acquisition_mode = acq_mode; % scanline_based, synthetic_aperture 
-    scat_density = 10;
+    scat_density = 1;
     Nelement = 192;
     Nactive = 65;
     shift = 0;
@@ -92,11 +92,10 @@ function fct_run_parameters(varargin)
     parameters.set_nb_slice(nb_slice);
     parameters.set_slice_spacing(slice_spacing);
     parameters.set_shift(shift);
-    parameters.set_dynamic_focusing(1);
+    parameters.set_dynamic_focusing(0);
     parameters.set_compensation_time(-1);
     parameters.create_directory();
     parameters.save();
-
     
     % ---------------------------------------------------------------------
     % ------------------------- CREATE PHANTOM ----------------------------
@@ -158,6 +157,8 @@ end
 
 % -------------------------------------------------------------------------
 function [ndname] = remove_extension(dname)
+    % Remove extebsion of a filename. 
+
     ndname = erase(dname, ".tiff");
     ndname = erase(ndname, ".png");
     ndname = erase(ndname, ".jpg");
@@ -167,6 +168,7 @@ end
 
 % -------------------------------------------------------------------------
 function [type] = get_extension(dname)
+    % Get the extension of a filename.
 
     if contains(dname, '.tiff')
         type = 'TIFF';

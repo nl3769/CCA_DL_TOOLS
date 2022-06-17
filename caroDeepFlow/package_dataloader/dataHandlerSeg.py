@@ -17,11 +17,11 @@ def check_dim(res, patient):
             sys.exit('Error in check_dim in dataHandler: ' + patient)
 
 # ----------------------------------------------------------------------------------------------------------------------
-class dataHandler(segFlowDataloader):
+class dataHandlerSeg(segFlowDataloader):
 
 
     def __init__(self, param, set):
-        super(dataHandler, self).__init__(param)
+        super(dataHandlerSeg, self).__init__(param)
 
         fsplit = os.listdir(param.PSPLIT)
         fsplit = [key for key in fsplit if set in key]
@@ -32,7 +32,7 @@ class dataHandler(segFlowDataloader):
         path = [os.path.join(param.PDATA, key.split('\n')[0]) for key in path]
 
         # --- subfolders
-        subfolds = ['I1', 'I2', 'M1', 'M2', 'OF']
+        subfolds = ['I1', 'I2', 'M1', 'M2']
 
         # --- get path
         for patient in path:
@@ -52,14 +52,7 @@ class dataHandler(segFlowDataloader):
                     pI2 = os.path.join(patient, id_seq, 'I2', fpath)
                     pM1 = os.path.join(patient, id_seq, 'M1', fpath)
                     pM2 = os.path.join(patient, id_seq, 'M2', fpath)
-                    pOF = os.path.join(patient, id_seq, 'OF', fpath.replace('png', 'nii'))
 
                     self.image_list.append([pI1, pI2])
                     self.mask_list.append([pM1, pM2])
-                    self.flow_list.append([pOF])
                     self.CF_list.append([pCF])
-
-        # self.image_list = self.image_list[:80]
-        # self.mask_list = self.mask_list[:80]
-        # self.flow_list = self.flow_list[:80]
-        # self.CF_list = self.CF_list[:80]

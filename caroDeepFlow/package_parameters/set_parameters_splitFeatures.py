@@ -23,13 +23,13 @@ from shutil import copyfile
 def setParameters():
 
   p = Parameters(
-                PDATA='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET_3MM_',                # PATH TO LOAD DATA
-                PRES='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/TRAINING_001',                 # PATH TO SAVE TRAINING RESULTS
-                PSPLIT='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/SPLIT_DATA',
+                PDATA='/home/laine/PROJECTS_IO/DATA/CARODEEPLFLOW/DATASET',                # PATH TO LOAD DATA
+                PRES='/home/laine/PROJECTS_IO/CARODEEPFLOW/',                 # PATH TO SAVE TRAINING RESULTS
+                PSPLIT='/home/laine/PROJECTS_IO/DATA/CARODEEPLFLOW/SPLIT_DATA',
                 LEARNING_RATE = 0.0001,
-                EPOCH = 50,
-                BATCH_SIZE=8,                                                                       # size of a batch
-                NB_EPOCH=50,
+                EPOCH = 200,
+                BATCH_SIZE=16,                                                                       # size of a batch
+                NB_EPOCH=200,
                 VALIDATION=True,
                 DROPOUT=0.0,                                                                        # dropout during training
                 GAMMA=0.8,                                                                          # see later what it is
@@ -38,19 +38,19 @@ def setParameters():
                 CORRELATION_RADIUS=4,                                                               # see later what it is
                 NB_ITERATION=12,
                 ALTERNATE_COORDINATE=False,                                                         # see later what it is
-                WORKERS=0,
+                WORKERS=4,
                 POSITION_ONLY=False,
                 POSITION_AND_CONTENT=False,
                 NUM_HEAD=4,
                 ADVENTICIA_DIM=1,                                                                   # part of adventitia in mm
                 USER='LAINE',
-                EXPNAME='TEST_00',
+                EXPNAME='SPLIT_FEATURES_01',
                 DEVICE='cuda',                                                                      # cuda/cpu
                 RESTORE_CHECKPOINT=True,
                 FEATURES='shared',                                                                  # shared or split
   )
 
-  pparam = os.path.join(p.PRES, 'parameters')
+  pparam = os.path.join(p.PRES, p.EXPNAME, 'parameters')
   fh.create_dir(p.PRES)
   fh.create_dir(pparam)
 

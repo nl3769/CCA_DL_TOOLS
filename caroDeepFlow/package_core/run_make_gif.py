@@ -6,13 +6,13 @@
 import argparse
 import importlib
 import os
-from package_database.databaseHandler       import databaseHandler
+from package_database.gifMaker              import gifMaker
 from icecream                               import ic
 
 # -----------------------------------------------------------------------------------------------------------------------
 def main():
 
-    # --- using a parser with set_parameters.py allows us to run several processes with different set_parameters.py on the cluster
+    # --- using a parser with set_parameters.py allows us to package_core several processes with different set_parameters.py on the cluster
     my_parser = argparse.ArgumentParser(description='Name of set_parameters_*.py')
     my_parser.add_argument('--Parameters', '-param', required=True,
                            help='List of parameters required to execute the code.')
@@ -30,8 +30,8 @@ def main():
     for simu in simulation:
         ic(simu)
         p.PDATA = os.path.join(PDATA, simu)
-        dataHandler = databaseHandler(p)
-        dataHandler()
+        gif = gifMaker(p)
+        gif()
 
 
 # -----------------------------------------------------------------------------------------------------------------------

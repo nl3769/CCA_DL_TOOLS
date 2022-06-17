@@ -11,7 +11,7 @@ end
 %%%%%%% RUM SIMULATION FOR ONE PHANTOM AND ONE SET OF PARAMETERS %%%%%%% 
 
 % --- path to data
-path_data='/home/laine/Desktop/TEST_SEG//momo/tech_001_id_001_FIELD';
+path_data='/home/laine/Desktop/FIELD_TEST/tech_004/tech_004_id_001_FIELD_3D';
 
 % --- get phantom name
 phantom_folder=fct_list_mat_files(path_data, 'phantom');

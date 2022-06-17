@@ -37,8 +37,8 @@ def split_data(pdata, pres, training_part, validation_part, testing_part):
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    # VARIABLES DECLARATION
-    pdata = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET_3MM_'
+    # --- VARIABLES DECLARATION
+    pdata = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET_3MM_00'
     pres = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/SPLIT_DATA'
     training_part = 0.7
     validation_part = 0.1

@@ -43,6 +43,7 @@ classdef imageReconstruction < handle
                     [obj.RF_aperture, obj.probe, obj.sub_probe, obj.param, obj.phantom]=get_data(varargin{1}, varargin{2}, varargin{3}, varargin{4}, varargin{5}, varargin{6}, varargin{7});
                     obj.tsart = zeros(size(obj.RF_aperture, 1), 1);
                     obj.tcompensation = 0;
+                    obj.param.path_res = '/home/laine/Desktop/FIELD_TEST/tech_004/tech_004_id_001_FIELD_3D';
                     path_image_information=fullfile(obj.param.path_res, 'phantom', 'image_information.mat');
                     image=load(path_image_information);
                     obj.image=image.image;
@@ -633,7 +634,163 @@ classdef imageReconstruction < handle
             imwrite(uint8(obj.in_vivo), pres_in_vivio);
         
         end
-    
+        
+        % ------------------------------------------------------------------
+        function BF_CUDA_STA(obj, name_algo, compounding)
+            % Apply simple DAS/DMAS/DMAS+CF beamforming algorithm.
+             
+            % --- add zeros padding
+            RF_signal = fct_zero_padding_RF_signals(obj.RF_aperture);
+            
+            % --- define the CUDA module and kernel
+            cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bf_low_res_image.ptx');
+            cuda_kernel_name = 'das_low_res';
+            
+            % --- get the CUDA kernel from the CUDA module
+            cuda_kernel = parallel.gpu.CUDAKernel(cuda_module_path_and_file_name, ...
+            'double*, const double*, const int, const int, const int, const int, const double, const double, const double*, const int, const int, const int, const double*',...
+            cuda_kernel_name);
+            
+            % --- signal information
+            [time_sample, n_rcv] = size(RF_signal{1}); 
+            dz = obj.probe.c/(2*obj.probe.fs);
+            addpath(fullfile('..', 'mtl_synthetic_aperture'))
+
+            % --- get image information
+            [X_img, Z_img, X_RF, Z_RF, obj.x_display, obj.z_display] = fct_get_grid_2D(obj.param, obj.phantom, obj.image, obj.probe, [time_sample, n_rcv], dz);
+            [n_points_z, n_points_x] = size(X_img);
+            obj.low_res_image = zeros([n_points_z n_points_x obj.probe.Nelements]);
+            
+            % --- get probe position element
+            probe_width = (obj.probe.Nelements-1)*(obj.probe.pitch);
+            probe_pos_x = linspace(-probe_width/2, probe_width/2, obj.probe.Nelements);
+            probe_pos_z = zeros(1, obj.probe.Nelements);
+                                    
+            offset = floor(obj.param.Nactive/2)+1;
+            
+            
+            Nactive_tx = obj.param.Nactive;
+            Nactive_rx = obj.param.Nactive;
+            
+            % --- apodization window
+            apodization = fct_get_apodization([time_sample, n_rcv], Nactive_tx, obj.probe.pitch, 'hanning_adaptative', obj.param.fnumber, dz);
+            apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img, Z_img);
+            
+            % changer ca sert de passer ces deux fonctions
+            tof = fct_get_time_of_flight(X_img, Z_img, probe_pos_x, obj.probe.c);
+            
+            [col_start_tx, col_end_tx]  = fct_get_se(obj.probe.Nelements, obj.probe.pitch, Nactive_tx, X_img(1,:));
+            [col_start_rx, col_end_rx]  = fct_get_se(obj.probe.Nelements, obj.probe.pitch, Nactive_rx, X_img(1,:));
+            col_start                   = max([col_start_rx, col_start_tx]);
+            col_end                     = min([col_end_rx, col_end_tx]);
+            
+            % --- define grid and block size
+            BLOCK_DIM_X = 32;
+            BLOCK_DIM_Y = 32;
+            
+            cuda_kernel.GridSize = [round( ((n_points_x-1)/BLOCK_DIM_X) + 1), round( ((n_points_z-1)/BLOCK_DIM_Y) + 1), 1];
+            cuda_kernel.ThreadBlockSize = [BLOCK_DIM_X, BLOCK_DIM_Y, 1];
+
+            % --- initialization for kernel
+            nb_rx        = int32(obj.probe.Nelements);
+            time_samples = int32(time_sample);
+            imageW       = int32(n_points_x);
+            imageH       = int32(n_points_z);
+            c            = obj.param.c;
+            fs           = double(obj.probe.fs);
+            apodization  = double(apodization);
+            col_s        = int32(col_start);
+            col_e        = int32(col_end);
+            tof          = double(tof);
+            
+            for id_tx=offset:obj.probe.Nelements-offset+1
+                
+                I            = double(zeros([n_points_z n_points_x]));
+                RF           = double(RF_signal{id_tx-offset+1});
+                
+% double* I, const double* rf, const int nb_rx, const int n_rcv, const int W, const int H, const double c, const double fs, const double* apod, const int id_tx, const int col_s, const int col_e, const double* tof
+
+                % --- call the kernel
+                lowresI_ = feval(cuda_kernel, I, RF, nb_rx, time_samples, imageW, imageH, c, fs, apodization, id_tx-1, col_s, col_e, tof);
+                
+                % --- gather the output back from GPU to CPU
+                lowresI_ = gather(lowresI_);
+                
+                % --- store low res image
+
+                obj.low_res_image(:,:,id_tx) = lowresI_;
+%                 figure(1)
+%                 imagesc(lowresI_)
+%                 colormap hot
+%                 colorbar
+%                 axis image
+%                 pause(0.1)
+
+%                 lowresI_ = abs(hilbert(lowresI_));
+% 
+%                 saveas(a, strcat('/home/laine/Desktop/CUDA_BF/', num2str(id_tx), '.png'))
+%                 close
+
+
+            end
+            
+            Ilow = obj.low_res_image(:,:,50);
+            Ilow = hilbert(Ilow);
+            bmodelow = abs(Ilow);
+            bmodelow  = 20*log10(bmodelow/max(bmodelow(:)));
+            
+            figure();
+            imagesc(bmodelow);
+            colormap gray;
+            Ilow
+            I = sum(obj.low_res_image, 3);
+            I = hilbert(I);
+            bmode = abs(I);
+            figure();
+            imagesc(20*log10(bmode/max(bmode(:))), [-60, 0]);
+            colormap gray;
+            
+            % --- compounding
+            switch compounding
+                case 'SUM'
+                    obj.IQ = sum(abs(obj.low_res_image), 3);
+                case 'MULTIPLY'
+                    low_res_image_ = abs(obj.low_res_image);
+                    for id_col = 1:size(low_res_image_, 2)
+                        
+                        % --- preserve dimensionality
+                        cols_ = low_res_image_(:,id_col,:);
+                        
+                        % --- compute yDMAS
+                        col_1 = sum(cols_, 3);
+                        col_1 = col_1.^2;
+                        col_2 = cols_.^2;
+                        col_2 = sum(col_2, 3);
+                        
+                        % --- store result
+                        y_DMAS = col_1-col_2;
+                        obj.IQ(:, id_col) = y_DMAS;
+                        
+                    end
+            end
+
+            % --- update field of view
+            x_bf_data = ( (col_end - col_start) * (obj.x_display(2) - obj.x_display(1)) ) / (n_points_x) ;
+            z_bf_data = obj.z_display;
+            
+            X_int = linspace(-x_bf_data/2, x_bf_data/2, col_end - col_start);
+            X_org = linspace(obj.x_display(1), obj.x_display(2), n_points_x);
+            Z = linspace(obj.z_display(1), obj.z_display(2), n_points_z);
+            
+            % --- interpolation of IQ 
+            [X_int, Z_int] = meshgrid(X_int, Z);
+            [X_org, Z_org] = meshgrid(X_org, Z);
+
+            obj.IQ = interp2(X_org, Z_org, obj.IQ, X_int, Z_int);
+
+            % --- update x_display
+            obj.x_display = [-x_bf_data/2 x_bf_data/2];
+        end
     end
     
 end

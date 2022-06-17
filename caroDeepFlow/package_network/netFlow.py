@@ -72,7 +72,7 @@ class NetFlow(nn.Module):
         else:
             corr_fn = correlation.CorrBlock(fmap1, fmap2, radius=self.p.CORRELATION_RADIUS)
 
-        # --- run the context network
+        # --- package_core the context network
         cnet, _ = self.cnet(I1)
         net, inp = torch.split(cnet, [hdim, cdim], dim=1)
         net = torch.tanh(net)

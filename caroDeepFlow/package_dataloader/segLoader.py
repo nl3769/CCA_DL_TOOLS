@@ -4,17 +4,14 @@ import package_utils.loader as      pul
 import os
 
 # ----------------------------------------------------------------------------------------------------------------------
-class segFlowDataloader(Dataset):
+class segDataloader(Dataset):
 
     def __init__(self, param):
 
         self.is_test = False
-        self.flow_list = []
         self.image_list = []
         self.mask_list = []
         self.CF_list = []
-        self.extra_info = []
-
         # self.preprocessing = preProcessing(p)
 
     # ------------------------------------------------------------------------------------------------------------------

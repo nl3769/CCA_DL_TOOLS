@@ -305,8 +305,8 @@ def get_roi_borders(LI1, LI2, MA1, MA2):
     roi_right.append(MA1.nonzero()[0][-1])
     roi_right.append(MA2.nonzero()[0][-1])
 
-    roi = {"left": max(roi_left) + 5,
-           "right": min(roi_right) - 5}
+    roi = {"left": max(roi_left) + 20,
+           "right": min(roi_right) - 20}
 
     return roi
 

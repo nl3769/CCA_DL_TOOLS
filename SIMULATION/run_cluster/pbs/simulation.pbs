@@ -2,7 +2,7 @@
 
 #PBS -t 1-128
 #PBS -l walltime=01:45:00
-#PBS -l nodes=1:ppn=1
+#PBS -l nodes=1:ppn=8
 #PBS -l mem=15GB
 #PBS -e /home/laine/PROJECTS_IO/SIMULATION/LOG/SIMULATION/${log_name}.err
 #PBS -o /home/laine/PROJECTS_IO/SIMULATION/LOG/SIMULATION/${log_name}.out

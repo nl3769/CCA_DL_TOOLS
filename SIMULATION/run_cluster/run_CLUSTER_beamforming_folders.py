@@ -3,9 +3,6 @@ import subprocess
 import glob
 import scipy.io
 from icecream import ic
-
-
-# ----------------------------------------------------------------------------------------------------------------------
 def find_string(files: list, string: str):
 
     sub_string=string.split('_')[-1];
@@ -26,6 +23,7 @@ def get_mat_files(files):
 def get_param(ppath):
 
     file = glob.glob(os.path.join(ppath, '*.mat'))
+    ic(file)
     PARAM = scipy.io.loadmat(os.path.join(ppath, file[0]))
 
     info_list = ['phantom_name', 'Nelements', 'Nactive', 'mode', 'nb_tx']
@@ -52,29 +50,31 @@ def get_phantom_name(phpath, sub_str):
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    """ Execute le code sur le cluster pour un plusieurs fantomes contenu dans un même répertoire. """
+    ''' execute le code sur le cluster pour un plusieurs fantomes contenu dans un même répertoire. '''
 
-    path_shell = '/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/run_cluster/shell/cluster_full_pipeline.sh'
-    fname = '/home/laine/PROJECTS_IO/SIMULATION/ICCVG/tech_004'
-    folders = os.listdir(fname)
-    folders.sort()
-    ic(folders)
-    for exp in folders[41:100]:
-        ic(exp)
-        path_param=os.path.join(fname, exp, 'parameters')
-        path_phantom=os.path.join(fname, exp, 'phantom')
+    path_shell = '/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/run_cluster/shell/cluster_beamforming.sh'
+    
+    nfolder = '/home/laine/PROJECTS_IO/SIMULATION/CUBS'
+    pname = os.listdir(nfolder)
+    for name in pname:
+        fname = os.path.join(nfolder, name) 
+        folders = os.listdir(fname)
 
-        ph_sub_str, nb_tx, pname = get_param(path_param)
-        phname = get_phantom_name(path_phantom, ph_sub_str)
-        pRF = os.path.join(fname, exp, 'raw_data')
-        log_name = ph_sub_str
-        pres = os.path.join(fname, exp)
+        for exp in folders:
+            ic(exp)
+            path_param=os.path.join(fname, exp, 'parameters')
+            path_phantom=os.path.join(fname, exp, 'phantom')
 
-        # --- display
-        ic(path_shell)
-        ic(pname)
-        ic(phname)
-        ic(log_name)
-        ic(nb_tx[0])
-        ic(pRF)
-        subprocess.run(['sh', path_shell, pname, phname, 'true', log_name, str(nb_tx[0]), pRF, pres])
+            ph_sub_str, nb_tx, pname = get_param(path_param)
+            phname = get_phantom_name(path_phantom, ph_sub_str)
+            pRF = os.path.join(fname, exp, 'raw_data')
+            log_name = ph_sub_str
+            pres = os.path.join(fname, exp)
+            # --- display
+            ic(path_shell)
+            ic(pname)
+            ic(phname)
+            ic(log_name)
+            ic(nb_tx[0])
+            ic(pRF)
+            subprocess.run(['sh', path_shell, pname, phname, 'true', log_name, str(nb_tx[0]), pRF, pres])

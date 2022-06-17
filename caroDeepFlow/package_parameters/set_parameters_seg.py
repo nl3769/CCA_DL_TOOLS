@@ -3,7 +3,7 @@
 @Contact :   <nolann.laine@outlook.fr>
 '''
 
-from package_parameters.parameters_training import Parameters
+from package_parameters.parameters_training_seg import Parameters
 import package_utils.fold_handler as fh
 import os
 from shutil import copyfile
@@ -23,34 +23,23 @@ from shutil import copyfile
 def setParameters():
 
   p = Parameters(
-                PDATA='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET_3MM_',                # PATH TO LOAD DATA
-                PRES='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/TRAINING_001',                 # PATH TO SAVE TRAINING RESULTS
-                PSPLIT='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/SPLIT_DATA',
+                PDATA='/home/laine/cluster/PROJECTS_IO/DATA/CARODEEPFLOW/DATASET',                  # PATH TO LOAD DATA
+                PRES='/home/laine/PROJECTS_IO/CARODEEPFLOW/',                                       # PATH TO SAVE TRAINING RESULTS
+                PSPLIT='/home/laine/cluster/PROJECTS_IO/DATA/CARODEEPFLOW/SPLIT_DATA',
                 LEARNING_RATE = 0.0001,
-                EPOCH = 50,
-                BATCH_SIZE=8,                                                                       # size of a batch
+                EPOCH = 200,
+                BATCH_SIZE=16,                                                                      # size of a batch
                 NB_EPOCH=50,
                 VALIDATION=True,
                 DROPOUT=0.0,                                                                        # dropout during training
-                GAMMA=0.8,                                                                          # see later what it is
-                ADD_NOISE=False,                                                                    # see later what it is
-                CORRELATION_LEVEL=4,                                                                # see later what it is
-                CORRELATION_RADIUS=4,                                                               # see later what it is
-                NB_ITERATION=12,
-                ALTERNATE_COORDINATE=False,                                                         # see later what it is
-                WORKERS=0,
-                POSITION_ONLY=False,
-                POSITION_AND_CONTENT=False,
-                NUM_HEAD=4,
-                ADVENTICIA_DIM=1,                                                                   # part of adventitia in mm
+                WORKERS=4,
                 USER='LAINE',
-                EXPNAME='TEST_00',
-                DEVICE='cuda',                                                                      # cuda/cpu
-                RESTORE_CHECKPOINT=True,
-                FEATURES='shared',                                                                  # shared or split
+                EXPNAME='SEG_00',
+                DEVICE='cpu',                                                                      # cuda/cpu
+                RESTORE_CHECKPOINT=True
   )
 
-  pparam = os.path.join(p.PRES, 'parameters')
+  pparam = os.path.join(p.PRES, p.EXPNAME, 'parameters')
   fh.create_dir(p.PRES)
   fh.create_dir(pparam)
 

@@ -78,7 +78,7 @@ classdef wavePropagation < handle
             
             % --- option for simus
             opt.WaitBar = false;
-            opt.ParPool = false;
+            opt.ParPool = true;
                         
             % --- synthetic aperture acquisition
             now1 = tic();
@@ -122,8 +122,6 @@ classdef wavePropagation < handle
             % --- scanline-based acquisition
             now1 = tic();
             % --- get xcurrent
-%             id_center_line = (obj.sub_probe.Nelements-1)/2;
-%             xcurent = xstart + (id_center_line * dx + dx/2) + (id_tx -1 )* dx;
             xcurent = xstart + (id_tx-1 + (obj.sub_probe.Nelements-1)/2 - 1 ) * dx;
             % --- display
             disp(['FIELD aperture ID (scanline-based): ' num2str(id_tx)]);

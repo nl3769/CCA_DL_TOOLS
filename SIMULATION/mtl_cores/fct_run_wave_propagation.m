@@ -1,9 +1,8 @@
 function fct_run_wave_propagation(varargin)
     fclose all;
-    
-    % we select how many elements emit
+
     switch nargin
-      case 4
+      case 4 
         path_param = varargin{1};
         path_phantom = varargin{2};
         flag_cluster = varargin{3};
@@ -29,11 +28,19 @@ function fct_run_wave_propagation(varargin)
     if isstring(id_tx)
         id_tx = str2double(id_tx);
     end
+
+    if ischar(id_tx)
+        id_tx = str2double(id_tx);
+    end
     
     if isstring(id_tx_end)
         id_tx_end = str2double(id_tx_end);
     end
     
+    if ischar(id_tx_end)
+        id_tx_end = str2double(id_tx_end);
+    end
+
     % --- create object
     simulation_obj=wavePropagation(path_param, path_phantom, flag_cluster);
     name_phantom=split(path_phantom, '/');
@@ -44,11 +51,12 @@ function fct_run_wave_propagation(varargin)
 
       switch simulation_obj.param.soft
           case 'SIMUS'
-              if simulation_obj.param.mode(1) % run scane-line based acquisition
+              if simulation_obj.param.mode(1) %                                                     % run scanline-based acquisition
                   simulation_obj.scanline_based_simus(i);
-              elseif simulation_obj.param.mode(2)
+              elseif simulation_obj.param.mode(2)                                                   % run scanline-based acquisition
                   simulation_obj.synthetic_aperture_simus(i);
               end
+
           case 'FIELD'
               if simulation_obj.param.mode(1)                                                       % run scanline based acquisition
                   simulation_obj.scanline_based_field(i);
