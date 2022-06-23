@@ -1,0 +1,19 @@
+#!/bin/sh
+
+#PBS -l walltime=10:00:00
+#PBS -l nodes=4:ppn=2:gpus=1 -q gpu
+#PBS -l mem=24GB
+#PBS -m ae
+#PBS -e $log_name.err
+#PBS -o $log_name.out
+#PBS -N $log_name
+#PBS -M laine@creatis.insa-lyon.fr
+
+source ~/anaconda3/etc/profile.d/conda.sh
+conda activate pytorch
+
+# package_core the script
+WD=/home/laine/REPOSITORIES/carotid_US_DL_tool/POSTPROCESSING/GAN
+
+cd $WD
+PYTHONPATH=$WD python scripts/train.py -param $param
