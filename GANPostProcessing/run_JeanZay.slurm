@@ -13,7 +13,7 @@ conda activate pytorch
 
 export MPLBACKEND='Agg' # solve pb with matplotlib
 
-# run the script
+# package_core the script
 WD=/linkhome/rech/gencre01/uby91ul/REPOSITORIES/carotid_US_DL_tool/POSTPROCESSING/GAN
 cd $WD
 PYTHONPATH=$WD python scripts/train.py -param $param

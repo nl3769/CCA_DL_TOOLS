@@ -12,7 +12,7 @@
 source ~/anaconda3/etc/profile.d/conda.sh
 conda activate pytorch
 
-# run the script
+# package_core the script
 WD=/home/laine/REPOSITORIES/carotid_US_DL_tool/POSTPROCESSING/GAN
 
 cd $WD

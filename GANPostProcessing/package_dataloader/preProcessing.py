@@ -57,12 +57,18 @@ class preProcessing():
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def normalize(org: torch.Tensor, sim: torch.Tensor):
-        """ Adapt dimension to fit pytorch format. """
+        """ adapt hisotgram between 0 and 255. """
 
+
+        sim = sim - torch.min(sim)
         sim = sim / torch.max(sim)
-        org = org / torch.max(org)
 
-        return org, sim
+        org = org - torch.min(org)
+        org = org / torch.max(org)
+        # sim = sim / torch.max(sim)
+        # org = org / torch.max(org)
+
+        return org*255, sim*255
 
     # ------------------------------------------------------------------------------------------------------------------
     def __call__(self, org: np.ndarray, sim: np.ndarray):

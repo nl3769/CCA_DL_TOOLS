@@ -184,6 +184,7 @@ class FinalLayer(nn.Module):
             x = self.activation(x)
 
         x = self.conv2d2(x)
+        # x = self.activation(x)
 
         return x
 
