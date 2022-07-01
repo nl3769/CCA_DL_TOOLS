@@ -11,7 +11,7 @@ end
 %%%%%%% RUM SIMULATION FOR ONE PHANTOM AND ONE SET OF PARAMETERS %%%%%%% 
 
 % --- path to data
-path_data='/home/laine/Desktop/FIELD_TEST/tech_004/tech_004_id_001_FIELD_3D';
+path_data='/home/laine/Desktop/TEST_SIMUS_CUDA/tech_001_id_001_SIMUS';
 
 % --- get phantom name
 phantom_folder=fct_list_mat_files(path_data, 'phantom');
@@ -33,7 +33,7 @@ elseif PARAM.mode(2)
     tx = nb_tx;
 end
 
-for id_tx=1:1:128
+for id_tx=1:1:192
 % for id_tx=10:1:10
     
     % --- run simulation

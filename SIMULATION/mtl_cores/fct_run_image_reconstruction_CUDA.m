@@ -40,7 +40,7 @@ function fct_run_image_reconstruction_CUDA(pres, flag_cluster)
 
     elseif data.param.mode(2) % synthetic aperture
         
-        % data.DAS_synthetic_aperture('DAS', 'SUM');        
+%         data.DAS_synthetic_aperture('DAS', 'SUM');        
         data.BF_CUDA_STA('DAS', 'SUM')
         data.get_bmode_gamma_correction();
     

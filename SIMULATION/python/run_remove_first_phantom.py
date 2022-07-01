@@ -4,7 +4,7 @@ import shutil
 # ----------------------------------------------------------------------------------------------------------------------
 def main():
 
-    pres = "/home/laine/PROJECTS_IO/SIMULATION/CUBS"
+    pres = "/home/laine/PROJECTS_IO/SIMULATION/MEIBURGER_1_FRAME"
 
     files = os.listdir(pres)
     for file in files:

@@ -66,7 +66,7 @@ function fct_run_parameters(varargin)
     slice_spacing = 0.5e-4;
     nb_slice = 10;
     acquisition_mode = acq_mode; % scanline_based, synthetic_aperture 
-    scat_density = 1;
+    scat_density = 10;
     Nelement = 192;
     Nactive = 65;
     shift = 0;

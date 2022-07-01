@@ -86,6 +86,15 @@ def main():
         discriminator, generator = validation_loop.validation_loop(discriminator, generator, val_loader, epoch, device, loss, logger, p_random_pred)
         logger.save_best_model(epoch=epoch, model=generator)
 
+        # wandb.log({"loss_generator_train": loss_generator_train,
+        #            "loss_discriminator_train": loss_discriminator_train,
+        #            "loss_generator_val": loss_generator_val,
+        #            "loss_discriminator_val": loss_discriminator_val,
+        #            "l1_training": metrics_training['l1'],
+        #            "l2_training": metrics_training['l2'],
+        #            "l1_val": metrics_validation['l1'],
+        #            "l2_val": metrics_validation['l2']})
+
         if logger.get_criterium_early_stop():
             break
 

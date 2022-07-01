@@ -5,8 +5,8 @@ from package_dataset.dataSetBuilder     import dataSetBuilder
 # ----------------------------------------------------------------------------------------------------------------------
 def main():
 
-    info = {'pdata': '/package_core/media/laine/HDD/PROJECTS_IO/SIMULATION/PATHO_ANDRE_25',
-            'pres': '/home/laine/cluster/PROJECTS_IO/DATA/GAN/PATHO_ANDRE_25',
+    info = {'pdata': '/run/media/laine/HDD/PROJECTS_IO/SIMULATION/MEIBURGER_1_FRAME',
+            'pres': '/home/laine/cluster/PROJECTS_IO/DATA/GAN/MEIBURGER_1_FRAME',
             'dataset': 'CUBS2',
             'subDataset': '',
             'pbmode': 'bmode_result/RF',

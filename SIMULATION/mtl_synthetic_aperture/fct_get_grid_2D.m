@@ -25,7 +25,7 @@ function [X_image_2D, Z_image_2D, X_org_2D, Z_org_2D, x_display_2D, z_display_2D
     x_org       = linspace(-dim_probe/2, dim_probe/2, dim(2));
 
     z_image     = linspace(z_start, z_end, n_points_z);
-    z_org       = linspace(dz, dim(1) * dz, dim(1));
+    z_org       = linspace(0, dim(1) * dz, dim(1));
     
     [X_image_2D, Z_image_2D] = meshgrid(x_image, z_image);
     [X_org_2D, Z_org_2D]     = meshgrid(x_org, z_org); 

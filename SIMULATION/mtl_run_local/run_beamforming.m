@@ -8,7 +8,7 @@ set(0, 'DefaultFigureWindowStyle', 'docked');
 addpath(fullfile('..', 'mtl_cores/'));
 
 % --- path to results
-path_res='/home/laine/Desktop/FIELD_TEST/tech_004';
+path_res='/home/laine/Desktop/STA_TEST_CUDA/tech_001';
 files_ = list_files(path_res);
 
 files=files_;

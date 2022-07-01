@@ -6,7 +6,7 @@ from package_utils.utils                    import check_dir
 
 def setParameters():
 
-  p = Parameters(MODEL_NAME         = 'GAN_UPCONV',
+  p = Parameters(MODEL_NAME         = 'AI4HEALTH',
                  PDATA              = '/gpfswork/rech/obh/uby91ul/PROJECTS_IO/DATA/GAN',
                  DATASET            = {'training'  : '/gpfswork/rech/obh/uby91ul/PROJECTS_IO/DATA/GAN/split_v01/training.txt',
                                        'validation': '/gpfswork/rech/obh/uby91ul/PROJECTS_IO/DATA/GAN/split_v01/validation.txt',
