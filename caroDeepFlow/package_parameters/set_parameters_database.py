@@ -15,7 +15,7 @@ import os
 # 0) Do not modify this template file "setParameterstemplate.py"
 # 1) Create a new copy of this file "setParametersTemplate.py" and rename it into "setParameters.py"
 # 2) Indicate all the variables according to your local environment and experiment
-# 3) Use your own "setParameters.py" file to run the code
+# 3) Use your own "setParameters.py" file to package_core the code
 # 4) Do not commit/push your own "setParameters.py" file to the collective repository, it is not relevant for other people
 # 5) The untracked file "setParameters.py" is automatically copied to the tracked file "getParameters.py" for reproducibility
 # ****************************************************************
@@ -25,7 +25,7 @@ def setParameters():
 
   p = Parameters(
                 PDATA='/home/laine/Documents/PROJECTS_IO/SIMULATION/CUBS/DONE',         # PATH TO LOAD DATA
-                PRES='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET_3MM_',     # PATH TO SAVE DATABASE
+                PRES='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET_3MM_00',     # PATH TO SAVE DATABASE
                 ROI_WIDTH = 3e-3,                                                       # SIZE OF THE ROI WIDTH
                 PIXEL_WIDTH = 128,                                                      # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW (IT IS EQUAL TO ROI_WIDTH)
                 PIXEL_HEIGHT = 256,                                                     # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW

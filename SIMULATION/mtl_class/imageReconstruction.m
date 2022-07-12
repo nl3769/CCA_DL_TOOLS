@@ -43,6 +43,7 @@ classdef imageReconstruction < handle
                     [obj.RF_aperture, obj.probe, obj.sub_probe, obj.param, obj.phantom]=get_data(varargin{1}, varargin{2}, varargin{3}, varargin{4}, varargin{5}, varargin{6}, varargin{7});
                     obj.tsart = zeros(size(obj.RF_aperture, 1), 1);
                     obj.tcompensation = 0;
+                    %obj.param.path_res = '/home/laine/Desktop/STA_TEST_CUDA/tech_001/tech_001_id_001_FIELD_3D/';
                     path_image_information=fullfile(obj.param.path_res, 'phantom', 'image_information.mat');
                     image=load(path_image_information);
                     obj.image=image.image;
@@ -187,16 +188,18 @@ classdef imageReconstruction < handle
             analytic_signals = fct_zero_padding_RF_signals(analytic_signals);
             
             % --- signal information
-            [time_sample, n_emit] = size(analytic_signals{1}); % rename --> time_sample, N_received
+            [time_sample, n_rcv] = size(analytic_signals{1}); % rename --> time_sample, N_received
             dz = obj.probe.c/(2*obj.probe.fs);
             time = (0:1:(time_sample-1))'*1/obj.probe.fs;
             
             % --- get grids
-            [X_img, Z_img, X_RF, Z_RF, obj.x_display, obj.z_display] = fct_get_grid_2D(obj.param, obj.phantom, obj.image, obj.probe, [time_sample, n_emit]);        % rename
+            [X_img, Z_img, X_RF, Z_RF, obj.x_display, obj.z_display] = fct_get_grid_2D(obj.param, obj.phantom, obj.image, obj.probe, [time_sample, n_rcv], dz);
+            %[X_img, Z_img, X_RF, Z_RF, obj.x_display, obj.z_display] = fct_get_grid_2D(obj.param, obj.phantom, obj.image, obj.probe, [time_sample, n_emit]);        % rename
             
             % --- get time of flight matrix
-            time_of_flight = fct_get_time_of_flight(time_sample, n_emit, dz, obj.probe.pitch, obj.probe.c);
-            time_of_flight = fct_interpolation(time_of_flight, X_RF, Z_RF, X_img, Z_img);
+            probe_width = (obj.probe.Nelements-1)*(obj.probe.pitch);
+            probe_pos_x = linspace(-probe_width/2, probe_width/2, obj.probe.Nelements);
+            time_of_flight = fct_get_time_of_flight(X_img, Z_img, probe_pos_x, obj.probe.c);
             
             % --- create low res image -> works at final image resolution
             [n_points_z, n_points_x] = size(X_img);
@@ -207,11 +210,11 @@ classdef imageReconstruction < handle
             % -- tx
 %             fnumber = obj.param.fnumber;
             fnumber = 0.5;
-            apod_tx = fct_get_apodization([time_sample, n_emit], Nactive_tx, obj.probe.pitch, 'hanning_adaptative', fnumber, dz);
+            apod_tx = fct_get_apodization([time_sample, n_rcv], Nactive_tx, obj.probe.pitch, 'hanning_adaptative', fnumber, dz);
             plot_apodized_window(3, 3, apod_tx, obj.path_res, 'tx');
             apod_tx = fct_interpolation(apod_tx, X_RF, Z_RF, X_img, Z_img);
             % -- rx
-            apod_rx = fct_get_apodization([time_sample, n_emit], Nactive_rx, obj.probe.pitch, 'hanning_adaptative', fnumber, dz);
+            apod_rx = fct_get_apodization([time_sample, n_rcv], Nactive_rx, obj.probe.pitch, 'hanning_adaptative', fnumber, dz);
             plot_apodized_window(3, 3, apod_rx, obj.path_res, 'rx');
             apod_rx = fct_interpolation(apod_rx, X_RF, Z_RF, X_img, Z_img);
             % --- starting/ending columns
@@ -633,7 +636,147 @@ classdef imageReconstruction < handle
             imwrite(uint8(obj.in_vivo), pres_in_vivio);
         
         end
-    
+        
+        % ------------------------------------------------------------------
+        function BF_CUDA_STA(obj, name_algo, compounding)
+            % Apply simple DAS/DMAS/DMAS+CF beamforming algorithm.
+             
+            % --- analytic signal
+%             coef = max(obj.RF_aperture(:));
+%             obj.RF_aperture =  obj.RF_aperture / coef
+            obj.RF_aperture = RF_normalization(obj.RF_aperture)
+            analytic_signals = fct_get_analytic_signals(obj.RF_aperture);
+            % --- add zeros padding
+            analytic_signals = fct_zero_padding_RF_signals(analytic_signals);
+            
+
+            % --- define the CUDA module and kernel
+            cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bf_low_res_image.ptx');
+            cuda_kernel_name = 'das_low_res';
+            
+            % --- get the CUDA kernel from the CUDA module
+            cuda_kernel = parallel.gpu.CUDAKernel(cuda_module_path_and_file_name, ...
+            'double*, double*, const double*, const double*, const int, const int, const int, const int, const double, const double, const double*, const int, const int, const int, const double*',...
+            cuda_kernel_name);
+            
+            % --- signal information
+            [time_sample, n_rcv] = size(analytic_signals{1}); 
+            dz = obj.probe.c/(2*obj.probe.fs);
+            addpath(fullfile('..', 'mtl_synthetic_aperture'))
+
+            % --- get image information
+            [X_img, Z_img, X_RF, Z_RF, obj.x_display, obj.z_display] = fct_get_grid_2D(obj.param, obj.phantom, obj.image, obj.probe, [time_sample, n_rcv], dz);
+            [n_points_z, n_points_x] = size(X_img);
+            obj.low_res_image = zeros([n_points_z n_points_x obj.probe.Nelements]);
+            
+            % --- get probe position element
+            probe_width = (obj.probe.Nelements-1) * obj.probe.pitch;
+            probe_pos_x = linspace(-probe_width/2, probe_width/2, obj.probe.Nelements);
+            
+            % --- first id_rx
+            offset = floor(obj.param.Nactive/2)+1;
+            
+            % --- number of active elements
+            Nactive_tx = obj.param.Nactive;
+            Nactive_rx = obj.param.Nactive;
+            
+%             --- apodization window
+            apodization = fct_get_apodization([time_sample, n_rcv], Nactive_tx, obj.probe.pitch, 'hanning_adaptative', obj.param.fnumber, dz);
+%             apodization = fct_get_apodization([time_sample, n_rcv], Nactive_tx, obj.probe.pitch, 'hanning_full', obj.param.fnumber, dz);
+            
+            apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img, Z_img);
+            
+            % --- time of flight matrix
+            tof = fct_get_time_of_flight(X_img, Z_img, probe_pos_x, obj.probe.c);
+            
+            [col_start_tx, col_end_tx]  = fct_get_se(obj.probe.Nelements, obj.probe.pitch, Nactive_tx, X_img(1,:));
+            [col_start_rx, col_end_rx]  = fct_get_se(obj.probe.Nelements, obj.probe.pitch, Nactive_rx, X_img(1,:));
+            col_start                   = max([col_start_rx, col_start_tx]);
+            col_end                     = min([col_end_rx, col_end_tx]);
+            
+            % --- define grid and block size
+            BLOCK_DIM_X = 32;
+            BLOCK_DIM_Y = 32;
+            
+            cuda_kernel.GridSize = [round( ((n_points_x-1)/BLOCK_DIM_X) + 1), round( ((n_points_z-1)/BLOCK_DIM_Y) + 1), 1];
+            cuda_kernel.ThreadBlockSize = [BLOCK_DIM_X, BLOCK_DIM_Y, 1];
+
+            % --- initialization for kernel
+            nb_rx        = int32(obj.probe.Nelements);
+            time_sample  = int32(time_sample);
+            imageW       = int32(n_points_x);
+            imageH       = int32(n_points_z);
+            c            = obj.param.c;
+            fs           = double(obj.probe.fs);
+            apodization  = double(apodization);
+            col_s        = int32(col_start);
+            col_e        = int32(col_end);
+            tof          = double(tof);
+            
+%             for id_tx=offset:obj.probe.Nelements-offset+1
+            for id_tx=1:1:192
+                
+                I_r          = double(zeros([n_points_z n_points_x]));
+                I_i          = double(zeros([n_points_z n_points_x]));
+%                 AL           = analytic_signals{id_tx-offset+1};
+                AL           = analytic_signals{id_tx};
+                Zi           = imag(AL);
+                Zr           = real(AL);
+                
+                % --- call the kernel
+                [I_i, I_r] = feval(cuda_kernel, I_r, I_i, Zi, Zr, nb_rx, time_sample, imageW, imageH, c, fs, apodization, id_tx-1, col_s, col_e, tof);
+                
+                % --- gather the output back from GPU to CPU
+                I_i = gather(I_i);
+                I_r = gather(I_r);
+
+                % --- store low res image
+                obj.low_res_image(:,:,id_tx) = I_r + I_i*1i;
+
+
+            end
+            
+            % --- compounding
+            switch compounding
+                case 'SUM'
+                    obj.IQ = sum(abs(obj.low_res_image), 3);
+                case 'MULTIPLY'
+                    low_res_image_ = abs(obj.low_res_image);
+                    for id_col = 1:size(low_res_image_, 2)
+                        
+                        % --- preserve dimensionality
+                        cols_ = low_res_image_(:,id_col,:);
+                        
+                        % --- compute yDMAS
+                        col_1 = sum(cols_, 3);
+                        col_1 = col_1.^2;
+                        col_2 = cols_.^2;
+                        col_2 = sum(col_2, 3);
+                        
+                        % --- store result
+                        y_DMAS = col_1-col_2;
+                        obj.IQ(:, id_col) = y_DMAS;
+                        
+                    end
+            end
+
+            % --- update field of view
+            x_bf_data = ( (col_end - col_start) * (obj.x_display(2) - obj.x_display(1)) ) / (n_points_x) ;
+            z_bf_data = obj.z_display;
+            
+            X_int = linspace(-x_bf_data/2, x_bf_data/2, col_end - col_start);
+            X_org = linspace(obj.x_display(1), obj.x_display(2), n_points_x);
+            Z = linspace(obj.z_display(1), obj.z_display(2), n_points_z);
+            
+            % --- interpolation of IQ 
+            [X_int, Z_int] = meshgrid(X_int, Z);
+            [X_org, Z_org] = meshgrid(X_org, Z);
+
+            obj.IQ = interp2(X_org, Z_org, obj.IQ, X_int, Z_int);
+
+            % --- update x_display
+            obj.x_display = [-x_bf_data/2 x_bf_data/2];
+        end
     end
     
 end

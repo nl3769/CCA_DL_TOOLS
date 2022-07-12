@@ -18,15 +18,15 @@ if __name__ == '__main__':
     pdata = '/home/laine/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images'
     fname = os.listdir(pdata)
     fname.sort()
-    pres = '/home/laine/PROJECTS_IO/SIMULATION/ICCVG'
+    pres = '/home/laine/PROJECTS_IO/SIMULATION/RANDOM_MODE/QUASI_RANDOM'
 
     # --- PARAMETERS
     software='FIELD'                  # choose FIELD or SIMUS
     acq_mode='synthetic_aperture'     # choose synthetic aperture or scanline_based
     info='_3D'                        # added information to file name
-    nb_img='180'                      # number of image in a sequenices
+    nb_img='1'                        # number of image in a sequence
     
-    for name in fname[3:4]:
+    for name in fname[30:31]:
         pres_ = os.path.join(pres, name.split('.')[0])
         make_dir(pres_)
         ic(name)

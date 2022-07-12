@@ -23,7 +23,7 @@ class NetEncoder(nn.Module):
         I1 = I1.contiguous()
         I2 = I2.contiguous()
 
-        # --- run the feature network
+        # --- package_core the feature network
         fmap1, skc1 = self.fnet1(I1)
         fmap2, skc2 = self.fnet2(I2)
 

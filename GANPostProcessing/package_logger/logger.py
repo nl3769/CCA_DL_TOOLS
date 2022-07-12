@@ -1,9 +1,10 @@
 import os.path
 import torch
-from torch.utils.tensorboard import SummaryWriter
-import numpy as np
-import matplotlib.pyplot as plt
-
+import numpy                    as np
+import matplotlib.pyplot        as plt
+import package_utils.utils      as puu
+from torch.utils.tensorboard    import SummaryWriter
+ 
 class loggerClass():
 
     def __init__(self, model, scheduler, p):
@@ -16,19 +17,28 @@ class loggerClass():
         self.pres = p.PATH_RES
         self.validation = p.VALIDATION
 
-        self.loss_generator = {'training': [],
-                               'validation': []}
+        self.loss_generator = \
+            {'training': [],
+            'validation': []}
 
-        self.loss_discriminator = {'training': [],
-                               'validation': []}
+        self.loss_discriminator = \
+            {'training': [],
+            'validation': []}
 
-        self.loss_org = {'training': {'loss_GAN': [], 'loss_pixel': []},
-                         'validation' : {'loss_GAN': [], 'loss_pixel': []}}
+        self.loss_org = \
+            {'training': {'loss_GAN': [],   'loss_pixel': []},
+            'validation' : {'loss_GAN': [], 'loss_pixel': []}}
 
         self.validation_loss = {}
 
-        self.history_model = {'training_based': [],
-                              'validation_based': []}
+        self.history_model = \
+            {'training_based': [],
+            'validation_based': []}
+
+        self.metrics = \
+            {'training': {'l1': [],   'l2': []},
+             'validation': {'l1': [], 'l2': []}}
+
         self.writer = None
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -58,7 +68,10 @@ class loggerClass():
     # ------------------------------------------------------------------------------------------------------------------
     def plot_loss(self):
         """ Plot the loss for training and evaluation during training. """
-
+        
+        psave = os.path.join(self.pres, "figures")
+        puu.check_dir(psave)
+        
         # --- validation
         if len(self.loss_generator['validation']) != 0:
             epoch = list(range(0, len(self.loss_generator['validation'])))
@@ -69,7 +82,7 @@ class loggerClass():
             plt.title('Validation loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
-            plt.savefig(os.path.join(self.pres, 'loss_validation.png'), dpi=150)
+            plt.savefig(os.path.join(psave, 'loss_validation.png'), dpi=150)
             plt.close()
 
         # --- training
@@ -82,7 +95,7 @@ class loggerClass():
             plt.title('Training loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
-            plt.savefig(os.path.join(self.pres, 'loss_training.png'), dpi=150)
+            plt.savefig(os.path.join(psave, 'loss_training.png'), dpi=150)
             plt.close()
 
         # --- training
@@ -101,13 +114,16 @@ class loggerClass():
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
             plt.legend(['training', 'validation'])
-            plt.savefig(os.path.join(self.pres, 'loss_training_validation.png'), dpi=150)
+            plt.savefig(os.path.join(psave, 'loss_training_validation.png'), dpi=150)
             plt.close()
 
     # ------------------------------------------------------------------------------------------------------------------
     def plot_metrics(self):
-        ''' Plot the metrics for training and evaluation during training. '''
-
+        """ Plot the metrics for training and evaluation during training. """
+        
+        psave = os.path.join(self.pres, "figures")
+        puu.check_dir(psave)
+        
         # --- validation
         if len(self.loss_generator['validation']) != 0:
             epoch = list(range(0, len(self.loss_generator['validation'])))
@@ -121,7 +137,7 @@ class loggerClass():
             plt.xlabel('Epoch')
             plt.ylabel('Metrics')
             plt.legend(self.metrics['validation'].keys())
-            plt.savefig(os.path.join(self.pres, 'metrics_validation.png'), dpi=150)
+            plt.savefig(os.path.join(psave, 'metrics_validation.png'), dpi=150)
             plt.close()
 
         # --- training
@@ -137,7 +153,7 @@ class loggerClass():
             plt.xlabel('Epoch')
             plt.ylabel('Metrics')
             plt.legend(self.metrics['training'].keys())
-            plt.savefig(os.path.join(self.pres, 'metrics_training.png'), dpi=150)
+            plt.savefig(os.path.join(psave, 'metrics_training.png'), dpi=150)
             plt.close()
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -146,17 +162,20 @@ class loggerClass():
 
     # ------------------------------------------------------------------------------------------------------------------
     def model_history(self, set: str, string: str):
-        ''' Add information for which the model was updated. '''
+        """ Add information for which the model was updated. """
         self.history_model[set].append(string)
 
     # ------------------------------------------------------------------------------------------------------------------
     def save_model_history(self):
-        ''' Save the model history in a .txt file. It records the epoch and associated loss for which the model was updated. '''
-
+        """ Save the model history in a .txt file. It records the epoch and associated loss for which the model was updated. """
+        
+        psave = os.path.join(self.pres, "history")
+        puu.check_dir(psave)
+        
         keys = self.history_model.keys()
-
+        
         for key in keys:
-            textfile = open(os.path.join(self.pres, key + '.txt'), "w")
+            textfile = open(os.path.join(psave, key + '.txt'), "w")
             for el in self.history_model[key]:
                 textfile.write(el + "\n")
             textfile.close()
@@ -164,6 +183,10 @@ class loggerClass():
     # ------------------------------------------------------------------------------------------------------------------
     def save_best_model(self, epoch, model):
         """ Save the best model. """
+
+        psave = os.path.join(self.pres, "models")
+        puu.check_dir(psave)
+
         self.early_stop_criterium += 1
         loss_val = self.loss_generator['validation']
         loss_train = self.loss_generator['training']
@@ -173,7 +196,7 @@ class loggerClass():
             if epoch > 0 and loss_val[-1] < np.min(loss_val[:-1]):
                 disp = f'Epoch: {epoch} |  training loss: {loss_train[-1]} | validation loss: {loss_val[-1]} | MODEL_VALIDATION SAVED.'
                 print(disp)
-                torch.save(model.state_dict(), os.path.join(self.pres, 'model_validation.pth'))
+                torch.save(model.state_dict(), os.path.join(psave, 'model_validation.pth'))
                 self.model_history(set='validation_based', string=disp)
                 self.early_stop_criterium = 0
 
@@ -184,18 +207,18 @@ class loggerClass():
             else:
                 disp = f'Epoch: {epoch} | training loss: {loss_train[-1]} | MODEL_TRAINING SAVED.'
             print(disp)
-            torch.save(model.state_dict(), os.path.join(self.pres, 'model_training.pth'))
+            torch.save(model.state_dict(), os.path.join(psave, 'model_training.pth'))
             self.model_history(set='training_based', string=disp)
 
         if epoch == 0:
             if self.validation:
-                torch.save(model.state_dict(), os.path.join(self.pres, 'model_training.pth'))
-                torch.save(model.state_dict(), os.path.join(self.pres, 'model_validation.pth'))
+                torch.save(model.state_dict(), os.path.join(psave, 'model_training.pth'))
+                torch.save(model.state_dict(), os.path.join(psave, 'model_validation.pth'))
                 disp = f'Epoch: {epoch} | training loss: {loss_train[-1]} | MODEL_TRAINING SAVED.'
                 self.model_history(set='validation_based', string=disp)
                 self.model_history(set='training_based', string=disp)
             else:
-                torch.save(model.state_dict(), os.path.join(self.pres, 'model_training.pth'))
+                torch.save(model.state_dict(), os.path.join(psave, 'model_training.pth'))
                 disp = f'Epoch: {epoch} | training loss: {loss_train[-1]} | MODEL_TRAINING SAVED.'
                 self.model_history(set='training_based', string=disp)
 

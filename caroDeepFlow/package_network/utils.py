@@ -76,8 +76,7 @@ def load_model(param):
     keys = ['netEncoder', 'netSeg', 'netFlow']
     models_name = get_path_models(param.PRES, keys)
 
-    if param.RESTORE_CHECKPOINT and models_name != None:
-
+    if param.RESTORE_CHECKPOINT:
         if models_name is not None:
             for model_name in models_name.keys():
                 if model_name == keys[0]:
@@ -87,10 +86,28 @@ def load_model(param):
                 elif model_name == keys[2]:
                     netFlow.load_state_dict(torch.load(models_name[model_name]))
     else:
-
         netEncoder.apply(initialize_weights)
         netSeg.apply(initialize_weights)
         netFlow.apply(initialize_weights)
 
     return netEncoder, netSeg, netFlow
+
+# ----------------------------------------------------------------------------------------------------------------------
+def load_model_seg(param):
+    """ Load models with associated weights. """
+
+    netSeg = DilatedUnet(in_channels=2, out_channels=2)
+
+    # --- adapt weights
+    keys = ['netSeg']
+    models_name = get_path_models(param.PRES, keys)
+
+    if param.RESTORE_CHECKPOINT and models_name != None:
+        if models_name is not None:
+            for model_name in models_name.keys():
+                netSeg.load_state_dict(torch.load(models_name[model_name]))
+    else:
+        netSeg.apply(initialize_weights)
+
+    return netSeg
 # ----------------------------------------------------------------------------------------------------------------------

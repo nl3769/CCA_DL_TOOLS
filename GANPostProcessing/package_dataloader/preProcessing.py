@@ -16,6 +16,7 @@ class preProcessing():
                                          iaa.Affine(shear=(-20, 20),
                                                     rotate=(-10, 10),
                                                     translate_px={"y": (-30, 30), "x": (-30, 30)})])
+        self.normalization = p.IMAGE_NORMALIZATION
 
     # ------------------------------------------------------------------------------------------------------------------
     def augmentation(self, org, sim):
@@ -57,17 +58,37 @@ class preProcessing():
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def normalize(org: torch.Tensor, sim: torch.Tensor):
-        """ Adapt dimension to fit pytorch format. """
+        """ adapt hisotgram between 0 and 255. """
 
+
+        sim = sim - torch.min(sim)
         sim = sim / torch.max(sim)
-        org = org / torch.max(org)
 
-        return org, sim
+        org = org - torch.min(org)
+        org = org / torch.max(org)
+        # sim = sim / torch.max(sim)
+        # org = org / torch.max(org)
+
+        return org*255, sim*255
+
+    # ----------------------------------------------------------------
+    @staticmethod
+    def histogram_extension(sample_rec, interval):
+
+        sample_rec = np.array(sample_rec)
+        delta = interval[1] - interval[0]
+        sample_rec  = sample_rec - sample_rec.min()
+        sample_rec  = sample_rec * (delta / sample_rec.max())
+        sample_rec  = sample_rec + interval[0]
+
+        return sample_rec
 
     # ------------------------------------------------------------------------------------------------------------------
     def __call__(self, org: np.ndarray, sim: np.ndarray):
 
         org, sim = self.reshape(org, sim, self.im_size)
+        org = self.histogram_extension(org, self.normalization)
+        sim = self.histogram_extension(sim, self.normalization)
         # if self.data_aug:
         #     org, sim = self.augmentation(org, sim)
 

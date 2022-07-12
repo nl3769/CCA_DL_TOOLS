@@ -24,12 +24,7 @@ classdef wavePropagation < handle
             obj.probe=getparam(obj.param.probe_name);
             obj.probe.fnumber=obj.param.fnumber;
             obj.probe.c=obj.param.c;
-            % --- we modify the probe
-%             obj.probe.width=obj.probe.width*0.5;
-%             obj.probe.kerf=obj.probe.kerf*0.5;
-%             obj.probe.pitch=obj.probe.kerf+obj.probe.width;
             obj.probe.fc=obj.param.fc;
-%             obj.probe.Nelements=ceil((obj.phantom.x_max-obj.phantom.x_min)/obj.probe.pitch+1); % adapt nb of transducers
             obj.probe.Nelements=obj.param.Nelements;
             obj.probe.fs=obj.param.fsCoef*obj.probe.fc;
             obj.sub_probe=obj.probe;
@@ -58,7 +53,7 @@ classdef wavePropagation < handle
             apod_probe(id_tx:id_tx+obj.param.Nactive-1)=obj.apod;
             obj.probe.TXapodization=apod_probe;
             % --- we run simus
-%                 del.delay_probe=delay_probe;
+%                del.delay_probe=delay_probe;
 %                 fct_save_delay(['simus-' num2str(id)], delay_probe)
 %                 fct_save_apo(['simus-' num2str(id)], apod_probe);
             obj.RF_aperture=simus([obj.phantom.x_scatt; obj.phantom.x_max; obj.phantom.x_min], ... % MUST function
@@ -78,7 +73,7 @@ classdef wavePropagation < handle
             
             % --- option for simus
             opt.WaitBar = false;
-            opt.ParPool = false;
+            opt.ParPool = true;
                         
             % --- synthetic aperture acquisition
             now1 = tic();
@@ -122,8 +117,6 @@ classdef wavePropagation < handle
             % --- scanline-based acquisition
             now1 = tic();
             % --- get xcurrent
-%             id_center_line = (obj.sub_probe.Nelements-1)/2;
-%             xcurent = xstart + (id_center_line * dx + dx/2) + (id_tx -1 )* dx;
             xcurent = xstart + (id_tx-1 + (obj.sub_probe.Nelements-1)/2 - 1 ) * dx;
             % --- display
             disp(['FIELD aperture ID (scanline-based): ' num2str(id_tx)]);
@@ -168,7 +161,10 @@ classdef wavePropagation < handle
             
             field_init(-1)
             [emit_aperture, receive_aperture, time_compensation]=obj.init_field(50);
-           
+            
+            % --- adapt tx id
+            id_tx_active = id_tx + floor(obj.param.Nactive/2);
+
             % --- adapt phantom in order to fit field
             positions=[obj.phantom.x_scatt, obj.phantom.y_scatt, obj.phantom.z_scatt];
             
@@ -178,7 +174,7 @@ classdef wavePropagation < handle
             disp(['FIELD aperture ID (Synthetic aperture): ' num2str(id_tx)]);
             
             % --- apodization
-            apo=zeros(1, obj.probe.Nelements);
+            apo = zeros(1, obj.probe.Nelements);
             apo(id_tx) = 1;
             xdc_apodization(emit_aperture, 0, apo);
             

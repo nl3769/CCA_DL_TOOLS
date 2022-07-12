@@ -23,7 +23,7 @@ class segFlowDataloader(Dataset):
         index = index % len(self.image_list)
 
         # --- read data
-        I1, I2, M1, M2, OF = self.read_img(index)
+        I1, I2, M1, M2 = self.read_img(index)
         CF = self.get_CF(index)
 
         # --- get the name of the sequence
@@ -35,13 +35,12 @@ class segFlowDataloader(Dataset):
             else:
                 name = os.path.join(name, key)
 
-        return I1, I2, M1, M2, OF, CF, name
+        return I1, I2, M1, M2, CF, name
 
     # ------------------------------------------------------------------------------------------------------------------
     def read_img(self, index):
         """ Read images and flow from files. """
 
-        OF = pul.load_nii(self.flow_list[index][0])
         I1 = pul.load_image(self.image_list[index][0])
         I2 = pul.load_image(self.image_list[index][1])
         M1 = pul.load_image(self.mask_list[index][0])
@@ -51,11 +50,8 @@ class segFlowDataloader(Dataset):
         I2 = np.array(I2).astype(np.float32)[None, ...] / 255
         M1 = np.array(M1).astype(np.float32)[None, ...] / 255
         M2 = np.array(M2).astype(np.float32)[None, ...] / 255
-        OF = OF.get_fdata()
-        OF = np.array(OF).astype(np.float32)[..., 0::2]
-        OF = np.moveaxis(OF, -1, 0)
 
-        return I1, I2, M1, M2, OF
+        return I1, I2, M1, M2
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_CF(self, index):

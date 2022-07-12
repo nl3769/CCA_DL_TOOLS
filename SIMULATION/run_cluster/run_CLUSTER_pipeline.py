@@ -55,11 +55,11 @@ if __name__ == '__main__':
     """ Execute le code sur le cluster pour un plusieurs fantomes contenu dans un même répertoire. """
 
     path_shell = '/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/run_cluster/shell/cluster_full_pipeline.sh'
-    fname = '/home/laine/PROJECTS_IO/SIMULATION/ICCVG/tech_004'
+    fname = '/home/laine/PROJECTS_IO/SIMULATION/RANDOM_MODE/QUASI_RANDOM/tech_037'
     folders = os.listdir(fname)
     folders.sort()
     ic(folders)
-    for exp in folders[:30]:
+    for exp in folders:
         ic(exp)
         path_param=os.path.join(fname, exp, 'parameters')
         path_phantom=os.path.join(fname, exp, 'phantom')

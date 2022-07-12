@@ -82,7 +82,7 @@ class GeneratorSR(nn.Module):
 # ----------------------------------------------------------------------------------------------------------------------
 class DiscriminatorSR(nn.Module):
 
-    def __init__(self, p, in_channels=1, out_channels=1):
+    def __init__(self, in_channels=1, out_channels=1):
         super(DiscriminatorSR, self).__init__()
 
         self.conv1 = nn.Conv2d(2*in_channels, 64, kernel_size=3, stride=1, padding='same')

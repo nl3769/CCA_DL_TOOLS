@@ -1,11 +1,11 @@
 import flow_vis
 import numpy as np
-import matplotlib.pyplot as plt
 import glob
 import torch
 import os
 
-from utils.utils import check_dir
+import matplotlib.pyplot            as plt
+import package_utils.utils          as puu
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ def save_pred(org: torch.Tensor, fake_org: torch.Tensor, sim: torch.Tensor, pres
 # ----------------------------------------------------------------------------------------------------------------------
 def save_prediction_it_fig(res, gt, fname, pred, inputs):
     rpath = os.path.join(res, 'images')
-    check_dir(rpath)
+    puu.check_dir(rpath)
 
     # save figure (img1, img2, GT, final flow)
     for pid in range(len(fname)):
@@ -68,7 +68,7 @@ def save_prediction_it_fig(res, gt, fname, pred, inputs):
 # ----------------------------------------------------------------------------------------------------------------------
 def save_prediction_fig(res: str, gt: np.ndarray, name: str, predictions: torch.Tensor, inputs: torch.Tensor):
     rpath = os.path.join(res, 'images')
-    check_dir(rpath)
+    puu.check_dir(rpath)
 
     # save figure (img1, img2, GT, final flow)
     for pid in range(len(name)):
@@ -173,6 +173,7 @@ def save_img_res(org: np.ndarray, fake_org: np.ndarray, sim: np.ndarray, pres: s
 
     plt.figure()
 
+
     #plt.rcParams['text.usetex'] = True
     # --- IMAGES
     # --- ORG
@@ -180,40 +181,23 @@ def save_img_res(org: np.ndarray, fake_org: np.ndarray, sim: np.ndarray, pres: s
     plt.imshow(org, cmap='gray')
     plt.axis('off')
     plt.title('Original')
+    plt.colorbar()
 
     # --- FAKE_ORG
     plt.subplot(1, 3, 2)
     plt.imshow(fake_org, cmap='gray')
     plt.axis('off')
-    plt.title('fake original')
+    plt.title('GAN output')
+    plt.colorbar()
 
     # --- sim
     plt.subplot(1, 3, 3)
     plt.imshow(sim, cmap='gray')
     plt.axis('off')
     plt.title('Simulated')
+    plt.colorbar()
 
     plt.tight_layout()
     plt.savefig(pres, bbox_inches='tight', dpi=1000)
 
     plt.close()
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-def compute_norm2(flow: np.ndarray):
-    """Compute the norm2 betwwen the x and z displacement field."""
-
-    return np.sqrt(np.power(flow[..., 0], 2) + np.power(flow[..., 1], 2))
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-def compute_arg(flow: np.ndarray):
-    """Compute the angle between  the x and z coordinates."""
-
-    norm2 = compute_norm2(flow)
-    arg = flow[..., 0] / norm2
-    arg = np.arccos(arg)
-    arg = np.rad2deg(arg)
-
-    return arg
-# ----------------------------------------------------------------------------------------------------------------------

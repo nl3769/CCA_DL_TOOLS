@@ -25,6 +25,7 @@ echo $SIMULATION
 # --- CLUSTER RF DATA
 cls_RF_name="$4_CLS"
 CLUSTER_RF=$(qsub -N $cls_RF_name -v path_RF=$6,log_name=$4 -W depend=afterokarray:$SIMULATION pbs/cluster_RF.pbs)
+#CLUSTER_RF=$(qsub -N $cls_RF_name -v path_RF=$6,log_name=$4 pbs/cluster_RF.pbs)
 #CLUSTER_RF=$(qsub -N $cls_RF_name -v path_RF=$6,log_name=$4 ../pbs_scripts/CLUSTER_run_cluster_RF.pbs)
 echo $CLUSTER_RF
 

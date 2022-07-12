@@ -62,15 +62,15 @@ function fct_run_parameters(varargin)
         run(fullfile('..', 'mtl_utils', 'add_path.m'));
     end
 
-    software = soft; % SIMUS, FIELD
-    slice_spacing = 0.5e-4;
-    nb_slice = 10;
-    acquisition_mode = acq_mode; % scanline_based, synthetic_aperture 
-    scat_density = 10;
-    Nelement = 192;
-    Nactive = 65;
-    shift = 0;
-    nb_images = str2double(nb_img); % number of images in one sequence
+    software = soft;                                                % SIMUS, FIELD
+    slice_spacing = 0.5e-4;                                         % space in meter between two consecutive slices
+    nb_slice = 5;                                                   % number of slices
+    acquisition_mode = acq_mode;                                    % scanline_based, synthetic_aperture 
+    scat_density = 10;                                              % scatterers per ceil resolution
+    Nelement = 192;                                                 % number of elements of the probe
+    Nactive = 65;                                                   % number of active elements to compute adpozization window
+    shift = 0;                                                      % shift the scatterers to avoid scatterers at position 0 (problem with field)
+    nb_images = str2double(nb_img);                                 % number of images in the sequence
     ndname = remove_extension(dname);
     pname = strcat('dicom_', ndname, '_phantom_', software, info);
     pres_ = fullfile(pres, strcat(ndname, '_', software, info));
@@ -81,22 +81,21 @@ function fct_run_parameters(varargin)
     % ---------------------------------------------------------------------
 
     parameters = writeParameters();
-    parameters.set_pres(pres_);
-    parameters.set_path_data(pdata);
-    parameters.set_phantom_name(pname);
-    parameters.set_software(software);
-    parameters.set_Nactive(Nactive);
-    parameters.set_Nelements(Nelement);
-    parameters.set_acquisition_mode(acquisition_mode);
-    parameters.set_scatteres_density(scat_density);
-    parameters.set_nb_slice(nb_slice);
-    parameters.set_slice_spacing(slice_spacing);
-    parameters.set_shift(shift);
-    parameters.set_dynamic_focusing(1);
-    parameters.set_compensation_time(-1);
-    parameters.create_directory();
-    parameters.save();
-
+    parameters.set_pres(pres_);                                      % TODO
+    parameters.set_path_data(pdata);                                 % TODO
+    parameters.set_phantom_name(pname);                              % TODO
+    parameters.set_software(software);                               % TODO
+    parameters.set_Nactive(Nactive);                                 % TODO
+    parameters.set_Nelements(Nelement);                              % TODO
+    parameters.set_acquisition_mode(acquisition_mode);               % TODO
+    parameters.set_scatteres_density(scat_density);                  % TODO
+    parameters.set_nb_slice(nb_slice);                               % TODO
+    parameters.set_slice_spacing(slice_spacing);                     % TODO
+    parameters.set_shift(shift);                                     % TODO
+    parameters.set_dynamic_focusing(1);                              % set 1 for dynamic focusing and 0 for STA
+    parameters.set_compensation_time(-1);                            % TODO
+    parameters.create_directory();                                   % TODO
+    parameters.save();                                               % TODO
     
     % ---------------------------------------------------------------------
     % ------------------------- CREATE PHANTOM ----------------------------
@@ -158,6 +157,8 @@ end
 
 % -------------------------------------------------------------------------
 function [ndname] = remove_extension(dname)
+    % Remove extebsion of a filename. 
+
     ndname = erase(dname, ".tiff");
     ndname = erase(ndname, ".png");
     ndname = erase(ndname, ".jpg");
@@ -167,6 +168,7 @@ end
 
 % -------------------------------------------------------------------------
 function [type] = get_extension(dname)
+    % Get the extension of a filename.
 
     if contains(dname, '.tiff')
         type = 'TIFF';
