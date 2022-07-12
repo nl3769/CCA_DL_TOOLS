@@ -14,7 +14,7 @@ def main():
     info ={'pres'           : pres,
            'subdataset'     : subdataset,
            'training_size'  : 70,
-           'validation_size': 10,
+           'validation_size': 20,
            'psave'          : psave}
     ic(info)
 

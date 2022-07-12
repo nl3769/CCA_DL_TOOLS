@@ -80,7 +80,6 @@ def main(set):
         test_metrics['PSNR_org_vs_fakeOrg'].append(PSNR_org_fakeOrg)
         test_metrics['name'].append(name)
         save_pred(org, fake_org, sim, pres_img, name)
-        # save_pred(org, fake_org, sim, pres_img, name)
 
     df = pd.DataFrame(data=test_metrics)
     df.to_csv(os.path.join(p.PATH_RES, 'res_evaluation_' + set + '.csv'))
@@ -105,33 +104,6 @@ def save_metrics(pres, set, metric):
             f.write('std: ' + str(std) + '\n')
             f.write('\n' + '###############' +'\n')
     f.close()
-
-# ----------------------------------------------------------------------------------------------------------------------
-def compute_PSNR(org, sim, fake_org):
-
-    org = org.cpu().detach().numpy()
-    sim = sim.cpu().detach().numpy()
-    fake_org = fake_org.cpu().detach().numpy()
-
-    MSE_org_sim = np.mean(np.power(np.abs(org - sim), 2))
-    MSE_org_fakeOrg = np.mean(np.power(np.abs(org - fake_org), 2))
-
-    PSNR_org_sim = 10*math.log10(255 ** 2 / MSE_org_sim)
-    PSNR_org_fakeOrg = 10*math.log10(255 ** 2/ MSE_org_fakeOrg)
-
-    return PSNR_org_sim, PSNR_org_fakeOrg
-
-# ----------------------------------------------------------------------------------------------------------------------
-def compute_EPE(org, sim, fake_org):
-
-    org = org.cpu().detach().numpy()
-    sim = sim.cpu().detach().numpy()
-    fake_org = fake_org.cpu().detach().numpy()
-
-    EPE_org = np.mean(np.abs(org - sim))
-    EPE_fake = np.mean(np.abs(org - fake_org))
-
-    return EPE_org, EPE_fake
 
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
