@@ -17,19 +17,28 @@ class loggerClass():
         self.pres = p.PATH_RES
         self.validation = p.VALIDATION
 
-        self.loss_generator = {'training': [],
-                               'validation': []}
+        self.loss_generator = \
+            {'training': [],
+            'validation': []}
 
-        self.loss_discriminator = {'training': [],
-                               'validation': []}
+        self.loss_discriminator = \
+            {'training': [],
+            'validation': []}
 
-        self.loss_org = {'training': {'loss_GAN': [], 'loss_pixel': []},
-                         'validation' : {'loss_GAN': [], 'loss_pixel': []}}
+        self.loss_org = \
+            {'training': {'loss_GAN': [],   'loss_pixel': []},
+            'validation' : {'loss_GAN': [], 'loss_pixel': []}}
 
         self.validation_loss = {}
 
-        self.history_model = {'training_based': [],
-                              'validation_based': []}
+        self.history_model = \
+            {'training_based': [],
+            'validation_based': []}
+
+        self.metrics = \
+            {'training': {'l1': [],   'l2': []},
+             'validation': {'l1': [], 'l2': []}}
+
         self.writer = None
 
     # ------------------------------------------------------------------------------------------------------------------

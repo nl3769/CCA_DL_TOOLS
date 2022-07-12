@@ -9,7 +9,7 @@ import package_utils.utils_evaluation   as puue
 # ----------------------------------------------------------------------------------------------------------------------
 def training_loop(discriminator, generator, train_loader, epoch, device, optimizer_generator, optimizer_discriminator, loss, logger, psave):
 
-    # --- if cuda is available then all tensors are to gpu
+    # --- if cuda is available then all tensors are on gpu
     cuda = True if torch.cuda.is_available() else False
     Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
@@ -26,21 +26,22 @@ def training_loop(discriminator, generator, train_loader, epoch, device, optimiz
     # --- TRAINING LOOP
     save = True
     for i_batch, (org, sim, fname) in enumerate(tqdm(train_loader, ascii=True, desc=f'TRAINING - Epoch nb.: {epoch}')):
+
         # --- load data
         org, sim = org.to(device), sim.to(device)
 
-        # --- create labels
-        valid = Tensor(np.ones((org.size(0), 1, 1, 1)), device=device)
-        fake = Tensor(np.zeros((org.size(0), 1, 1, 1)), device=device)
+        # --- Create labels
+        valid   = Tensor(np.ones((org.size(0), 1, 1, 1)), device=device)
+        fake    = Tensor(np.zeros((org.size(0), 1, 1, 1)), device=device)
 
         # --- TRAIN GENERATOR
         optimizer_generator.zero_grad()
 
-        # --- GAN loss
+        # --- Get predictions
         fake_org = generator(sim)
-        pred_fake = discriminator(org, fake_org)
+        pred_fake = discriminator(sim, fake_org)
 
-        # --- get generator loss
+        # --- Get generator loss
         loss_generator, loss_gen_org = loss(org, sim, fake_org, [pred_fake], valid, fake, generator=True)
 
         # --- Compute the gradient and perform one optimization step
@@ -83,6 +84,6 @@ def training_loop(discriminator, generator, train_loader, epoch, device, optimiz
     logger.add_loss(loss_generator_train, loss_discriminator_train, loss_generator_org_train, set='training')
     metrics_training['l1'] = np.mean(np.array(metrics_training['l1']))
     metrics_training['l2'] = np.mean(np.array(metrics_training['l2']))
+    logger.add_metrics(metrics_training, 'training')
 
-    return discriminator, generator
 # ----------------------------------------------------------------------------------------------------------------------

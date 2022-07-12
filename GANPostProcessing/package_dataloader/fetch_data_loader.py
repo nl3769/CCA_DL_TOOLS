@@ -15,14 +15,15 @@ def fetch_dataloader(p, set: str, shuffle, evaluation=False, data_aug = False):
     else:
         batch_size = p.BATCH_SIZE
 
-    loader = DataLoader(dataset,
-                        batch_size=batch_size,
-                        pin_memory=False,
-                        shuffle=shuffle,
-                        num_workers=p.WORKERS,
-                        drop_last=True)
+    loader = DataLoader(\
+        dataset,
+        batch_size  = batch_size,
+        pin_memory  = False,
+        shuffle     = shuffle,
+        num_workers = p.WORKERS,
+        drop_last   = True)
 
-    print(set + ' with %d image ' % len(dataset))
+    print(set + ' with %d images ' % len(dataset))
 
     len_dataset = len(dataset.org_list)
 

@@ -38,7 +38,7 @@ def validation_loop(discriminator, generator, val_loader, epoch, device, loss, l
 
         # --- get prediction
         fake_org = generator(sim)
-        pred_fake = discriminator(org, fake_org)
+        pred_fake = discriminator(sim, fake_org)
 
         # --- get loss
         loss_generator, loss_gen_org = loss(org, sim, fake_org, [pred_fake], valid, fake, generator=True)
@@ -64,7 +64,7 @@ def validation_loop(discriminator, generator, val_loader, epoch, device, loss, l
             save = False
 
     loss_generator_val = np.mean(np.array(loss_generator_val))
-    loss_discriminator_val = np.mean(np.array(loss_generator_val))
+    loss_discriminator_val = np.mean(np.array(loss_discriminator_val))
     loss_generator_org_val['loss_GAN'] = np.mean(np.array(loss_generator_org_val['loss_GAN']))
     loss_generator_org_val['loss_pixel'] = np.mean(np.array(loss_generator_org_val['loss_pixel']))
     logger.add_loss(loss_generator_val, loss_discriminator_val, loss_generator_org_val, set='validation')
@@ -72,5 +72,4 @@ def validation_loop(discriminator, generator, val_loader, epoch, device, loss, l
 
     metrics_validation['l1'] = np.mean(np.array(metrics_validation['l1']))
     metrics_validation['l2'] = np.mean(np.array(metrics_validation['l2']))
-
-    return discriminator, generator
+    logger.add_metrics(metrics_validation, 'validation')

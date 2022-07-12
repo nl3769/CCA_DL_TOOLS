@@ -173,6 +173,7 @@ def save_img_res(org: np.ndarray, fake_org: np.ndarray, sim: np.ndarray, pres: s
 
     plt.figure()
 
+
     #plt.rcParams['text.usetex'] = True
     # --- IMAGES
     # --- ORG
@@ -180,18 +181,21 @@ def save_img_res(org: np.ndarray, fake_org: np.ndarray, sim: np.ndarray, pres: s
     plt.imshow(org, cmap='gray')
     plt.axis('off')
     plt.title('Original')
+    plt.colorbar()
 
     # --- FAKE_ORG
     plt.subplot(1, 3, 2)
     plt.imshow(fake_org, cmap='gray')
     plt.axis('off')
     plt.title('GAN output')
+    plt.colorbar()
 
     # --- sim
     plt.subplot(1, 3, 3)
     plt.imshow(sim, cmap='gray')
     plt.axis('off')
     plt.title('Simulated')
+    plt.colorbar()
 
     plt.tight_layout()
     plt.savefig(pres, bbox_inches='tight', dpi=1000)

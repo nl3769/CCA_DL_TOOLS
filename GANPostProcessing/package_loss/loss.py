@@ -8,22 +8,35 @@ class lossClass():
         self.criterion_GAN = torch.nn.BCEWithLogitsLoss()
 
         if p.LOSS == 'L1':
-            self.criterion_pixelwise = torch.nn.L1Loss(reduction='mean')  # A loss for a voxel-wise comparison of images like torch.nn.L1Loss
+            self.criterion_pixelwise = lambda org, fake_org: self.compute_L1(org, fake_org)
         elif p.LOSS == 'L2':
-            self.criterion_pixelwise = torch.nn.MSELoss(reduction='mean')  # A loss for a voxel-wise comparison of images like torch.nn.L1Loss
+            self.criterion_pixelwise = lambda org, fake_org: self.compute_L2(org, fake_org)
+        elif p.LOSS == 'L1L2':
+            self.criterion_pixelwise = lambda org, fake_org: self.compute_L1L2(org, fake_org)
 
         self.lambda_GAN = p.LOSS_BALANCE['lambda_GAN']          # Weights criterion_GAN in the generator loss
         self.lambda_pixel = p.LOSS_BALANCE['lambda_pixel']
 
     # ------------------------------------------------------------------------------------------------------------------
     def compute_L1(self, org, fake_org):
+
         L1_metric = torch.nn.L1Loss(reduction='mean')
+
         return L1_metric(org, fake_org)
 
     # ------------------------------------------------------------------------------------------------------------------
     def compute_L2(self, org, fake_org):
+
         L2_metric = torch.nn.MSELoss(reduction='mean')
+
         return L2_metric(org, fake_org)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def compute_L1L2(self, org, fake_org):
+
+        L1L2 = 0.5 * (self.compute_L1(org, fake_org) + self.compute_L2(org, fake_org))
+
+        return L1L2
 
     # ------------------------------------------------------------------------------------------------------------------
     def compute_loss_generator(self, org, fake_org, discriminator_out, valid):
@@ -49,8 +62,10 @@ class lossClass():
     def __call__(self, org, sim, fake_org, discriminator_out, valid, fake, generator = None):
 
         if generator == True:
+
             return self.compute_loss_generator(org, fake_org, discriminator_out, valid)
 
         elif generator == False:
+
             return self.compute_loss_discriminator(discriminator_out, valid, fake)
     # ------------------------------------------------------------------------------------------------------------------
