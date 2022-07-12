@@ -345,7 +345,7 @@ end
 
 % --- get apodization window
 function [apod_window] = hanning_adaptative(dim, Nactive, pitch, f_number, dz, id_tx)
-/dyn
+
     width = dim(2);
     height = dim(1);
 

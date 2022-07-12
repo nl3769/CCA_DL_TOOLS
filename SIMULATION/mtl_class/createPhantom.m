@@ -113,10 +113,6 @@ classdef createPhantom < handle
             x_max=width_meter/2;
             z_min=0;
             z_max=height_meter;
-            % --- get parameters
-%             if ~isdeployed
-%                 addpath('../MUST_2021/')
-%             end
             probe=getparam(obj.param.probe_name);
             lambda=obj.param.c/probe.fc;
             nb_scatteres_speckle=round(obj.param.scat_density*height_meter*width_meter/(lambda^2));
@@ -148,8 +144,30 @@ classdef createPhantom < handle
             interpolant=scatteredInterpolant(x_m(:),z_m(:),corrected_B_mode(:), 'linear');
             % --- randomly generate the scatterers position
             rng("shuffle")
-            x_scat_=random('unif', 0, obj.data_img.width, fix(nb_scatteres_speckle), 1);
-            z_scat_=random('unif', 0, obj.data_img.height, fix(nb_scatteres_speckle), 1);
+            
+            if obj.param.random_mode == "QUASI_RANDOM"
+                
+                p = haltonset(2,'Skip',1e3,'Leap',1e2);
+                p = scramble(p,'RR2');
+                pts = net(p, fix(nb_scatteres_speckle));
+                x_scat_ = pts(:,1) * obj.data_img.width;
+                z_scat_ = pts(:,2) * obj.data_img.height;
+
+            elseif obj.param.random_mode == "UNIFORM"
+            
+                x_scat_=random('unif', 0, obj.data_img.width, fix(nb_scatteres_speckle), 1);
+                z_scat_=random('unif', 0, obj.data_img.height, fix(nb_scatteres_speckle), 1);
+            
+            end
+
+            
+            % --- Quasi random distribution
+
+
+%             z_scat_=random('unif', 0, obj.data_img.height, fix(nb_scatteres_speckle), 1);
+            
+            
+
             % --- get the reflexion coefficient
             RC_scat=interpolant(x_scat_, z_scat_);
             % --- convert x_scat and z_scatt in m
@@ -381,6 +399,7 @@ classdef createPhantom < handle
                 x_img = x_max - x_min;
                 z_img = z_max - z_min;
                 y_img = y_max - y_min;
+                
                 % --- interpolation in 3D space
                 lambda = obj.param.c / obj.param.fc;
                 nb_scat = round(obj.param.scat_density * x_img * y_img * z_img / (lambda^3));
@@ -388,10 +407,26 @@ classdef createPhantom < handle
                                                    obj.data_scatt.z_scatt, ...
                                                    obj.data_scatt.y_scatt, ...
                                                    obj.data_scatt.RC_scatt);
+                
+                
+                if obj.param.random_mode == "QUASI_RANDOM"
+                    p = haltonset(3,'Skip', 1e3,'Leap', 1e2);
+                    p = scramble(p, 'RR2');
+                    pts = net(p, fix(nb_scat));
+                    x_scat = pts(:,1) * (x_max - x_min) + x_min;
+                    y_scat = pts(:,2) * (y_max - y_min) + y_min;
+                    z_scat = pts(:,3) * (z_max - z_min) + z_min;
+                elseif obj.param.random_mode == "UNIFORM"
+                    y_scat = random('unif', y_min, y_max, nb_scat, 1);
+                    x_scat= random('unif', x_min, x_max, nb_scat, 1); 
+                    z_scat= random('unif', z_min, z_max, nb_scat, 1);
+                end
 
-                y_scat = random('unif', y_min, y_max, nb_scat, 1);
-                x_scat= random('unif', x_min, x_max, nb_scat, 1); 
-                z_scat= random('unif', z_min, z_max, nb_scat, 1);
+
+                % --- Uniform distribution
+
+
+
                 RC_scatt = interpolant(x_scat, z_scat, y_scat);
 %                 RC_scatt = RC_scatt - min(RC_scatt); 
                 % --- update

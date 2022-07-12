@@ -6,6 +6,7 @@ set(0, 'DefaultFigureWindowStyle', 'docked');
 
 % --- add path
 addpath(fullfile('..', 'mtl_cores/'));
+addpath(fullfile('..', 'mtl_utils'));
 
 % --- path to results
 path_res='/home/laine/Desktop/STA_TEST_CUDA/tech_001';

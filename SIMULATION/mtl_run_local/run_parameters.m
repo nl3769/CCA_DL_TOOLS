@@ -7,7 +7,7 @@ addpath(fullfile('..', 'mtl_cores'))
 pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images';
 fnames = load_fnames(pdatabase);
 
-pres = '/home/laine/Desktop/TEST_SIMUS_CUDA';
+pres = '/home/laine/Desktop/QUASI_RANDOM';
 parameters = writeParameters();
 info = '';
 
@@ -31,4 +31,4 @@ end
      end
  end
  
- % ------------------------------------------------------------------------
+% -------------------------------------------------------------------------
