@@ -63,14 +63,15 @@ function fct_run_parameters(varargin)
     end
 
     software = soft;                                                % SIMUS, FIELD
-    slice_spacing = 0.5e-4;                                         % space in meter between two consecutive slices
-    nb_slice = 5;                                                   % number of slices
     acquisition_mode = acq_mode;                                    % scanline_based, synthetic_aperture 
-    scat_density = 10;                                              % scatterers per ceil resolution
-    Nelement = 192;                                                 % number of elements of the probe
-    Nactive = 65;                                                   % number of active elements to compute adpozization window
-    shift = 0;                                                      % shift the scatterers to avoid scatterers at position 0 (problem with field)
     nb_images = str2double(nb_img);                                 % number of images in the sequence
+    
+%     slice_spacing = 0.5e-4;                                         % space in meter between two consecutive slices
+%     nb_slice = 5;                                                   % number of slices
+%     scat_density = 10;                                              % scatterers per ceil resolution
+%     Nelement = 192;                                                 % number of elements of the probe
+%     Nactive = 65;                                                   % number of active elements to compute adpozization window
+%     shift = 0;                                                      % shift the scatterers to avoid scatterers at position 0 (problem with field)
     ndname = remove_extension(dname);
     pname = strcat('dicom_', ndname, '_phantom_', software, info);
     pres_ = fullfile(pres, strcat(ndname, '_', software, info));

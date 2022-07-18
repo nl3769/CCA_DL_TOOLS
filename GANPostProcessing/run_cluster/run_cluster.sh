@@ -1,22 +1,20 @@
 #!/bin/bash
 
-parameters=("GAN_parameters_cluster_dropout_00.py"
-            "GAN_parameters_cluster_dropout_10.py"
-            "GAN_parameters_cluster_dropout_20.py"
-            "GAN_parameters_cluster_dropout_40.py"
-            "GAN_parameters_cluster_kernel_3.py"
-            "GAN_parameters_cluster_kernel_5.py"
-            "GAN_parameters_cluster_kernel_7.py"
-            "GAN_parameters_normalization_off.py")
+parameters=("GAN_parameters_L1_GAN1_PIXEL1.py"
+            "GAN_parameters_L2_GAN1_PIXEL1.py"
+            "GAN_parameters_L1L2_GAN1_PIXEL1.py"
+            "GAN_parameters_L1_GAN1_PIXEL5.py"
+            "GAN_parameters_L2_GAN1_PIXEL5.py"
+            "GAN_parameters_L1L2_GAN1_PIXEL5.py"
+            )
 
-exp=("GAN_DO_00"
-     "GAN_DO_10"
-     "GAN_DO_20"
-     "GAN_DO_40"
-     "GAN_KS_3"
-     "GAN_KS_5"
-     "GAN_KS_7.py"
-     "GAN_NORM_OFF")
+exp=("L1_D1_P1"
+     "L2_G1_P1"
+     "L1L2_G1_P1"
+     "L1_G1_P5"
+     "L2_G1_P5"
+     "L1L2_G1_P5"
+     )
 
 
 for idx in ${!parameters[@]}; do

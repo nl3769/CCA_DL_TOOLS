@@ -26,7 +26,7 @@ classdef writeParameters < handle
             obj.param.range_DB 			= 50;               % attenuation in dB
             obj.param.bandwidth 		= 93;               % bandewidth (not used)
             obj.param.fnumber 			= 1;			    % fnumber (used for apodization (emite en receive apod)
-            obj.param.Nactive 			= 64;               % active number for apodization
+            obj.param.Nactive 			= 65;               % active number for apodization
             obj.param.Nelements 		= 192;              % numbe rof element of th eprobe
             obj.param.fsCoef 			= 6;                % sampling frequency -> fs= sCoef*fc
             obj.param.shift 			= 0;                % shift scatterer to start at x mm instead of 0
@@ -38,7 +38,7 @@ classdef writeParameters < handle
             obj.param.sequence 			= false;            % create phantom for all images in the sequence
             obj.param.preprocessing 	= false;            % preprocess bmode image before extracting scatterers -> here we apply bilateral filtering
             obj.param.mode 			    = [0 1];            % [1 0] -> scanline based ; [0 1] -> synthetic aperture
-            obj.param.slice_spacing 	= 2e-4;             % space between slice in y direction
+            obj.param.slice_spacing 	= 0.5e-4;             % space between slice in y direction
             obj.param.nb_slices 		= 5;                % total number of slice (has to be an even number)
             obj.param.compensation_time = -1;               % compensation time
             obj.param.remove_top_region = 1e-3;             % top region removal in m
