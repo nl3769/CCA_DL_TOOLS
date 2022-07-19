@@ -60,7 +60,13 @@ def evaluation(set, p):
 
     save_metrics(p.PATH_SAVE_CVS, set, test_metrics)
 
-# ----------------------------------------------------------------------------------------------------------------------
+    return \
+        np.mean(np.array(test_metrics['EPE_org_vs_sim'])), \
+        np.std(np.array(test_metrics['EPE_org_vs_sim'])), \
+        np.mean(np.array(test_metrics['PSNR_org_vs_sim'])), \
+        np.std(np.array(test_metrics['PSNR_org_vs_sim']))
+
+        # ----------------------------------------------------------------------------------------------------------------------
 def save_metrics(pres, set, metric):
 
     f = open(os.path.join(pres, 'metrics_' + set + '.txt'), 'w')

@@ -7,25 +7,25 @@ import numpy                            as np
 import package_utils.utils_evaluation   as puue
 
 # ----------------------------------------------------------------------------------------------------------------------
-def training_loop(discriminator, generator, train_loader, epoch, device, optimizer_generator, optimizer_discriminator, loss, logger, psave):
+def trn_loop(discriminator, generator, trn_loader, epoch, device, optimizer_generator, optimizer_discriminator, loss, logger, psave):
 
     # --- if cuda is available then all tensors are on gpu
     cuda = True if torch.cuda.is_available() else False
     Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
     # --- initilization to store metrics and losses
-    loss_generator_train        = []
-    loss_generator_org_train    = {'loss_GAN': [], 'loss_pixel': []}
-    loss_discriminator_train    = []
-    metrics_training            = {'l1': [], 'l2': []}
+    loss_generator_trn      = []
+    loss_generator_org_trn  = {'loss_GAN': [], 'loss_pixel': []}
+    loss_discriminator_trn  = []
+    metrics_trn             = {'l1': [], 'l2': []}
 
-    # --- set model in training mode
+    # --- set model in trn mode
     discriminator.train()
     generator.train()
 
-    # --- TRAINING LOOP
+    # --- trn LOOP
     save = True
-    for i_batch, (org, sim, fname) in enumerate(tqdm(train_loader, ascii=True, desc=f'TRAINING - Epoch nb.: {epoch}')):
+    for i_batch, (org, sim, fname) in enumerate(tqdm(trn_loader, ascii=True, desc=f'TRN - Epoch nb.: {epoch}')):
 
         # --- load data
         org, sim = org.to(device), sim.to(device)
@@ -34,7 +34,7 @@ def training_loop(discriminator, generator, train_loader, epoch, device, optimiz
         valid   = Tensor(np.ones((org.size(0), 1, 1, 1)), device=device)
         fake    = Tensor(np.zeros((org.size(0), 1, 1, 1)), device=device)
 
-        # --- TRAIN GENERATOR
+        # --- trn GENERATOR
         optimizer_generator.zero_grad()
 
         # --- Get predictions
@@ -48,7 +48,7 @@ def training_loop(discriminator, generator, train_loader, epoch, device, optimiz
         loss_generator.backward()
         optimizer_generator.step()
 
-        # --- TRAIN DISCRIMINATOR
+        # --- trn DISCRIMINATOR
         optimizer_discriminator.zero_grad()
 
         # --- Real loss
@@ -61,29 +61,35 @@ def training_loop(discriminator, generator, train_loader, epoch, device, optimiz
         loss_discriminator.backward()
         optimizer_discriminator.step()
 
-        loss_generator_train.append(loss_generator.cpu().detach().numpy())
-        loss_generator_org_train['loss_GAN'].append(loss_gen_org['loss_GAN'].cpu().detach().numpy())
-        loss_generator_org_train['loss_pixel'].append(loss_gen_org['loss_pixel'].cpu().detach().numpy())
-        loss_discriminator_train.append(loss_discriminator.cpu().detach().numpy())
-        metrics_training['l1'].append(loss.compute_L1(org, fake_org).cpu().detach().numpy())
-        metrics_training['l2'].append(loss.compute_L2(org, fake_org).cpu().detach().numpy())
+        loss_generator_trn.append(loss_generator.cpu().detach().numpy())
+        loss_generator_org_trn['loss_GAN'].append(loss_gen_org['loss_GAN'].cpu().detach().numpy())
+        loss_generator_org_trn['loss_pixel'].append(loss_gen_org['loss_pixel'].cpu().detach().numpy())
+        loss_discriminator_trn.append(loss_discriminator.cpu().detach().numpy())
+        metrics_trn['l1'].append(loss.compute_L1(org, fake_org).cpu().detach().numpy())
+        metrics_trn['l2'].append(loss.compute_L2(org, fake_org).cpu().detach().numpy())
 
         if save == True:
 
             fake_org, org, sim = fake_org.cpu().detach().numpy(), org.cpu().detach().numpy(), sim.cpu().detach().numpy()
             fake_org, org, sim = fake_org[0, 0, ], org[0, 0, ], sim[0, 0, ]
-            path = os.path.join(psave, "training_epoch_" + str(epoch) + "_" + fname[0] + ".png")
+            path = os.path.join(psave, "trn_epoch_" + str(epoch) + "_" + fname[0] + ".png")
             puue.save_img_res(org, fake_org, sim, path)
             save = False
 
-    loss_generator_train = np.mean(np.array(loss_generator_train))
-    loss_discriminator_train = np.mean(np.array(loss_discriminator_train))
-    loss_generator_org_train['loss_GAN'] = np.mean(np.array(loss_generator_org_train['loss_GAN']))
-    loss_generator_org_train['loss_pixel'] = np.mean(np.array(loss_generator_org_train['loss_pixel']))
+    loss_generator_trn = np.mean(np.array(loss_generator_trn))
+    loss_discriminator_trn = np.mean(np.array(loss_discriminator_trn))
+    loss_generator_org_trn['loss_GAN'] = np.mean(np.array(loss_generator_org_trn['loss_GAN']))
+    loss_generator_org_trn['loss_pixel'] = np.mean(np.array(loss_generator_org_trn['loss_pixel']))
 
-    logger.add_loss(loss_generator_train, loss_discriminator_train, loss_generator_org_train, set='training')
-    metrics_training['l1'] = np.mean(np.array(metrics_training['l1']))
-    metrics_training['l2'] = np.mean(np.array(metrics_training['l2']))
-    logger.add_metrics(metrics_training, 'training')
+    logger.add_loss(loss_generator_trn, loss_discriminator_trn, loss_generator_org_trn, set='training')
+    metrics_trn['l1'] = np.mean(np.array(metrics_trn['l1']))
+    metrics_trn['l2'] = np.mean(np.array(metrics_trn['l2']))
+    logger.add_metrics(metrics_trn, 'training')
 
+    return \
+        loss_generator_trn, \
+        loss_generator_org_trn['loss_GAN'], \
+        loss_generator_org_trn['loss_pixel'], \
+        metrics_trn['l1'], \
+        metrics_trn['l2']
 # ----------------------------------------------------------------------------------------------------------------------

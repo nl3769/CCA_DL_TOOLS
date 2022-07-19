@@ -4,21 +4,19 @@ import argparse
 import importlib
 import torch
 import math
+import wandb
 
-import numpy                                    as np
-import package_utils.utils                      as puu
-
-from tqdm                                       import tqdm
 from package_utils.load_model                   import load_model
 from package_utils.model_information            import save_print
 from package_utils.weights_init                 import weights_init
 from package_dataloader.fetch_data_loader       import fetch_dataloader
-from package_utils.visualize_data               import visualize_images, save_inputs
 from package_loss.loss                          import lossClass
 from package_logger.logger                      import loggerClass
 from package_loop                               import training_loop, validation_loop
 from package_utils.get_param_wandb              import get_param_wandb
 from package_cores.run_evaluate_model           import evaluation
+# Set wandb in silent mode (remove display in consol)
+os.environ["WANDB_SILENT"] = "true"
 ################################
 # --- RUN TRAINING ROUTINE --- #
 ################################
@@ -51,8 +49,8 @@ def main():
     save_print(generator, p.PATH_PRINT_MODEL)
 
     # --- create trn_loader/val_loader
-    trn_loader, len_dataset_trn = fetch_dataloader(p,    set = 'training',   shuffle = True,  data_aug = True)
-    val_loader, len_dataset_val = fetch_dataloader(p,    set = 'validation', shuffle = False, data_aug = False)
+    trn_loader, len_dataset_trn = fetch_dataloader(p, set = 'training',   shuffle = True,  data_aug = True)
+    val_loader, len_dataset_val = fetch_dataloader(p, set = 'validation', shuffle = False, data_aug = False)
 
     # --- Optimizers
     optimizer_generator, optimizer_discriminator = fetch_optimizer(p, generator, discriminator, n_step=math.ceil(len_dataset_trn / p.BATCH_SIZE) * p.NB_EPOCH)
@@ -65,13 +63,24 @@ def main():
 
     # --- init weight and biases
     config = get_param_wandb(p, {})
-    # wandb.init(project="realisticUSTextureGAN", entity="nl37", dir=p.PATH_RES, config=config,
-    #            name=p.PATH_RES.split('/')[-1])
+    wandb.init(project="realisticUSTextureGAN_V2", entity="nl37", dir=p.PATH_RES, config=config, name=p.PATH_RES.split('/')[-1])
 
     for epoch in range(p.NB_EPOCH):
-        training_loop.training_loop(discriminator, generator, trn_loader, epoch, device, optimizer_generator, optimizer_discriminator, loss, logger, p.PATH_RANDOM_PRED_TRN)
-        validation_loop.validation_loop(discriminator, generator, val_loader, epoch, device, loss, logger, p.PATH_RANDOM_PRED_TRN)
+        trn_out = training_loop.trn_loop(discriminator, generator, trn_loader, epoch, device, optimizer_generator, optimizer_discriminator, loss, logger, p.PATH_RANDOM_PRED_TRN)
+        val_out = validation_loop.val_loop(discriminator, generator, val_loader, epoch, device, loss, logger, p.PATH_RANDOM_PRED_TRN)
         logger.save_best_model(epoch=epoch, model=generator)
+        wandb.log({
+            'trn_loss_gen': trn_out[0],
+            'trn_loss_GAN': trn_out[1],
+            'trn_loss_pxl': trn_out[2],
+            'trn_l1':       trn_out[3],
+            'trn_l2':       trn_out[4],
+            'val_loss_gen': val_out[0],
+            'val_loss_GAN': val_out[1],
+            'val_loss_pxl': val_out[2],
+            'val_l1':       val_out[3],
+            'val_l2':       val_out[4],
+        })
 
         if logger.get_criterium_early_stop():
             break
@@ -80,9 +89,25 @@ def main():
     logger.plot_metrics()
     logger.save_model_history()
 
-    evaluation('testing', p)
-    evaluation('validation', p)
-    evaluation('training', p)
+    tst_eval = evaluation('testing', p)
+    val_eval = evaluation('validation', p)
+    trn_eval = evaluation('training', p)
+
+    wandb.log({
+        'tst_eval_EPE_mean':    tst_eval[0],
+        'tst_eval_EPE_std':     tst_eval[1],
+        'tst_eval_PSNR_mean':   tst_eval[2],
+        'tst_eval_PSNR_std':    tst_eval[3],
+        'val_eval_EPE_mean':    val_eval[0],
+        'val_eval_EPE_std':     val_eval[1],
+        'val_eval_PSNR_mean':   val_eval[2],
+        'val_eval_PSNR_std':    val_eval[3],
+        'trn_eval_EPE_mean':    trn_eval[0],
+        'trn_eval_EPE_std':     trn_eval[1],
+        'trn_eval_PSNR_mean':    trn_eval[2],
+        'trn_eval_PSNR_std':     trn_eval[3],
+    })
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 def display_loss(validation: bool, epoch: int, loss_training: float, loss_org_train: float,  loss_val: float, loss_org_val: float):
@@ -112,12 +137,13 @@ def fetch_optimizer(p, generator, discriminator, n_step):
     optimizer_discriminator = torch.optim.Adam(discriminator.parameters(), lr=p.LEARNING_RATE, betas=(beta1, beta2))
 
     # --- schedular
-    param = {'max_lr'           : p.LEARNING_RATE,
-             'total_steps'      : n_step,
-             'epochs'           : p.NB_EPOCH,
-             'pct_start'        : 0.05,
-             'cycle_momentum'   : False,
-             'anneal_strategy'  : 'linear'}
+    param = \
+        {'max_lr'           : p.LEARNING_RATE,
+         'total_steps'      : n_step,
+         'epochs'           : p.NB_EPOCH,
+         'pct_start'        : 0.05,
+         'cycle_momentum'   : False,
+         'anneal_strategy'  : 'linear'}
 
     return optimizer_generator, optimizer_discriminator
 
