@@ -36,11 +36,20 @@ def image_interp_y(I, factor):
     return I
 
 # ----------------------------------------------------------------------------------------------------------------------
-def signal_interpolation_1D(s, x_org, x_query):
+def signal_interpolation_1D(s, x_org, x_query, mode = 'linear'):
     """ 1D signal interpolation. """
 
-    F = interpolate.Akima1DInterpolator(x_org, s)
-    out = F(x_query, extrapolate=None)
+
+    if mode == "linear":
+        F = interpolate.interp1d(x_org, s)
+        out = F(x_query)
+        nonzero = out.nonzero()
+        out[nonzero[0][0]] = 0
+        out[nonzero[0][-1]] = 0
+
+    elif mode == "akima":
+        F = interpolate.Akima1DInterpolator(x_org, s)
+
 
     return out
 

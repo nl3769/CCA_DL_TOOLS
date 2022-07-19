@@ -24,14 +24,14 @@ import os
 def setParameters():
 
   p = Parameters(
-                PDATA='/home/laine/Documents/PROJECTS_IO/SIMULATION/CUBS/DONE',         # PATH TO LOAD DATA
-                PRES='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET_3MM_00',     # PATH TO SAVE DATABASE
-                ROI_WIDTH = 3e-3,                                                       # SIZE OF THE ROI WIDTH
-                PIXEL_WIDTH = 128,                                                      # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW (IT IS EQUAL TO ROI_WIDTH)
-                PIXEL_HEIGHT = 256,                                                     # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW
-                SHIFT_X = 64,                                                           # X SHIFT TO GENERATE DATASET
-                SHIFT_Z = 50                                                            # Z SHIFT TO GENERATE DATASET
-  )
+        PDATA           ='/run/media/laine/HDD/PROJECTS_IO/SIMULATION/CUBS_SEQUENCE',           # PATH TO LOAD DATA
+        PRES            ='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/_DATASET_3MM_00',      # PATH TO SAVE DATABASE
+        ROI_WIDTH       = 3e-3,                                                                 # SIZE OF THE ROI WIDTH
+        PIXEL_WIDTH     = 128,                                                                  # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW (IT IS EQUAL TO ROI_WIDTH)
+        PIXEL_HEIGHT    = 256,                                                                  # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW
+        SHIFT_X         = 64,                                                                   # X SHIFT TO GENERATE DATASET
+        SHIFT_Z         = 50                                                                    # Z SHIFT TO GENERATE DATASET
+)
 
   pparam = os.path.join(p.PRES, 'parameters')
   fh.create_dir(p.PRES)
@@ -39,20 +39,14 @@ def setParameters():
 
   # --- Print all attributes in the console
   attrs = vars(p)
+  print('----------------------------------------------------------------')
+  print('----------------------------------------------------------------')
   print('\n'.join("%s: %s" % item for item in attrs.items()))
+  print('----------------------------------------------------------------')
   print('----------------------------------------------------------------')
 
   # --- Save a backup of the parameters so it can be tracked on Git, without requiring to be adapted by from other contributors
   copyfile(os.path.join('package_parameters', os.path.basename(__file__)), os.path.join(pparam, 'get_parameters_database.py'))
-
-  # --- Modify the function name from "setParameters" to "getParameters"
-  fid = open(os.path.join(pparam, 'get_parameters_database.py'), 'rt')
-  data = fid.read()
-  data = data.replace('setParameters()', 'getParameters()')
-  fid.close()
-  fid = open(os.path.join(pparam, 'get_parameters_database.py'), 'wt')
-  fid.write(data)
-  fid.close()
 
   # --- Return populated object from Parameters class
   return p

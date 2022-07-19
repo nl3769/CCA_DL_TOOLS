@@ -12,7 +12,7 @@ from icecream                               import ic
 
 # -----------------------------------------------------------------------------------------------------------------------
 def create_dataset(p, PDATA, simulation):
-    for simu in simulation:
+    for simu in simulation[1:]:
         ic(simu)
         p.PDATA = os.path.join(PDATA, simu)
         dataHandler = databaseHandler(p)

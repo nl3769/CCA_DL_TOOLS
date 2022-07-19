@@ -9,7 +9,7 @@ import sys
 from icecream import ic
 
 # ----------------------------------------------------------------------------------------------------------------------
-def check_segmentation_dim(LI1, LI2, MA1, MA2):
+def check_segmentation_dim(LI1, LI2, MA1, MA2, iname):
     """ Check if dimension are consistent. """
 
     flag = False
@@ -27,10 +27,10 @@ def check_segmentation_dim(LI1, LI2, MA1, MA2):
         flag = True
 
     if flag:
-        sys.exit('Error in check check_segmentation_dim')
+        sys.exit(f'Error in check check_segmentation_dim | pair 0 {iname[0]} | pair 1 {iname[1]}')
 
 # ----------------------------------------------------------------------------------------------------------------------
-def check_dim(I0, I1, pname):
+def check_image_dim(I0, I1, pname):
     """ Check if dimension are consistent. """
 
     I0height, I0width = I0.shape
@@ -46,7 +46,7 @@ def check_dim(I0, I1, pname):
 
     if flag:
         ic(pname)
-        sys.exit('Error in check_dir')
+        sys.exit(f'Error in check_image_dim {pname}')
 
 # ----------------------------------------------------------------------------------------------------------------------
 def get_fname(dir: str, sub_str: str, fold = None) -> str:

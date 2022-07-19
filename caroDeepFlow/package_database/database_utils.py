@@ -11,6 +11,7 @@ import package_utils.signal_processing      as sp
 import package_utils.reader                 as rd
 import package_utils.saver                  as ps
 
+from tqdm                                   import tqdm
 from icecream                               import ic
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -156,7 +157,7 @@ def preprocessing(I1, I2, OF, LI1, LI2,  MA1, MA2, pairs, roi_width, pixel_width
 
     Odim = I1.shape
     # --- check if dimension are consistent
-    rd.check_dim(I1, I2, pairs)
+    rd.check_image_dim(I1, I2, pairs)
     # --- adapt segmentation to image dimension
     LI1, MA1 = adapt_segmentation(LI1, MA1, Odim)
     LI2, MA2 = adapt_segmentation(LI2, MA2, Odim)
@@ -291,7 +292,7 @@ def seg_interpoland(LI, MA, Fdim):
     return LI, MA
 
 # ----------------------------------------------------------------------------------------------------------------------
-def get_roi_borders(LI1, LI2, MA1, MA2):
+def _get_roi_borders(LI1, LI2, MA1, MA2, pairs):
     """ Get roi borders. """
 
     roi_left, roi_right = [], []
@@ -305,8 +306,39 @@ def get_roi_borders(LI1, LI2, MA1, MA2):
     roi_right.append(MA1.nonzero()[0][-1])
     roi_right.append(MA2.nonzero()[0][-1])
 
-    roi = {"left": max(roi_left) + 20,
-           "right": min(roi_right) - 20}
+    roi = {
+        "left": max(roi_left) + 40,
+        "right": min(roi_right) - 40}
+
+    return roi
+
+# ----------------------------------------------------------------------------------------------------------------------
+def get_roi_borders(path_data, pairs):
+    """ Get roi borders. """
+
+    roi_left, roi_right = [], []
+
+    for id in tqdm(range(0, len(pairs))):
+        path = get_path(path_data, pairs, id)
+        LI1 = get_seg(path['LI1'], 'LI_val')
+        LI2 = get_seg(path['LI2'], 'LI_val')
+        MA1 = get_seg(path['MA1'], 'MA_val')
+        MA2 = get_seg(path['MA2'], 'MA_val')
+
+        roi_left.append(LI1.nonzero()[0][0])
+        roi_left.append(LI2.nonzero()[0][0])
+        roi_right.append(LI1.nonzero()[0][-1])
+        roi_right.append(LI2.nonzero()[0][-1])
+
+        roi_left.append(MA1.nonzero()[0][0])
+        roi_left.append(MA2.nonzero()[0][0])
+        roi_right.append(MA1.nonzero()[0][-1])
+        roi_right.append(MA2.nonzero()[0][-1])
+
+
+    roi = {
+        "left": max(roi_left) + 5,
+        "right": min(roi_right) - 5}
 
     return roi
 
@@ -374,7 +406,7 @@ def get_zstart(fname):
     return zstart
 
 # ----------------------------------------------------------------------------------------------------------------------
-def data_extraction(LI1, LI2, MA1, MA2, I1, I2, OF, coordinates, pixel_width, pixel_height):
+def data_extraction(LI1, LI2, MA1, MA2, I1, I2, OF, coordinates, pixel_width, pixel_height, pairs_name):
     """ Get patch. """
 
     # --- get roi
@@ -383,7 +415,7 @@ def data_extraction(LI1, LI2, MA1, MA2, I1, I2, OF, coordinates, pixel_width, pi
     MA1c = np.nonzero(MA1)[0]
     MA2c = np.nonzero(MA2)[0]
 
-    rd.check_segmentation_dim(LI1c, LI2c, MA1c, MA2c)
+    rd.check_segmentation_dim(LI1c, LI2c, MA1c, MA2c, pairs_name)
 
     # --- mask creation
     mask1 = np.zeros(I1.shape, dtype=np.uint8)
