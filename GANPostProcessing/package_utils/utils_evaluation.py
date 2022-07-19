@@ -9,14 +9,14 @@ import package_utils.utils          as puu
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def save_pred(org: torch.Tensor, fake_org: torch.Tensor, sim: torch.Tensor, pres: str, name: str):
+def save_pred(org: torch.Tensor, fake_org: torch.Tensor, sim: torch.Tensor, pres: str, name: str, set = ''):
     """ Adapt tensor to numpy to save results. """
 
     org = org.cpu().detach().numpy().squeeze()
     fake_org = fake_org.cpu().detach().numpy().squeeze()
     sim = sim.cpu().detach().numpy().squeeze()
 
-    save_img_res(org, fake_org, sim, os.path.join(pres, name))
+    save_img_res(org, fake_org, sim, os.path.join(pres, set + '_' + name))
 
 
 # ----------------------------------------------------------------------------------------------------------------------

@@ -14,8 +14,8 @@ class lossClass():
         elif p.LOSS == 'L1L2':
             self.criterion_pixelwise = lambda org, fake_org: self.compute_L1L2(org, fake_org)
 
-        self.lambda_GAN = p.LOSS_BALANCE['lambda_GAN']          # Weights criterion_GAN in the generator loss
-        self.lambda_pixel = p.LOSS_BALANCE['lambda_pixel']
+        self.lambda_GAN = p.lambda_GAN          # Weights criterion_GAN in the generator loss
+        self.lambda_pixel = p.lambda_pixel
 
     # ------------------------------------------------------------------------------------------------------------------
     def compute_L1(self, org, fake_org):
