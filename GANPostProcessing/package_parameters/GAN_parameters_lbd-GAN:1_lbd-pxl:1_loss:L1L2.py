@@ -7,13 +7,13 @@ from package_utils.utils                import check_dir
 def setParameters():
 
   p = Parameters(MODEL_NAME                 = 'UnetGZ',
-                 PDATA                      = '/home/laine/cluster/PROJECTS_IO/DATA/GAN',
+                 PDATA                      = '/home/laine/PROJECTS_IO/DATA/GAN',
                  DATABASE                    =
-                    {'training'  : '/home/laine/cluster/PROJECTS_IO/DATA/GAN/split_v01/training.txt',
-                     'validation': '/home/laine/cluster/PROJECTS_IO/DATA/GAN/split_v01/validation.txt',
-                      'testing'   : '/home/laine/cluster/PROJECTS_IO/DATA/GAN/split_v01/testing.txt'},
+                    {'training'  : '/home/laine/PROJECTS_IO/DATA/GAN/split_v01/training.txt',
+                     'validation': '/home/laine/PROJECTS_IO/DATA/GAN/split_v01/validation.txt',
+                      'testing'   : '/home/laine/PROJECTS_IO/DATA/GAN/split_v01/testing.txt'},
                  VALIDATION                 = True,
-                 LOSS                       = 'L1',
+                 LOSS                       = 'L1L2',
                  lambda_GAN                 = 1,
                  lambda_pixel               = 1,
                  CASCADE_FILTERS            = None,
@@ -28,7 +28,7 @@ def setParameters():
                  DROPOUT                    = 0,
                  WORKERS                    = 4,
                  EARLY_STOP                 = 50,
-                 PATH_RES                   = '/home/laine/Documents/PROJECTS_IO/GAN/lambda_1_pixel_1_L1')
+                 PATH_RES                   = '/home/laine/PROJECTS_IO/GAN/lbd-GAN:1_lbd-pxl:1_loss:L1')
 
   # --- Print all attributes in the console
   attrs = vars(p)
