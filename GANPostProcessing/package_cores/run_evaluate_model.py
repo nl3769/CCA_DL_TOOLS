@@ -46,7 +46,7 @@ def evaluation(set, p):
 
         # --- compute metrics
         metric_org, metric_pred = compute_EPE(org, sim, fake_org)
-        PSNR_org_sim, PSNR_org_fakeOrg = compute_PSNR(org, sim, fake_org)
+        PSNR_org_sim, PSNR_org_fakeOrg = compute_PSNR(org, sim, fake_org, p.IMAGE_NORMALIZATION[1])
 
         test_metrics['EPE_org_vs_sim'].append(metric_org)
         test_metrics['EPE_org_vs_fakeOrg'].append(metric_pred)
