@@ -69,7 +69,6 @@ def trn_loop(discriminator, generator, trn_loader, epoch, device, optimizer_gene
         metrics_trn['l2'].append(loss.compute_L2(org, fake_org).cpu().detach().numpy())
 
         if save == True:
-
             fake_org, org, sim = fake_org.cpu().detach().numpy(), org.cpu().detach().numpy(), sim.cpu().detach().numpy()
             fake_org, org, sim = fake_org[0, 0, ], org[0, 0, ], sim[0, 0, ]
             path = os.path.join(psave, "trn_epoch_" + str(epoch) + "_" + fname[0] + ".png")

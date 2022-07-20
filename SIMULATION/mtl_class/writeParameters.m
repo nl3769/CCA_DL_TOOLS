@@ -19,38 +19,38 @@ classdef writeParameters < handle
             obj.param.soft='';
 
             % --- RELATIVE TO THE SIMULATION
-            obj.param.c 			    = 1540;             % sound celerity
-            obj.param.fc 			    = 7.5e6;            % central frequency of the probe
-            obj.param.scat_density 		= 10;			    % number of scatterers per resolution cell
-            obj.param.probe_name 		= 'L12-3v';		    % name of the probe
-            obj.param.range_DB 			= 50;               % attenuation in dB
-            obj.param.bandwidth 		= 93;               % bandewidth (not used)
-            obj.param.fnumber 			= 1;			    % fnumber (used for apodization (emite en receive apod)
-            obj.param.Nactive 			= 65;               % active number for apodization
-            obj.param.Nelements 		= 192;              % numbe rof element of th eprobe
-            obj.param.fsCoef 			= 6;                % sampling frequency -> fs= sCoef*fc
-            obj.param.shift 			= 0;                % shift scatterer to start at x mm instead of 0
-            obj.param.gamma 			= 0.3;              % gamma correction
-            obj.param.TGC 			    = true;             % time gain compensation
-            obj.param.distribution 		= [0 0 1];          % [random_point normal rayleight] -> example for rayleight distribution [0 0 1]
-            obj.param.imadjust_vals 	= [0.03 0.75];      % imagejust coefficient for IQ post processing
+            obj.param.c 			           = 1540;             % sound celerity
+            obj.param.fc 			          = 7.5e6;            % central frequency of the probe
+            obj.param.scat_density       = 6;			    % number of scatterers per resolution cell
+            obj.param.probe_name 	      = 'L12-3v';		    % name of the probe
+            obj.param.range_DB 		      = 50;               % attenuation in dB
+            obj.param.bandwidth 		     = 93;               % bandewidth (not used)
+            obj.param.fnumber 			     = 1;			    % fnumber (used for apodization (emite en receive apod)
+            obj.param.Nactive 			     = 65;               % active number for apodization
+            obj.param.Nelements 		     = 192;              % numbe rof element of th eprobe
+            obj.param.fsCoef 			      = 6;                % sampling frequency -> fs= sCoef*fc
+            obj.param.shift 			       = 0;                % shift scatterer to start at x mm instead of 0
+            obj.param.gamma 			       = 0.3;              % gamma correction
+            obj.param.TGC 			         = true;             % time gain compensation
+            obj.param.distribution 		  = [0 0 1];          % [random_point normal rayleight] -> example for rayleight distribution [0 0 1]
+            obj.param.imadjust_vals 	   = [0.03 0.75];      % imagejust coefficient for IQ post processing
             obj.param.dynamic_focusing 	= 1;                % dynamic focus using field only
-            obj.param.sequence 			= false;            % create phantom for all images in the sequence
-            obj.param.preprocessing 	= false;            % preprocess bmode image before extracting scatterers -> here we apply bilateral filtering
-            obj.param.mode 			    = [0 1];            % [1 0] -> scanline based ; [0 1] -> synthetic aperture
-            obj.param.slice_spacing 	= 0.5e-4;             % space between slice in y direction
-            obj.param.nb_slices 		= 5;                % total number of slice (has to be an even number)
-            obj.param.compensation_time = -1;               % compensation time
-            obj.param.remove_top_region = 1e-3;             % top region removal in m
-            obj.param.random_mode       = 'QUASI_RANDOM';   % 'QUASI_RANDOM', 'UNIFORM'
+            obj.param.sequence 			    = false;            % create phantom for all images in the sequence
+            obj.param.preprocessing 	   = false;            % preprocess bmode image before extracting scatterers -> here we apply bilateral filtering
+            obj.param.mode 			        = [0 1];            % [1 0] -> scanline based ; [0 1] -> synthetic aperture
+            obj.param.slice_spacing 	   = 0.5e-4;             % space between slice in y direction
+            obj.param.nb_slices 		     = 5;                % total number of slice (has to be an even number)
+            obj.param.compensation_time  = -1;               % compensation time
+            obj.param.remove_top_region  = 1e-3;             % top region removal in m
+            obj.param.random_mode        = 'QUASI_RANDOM';   % 'QUASI_RANDOM', 'UNIFORM'
 
             % --- RELATIVE TO MOVEMENT
             obj.param.cardiac_cycle_bpm = [50 90];         	% 1 since it is ~60 cardiac cycles per minute
-            obj.param.theta_max_rot 	= [0.1 2];          % maximal rotation movement
+            obj.param.theta_max_rot 	  = [0.1 2];          % maximal rotation movement
             obj.param.theta_max_shear 	= [1 10];          	% maximal rotation movement
-            obj.param.scaling_coef 		= [0.1 5];          % scaling coefficient in %
-            obj.param.fps 			    = [50 90];          % number of frame per second
-            obj.param.stretch_coef 		= [1 3];            % stretch coefficient
+            obj.param.scaling_coef 		 = [0.1 5];          % scaling coefficient in %
+            obj.param.fps 			        = [50 90];          % number of frame per second
+            obj.param.stretch_coef 		 = [1 3];            % stretch coefficient
         
         end
         

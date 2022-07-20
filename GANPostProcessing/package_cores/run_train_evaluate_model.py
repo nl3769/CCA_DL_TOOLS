@@ -15,8 +15,10 @@ from package_logger.logger                      import loggerClass
 from package_loop                               import training_loop, validation_loop
 from package_utils.get_param_wandb              import get_param_wandb
 from package_cores.run_evaluate_model           import evaluation
+
 # Set wandb in silent mode (remove display in consol)
 os.environ["WANDB_SILENT"] = "true"
+
 ################################
 # --- RUN TRAINING ROUTINE --- #
 ################################
@@ -50,7 +52,7 @@ def main():
 
     # --- create trn_loader/val_loader
     trn_loader, len_dataset_trn = fetch_dataloader(p, set = 'training',   shuffle = True,  data_aug = True)
-    val_loader, len_dataset_val = fetch_dataloader(p, set = 'validation', shuffle = False, data_aug = False)
+    val_loader, len_dataset_val = fetch_dataloader(p, set = 'validation', shuffle = True, data_aug = False)
 
     # --- Optimizers
     optimizer_generator, optimizer_discriminator = fetch_optimizer(p, generator, discriminator, n_step=math.ceil(len_dataset_trn / p.BATCH_SIZE) * p.NB_EPOCH)

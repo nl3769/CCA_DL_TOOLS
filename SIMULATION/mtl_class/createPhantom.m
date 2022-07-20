@@ -158,15 +158,7 @@ classdef createPhantom < handle
                 x_scat_=random('unif', 0, obj.data_img.width, fix(nb_scatteres_speckle), 1);
                 z_scat_=random('unif', 0, obj.data_img.height, fix(nb_scatteres_speckle), 1);
             
-            end
-
-            
-            % --- Quasi random distribution
-
-
-%             z_scat_=random('unif', 0, obj.data_img.height, fix(nb_scatteres_speckle), 1);
-            
-            
+            end         
 
             % --- get the reflexion coefficient
             RC_scat=interpolant(x_scat_, z_scat_);
@@ -422,13 +414,7 @@ classdef createPhantom < handle
                     z_scat= random('unif', z_min, z_max, nb_scat, 1);
                 end
 
-
-                % --- Uniform distribution
-
-
-
                 RC_scatt = interpolant(x_scat, z_scat, y_scat);
-%                 RC_scatt = RC_scatt - min(RC_scatt); 
                 % --- update
                 obj.data_scatt.x_scatt = x_scat;
                 obj.data_scatt.y_scatt = y_scat;
@@ -436,8 +422,6 @@ classdef createPhantom < handle
                 obj.data_scatt.RC_scatt = RC_scatt;
                 obj.data_scatt.y_min = y_min;
                 obj.data_scatt.y_max = y_max;
-                
-%                 obj.data_scatt_moved = obj.data_scatt;
                 
             else
                 nb_scat=length(obj.data_scatt.x_scatt);

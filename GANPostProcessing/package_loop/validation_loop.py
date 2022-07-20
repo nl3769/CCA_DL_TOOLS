@@ -56,7 +56,6 @@ def val_loop(discriminator, generator, val_loader, epoch, device, loss, logger, 
         metrics_val['l2'].append(loss.compute_L2(org, fake_org).cpu().detach().numpy())
 
         if save == True:
-
             fake_org, org, sim = fake_org.cpu().detach().numpy(), org.cpu().detach().numpy(), sim.cpu().detach().numpy()
             fake_org, org, sim = fake_org[0, 0, ], org[0, 0, ], sim[0, 0, ]
             path = os.path.join(psave, "val_epoch_" + str(epoch) + "_" + fname[0] + ".png")

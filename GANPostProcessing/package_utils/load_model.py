@@ -14,15 +14,15 @@ def load_model(p):
     if p.MODEL_NAME == 'UnetGZ':
         discriminator = Discriminator()
         generator = Unet(
-            input_nc=1,
-            output_nc=1,
-            n_layers=5,
-            ngf=32,
-            norm_layer=nn.BatchNorm2d,
-            kernel_size=(3, 3),
-            padding=(1, 1),
-            activation=nn.LeakyReLU(0.2, True),
-            use_bias=True
+            input_nc        = 1,
+            output_nc       = 1,
+            n_layers        = p.NB_LAYERS, 
+            ngf             = p.NGF,
+            norm_layer      = nn.BatchNorm2d,
+            kernel_size     = p.KERNEL_SIZE,
+            padding         = (1, 1),
+            activation      = nn.LeakyReLU(0.2, True),
+            use_bias        = p.USE_BIAS
         )
 
         return discriminator, generator

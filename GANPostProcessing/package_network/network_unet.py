@@ -2,12 +2,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-
-"""
-THIS FILE WAS ADAPTED FROM:
-https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix
-"""
-
 # ----------------------------------------------------------------
 class Unet(nn.Module):
 
@@ -37,42 +31,42 @@ class Unet(nn.Module):
 
     # Add innermost layer
     unet_block = UnetSkipConnectionBlock(
-      outer_nc=ngf * 2**(n_layers-2),
-      inner_nc=ngf * 2**(n_layers-1),
-      kernel_size=kernel_size,
-      padding=padding,
-      activation=activation,
-      input_nc=None,
-      submodule=None,
-      norm_layer=norm_layer,
-      innermost=True,
-      use_bias=use_bias)
+      outer_nc      = ngf * 2**(n_layers-2),
+      inner_nc      = ngf * 2**(n_layers-1),
+      kernel_size   = kernel_size,
+      padding       = padding,
+      activation    = activation,
+      input_nc      = None,
+      submodule     = None,
+      norm_layer    = norm_layer,
+      innermost     = True,
+      use_bias      = use_bias)
 
     # Add intermediate layers
     for i in range(n_layers-2, 0, -1):
       unet_block = UnetSkipConnectionBlock(
-        outer_nc=ngf * 2**(i-1),
-        inner_nc=ngf * 2**i,
-        kernel_size=kernel_size,
-        padding=padding,
-        activation=activation,
-        input_nc=None,
-        submodule=unet_block,
-        norm_layer=norm_layer,
-        use_bias=use_bias)
+        outer_nc    = ngf * 2**(i-1),
+        inner_nc    = ngf * 2**i,
+        kernel_size = kernel_size,
+        padding     = padding,
+        activation  = activation,
+        input_nc    = None,
+        submodule   = unet_block,
+        norm_layer  = norm_layer,
+        use_bias    = use_bias)
 
     # Add outermost layer
     unet_block = UnetSkipConnectionBlock(
-      outer_nc=output_nc,
-      inner_nc=ngf,
-      kernel_size=kernel_size,
-      padding=padding,
-      activation=activation,
-      input_nc=input_nc,
-      submodule=unet_block,
-      outermost=True,
-      norm_layer=norm_layer,
-      use_bias=use_bias)
+      outer_nc      = output_nc,
+      inner_nc      = ngf,
+      kernel_size   = kernel_size,
+      padding       = padding,
+      activation    = activation,
+      input_nc      = input_nc,
+      submodule     = unet_block,
+      outermost     = True,
+      norm_layer    = norm_layer,
+      use_bias      = use_bias)
 
     self.model = unet_block
 

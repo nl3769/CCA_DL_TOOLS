@@ -11,22 +11,22 @@ class preProcessing():
 
         self.data_aug = data_aug
         self.im_size = p.IMG_SIZE
+        self.interval = p.IMAGE_NORMALIZATION
         self.augmenter = iaa.Sequential([iaa.Fliplr(0.5),
                                          iaa.Flipud(0.5),
-                                         iaa.Affine(shear=(-20, 20),
-                                                    rotate=(-10, 10),
+                                         # iia.scale{"x": (0.8, 1.2), "y": (0.8, 1.2)},
+                                         iaa.Affine(shear=(-5, 5),
+                                                    rotate=(-5, 5),
                                                     translate_px={"y": (-30, 30), "x": (-30, 30)})])
-        self.normalization = p.IMAGE_NORMALIZATION
 
     # ------------------------------------------------------------------------------------------------------------------
     def augmentation(self, org, sim):
 
-        org = np.expand_dims(org, axis=(0, -1))
-        sim = np.expand_dims(sim, axis=(0, -1))
-        org, sim = self.augmenter(images=org, segmentation_maps=sim)
-
-        org = org.squeeze()
-        sim = sim.squeeze()
+        org = np.array(org.squeeze())
+        sim = np.array(sim.squeeze())
+        augseq_det = self.augmenter.to_deterministic()
+        org, sim = augseq_det(images=org), augseq_det(images=sim)
+        org, sim = np.expand_dims(org, axis=0), np.expand_dims(sim, axis=0)
 
         return org, sim
 
@@ -44,7 +44,6 @@ class preProcessing():
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def adapt_dim(org: np.ndarray, sim: np.ndarray):
-
         """ Adapt dimension to fit pytorch format. """
 
         sim = np.expand_dims(sim, axis=0)
@@ -54,23 +53,7 @@ class preProcessing():
         org = torch.from_numpy(org).float()
 
         return org, sim
-
-    # ------------------------------------------------------------------------------------------------------------------
-    @staticmethod
-    def normalize(org: torch.Tensor, sim: torch.Tensor):
-        """ adapt hisotgram between 0 and 255. """
-
-
-        sim = sim - torch.min(sim)
-        sim = sim / torch.max(sim)
-
-        org = org - torch.min(org)
-        org = org / torch.max(org)
-        # sim = sim / torch.max(sim)
-        # org = org / torch.max(org)
-
-        return org*255, sim*255
-
+    
     # ----------------------------------------------------------------
     @staticmethod
     def histogram_extension(sample_rec, interval):
@@ -87,14 +70,12 @@ class preProcessing():
     def __call__(self, org: np.ndarray, sim: np.ndarray):
 
         org, sim = self.reshape(org, sim, self.im_size)
-        org = self.histogram_extension(org, self.normalization)
-        sim = self.histogram_extension(sim, self.normalization)
-        # if self.data_aug:
-        #     org, sim = self.augmentation(org, sim)
-
+        org = self.histogram_extension(org, self.interval)
         org, sim = self.adapt_dim(org, sim)
-        # org, sim = self.normalize(org, sim)
+        sim = self.histogram_extension(sim, self.interval)
+        if self.data_aug:
+            org, sim = self.augmentation(org, sim)
 
-        return org, sim
+        return torch.tensor(org), torch.tensor(sim)
 
     # ------------------------------------------------------------------------------------------------------------------
