@@ -787,15 +787,15 @@ function [RF_aperture, probe, sub_probe, param, phantom]=get_data(path_data, rf_
     
 
     % --- PARAMETERS
-    param=fct_load_param(fullfile(path_data, 'parameters', param_name), flag_cluster);
+    param=fct_load_param(fullfile(path_data, 'parameters', param_name));
     disp('Parameters are loaded');
     % --- PROBE 
-    probe=load_data(fullfile(path_data, 'raw_data', probe_name), flag_cluster);
+    probe=load_data(fullfile(path_data, 'raw_data', probe_name));
     probe=probe.probe;
     disp('Probe data is loaded');
     
     % ---  SUBPROBE 
-    sub_probe=load_data(fullfile(path_data, 'raw_data', sub_probe_name), flag_cluster);
+    sub_probe=load_data(fullfile(path_data, 'raw_data', sub_probe_name));
     sub_probe=sub_probe.sub_probe;
     disp('Probe data is loaded');
     
@@ -804,7 +804,7 @@ function [RF_aperture, probe, sub_probe, param, phantom]=get_data(path_data, rf_
     disp('Phantom is loaded');
     
         % --- RF DATA 
-    RF_aperture=load_data(fullfile(path_data, 'raw_data', rf_data_name), flag_cluster);
+    RF_aperture=load_data(fullfile(path_data, 'raw_data', rf_data_name));
     RF_aperture=RF_aperture.raw_data;
     disp('Raw data is loaded');
    
@@ -815,17 +815,11 @@ function [RF_aperture, probe, sub_probe, param, phantom]=get_data(path_data, rf_
 end
 
 % ------------------------------------------------------------------------------------------------------------------------------
-function [data]=load_data(path_data, flag_cluster)
-	% Data loading depending on whether wer are using the cluster or working locally
-%     flag_cluster = true
-    if ~flag_cluster
-        data=load(path_data);
-    else
-        % --- modify path_res
-        path_res_cluster = erase(path_data, 'cluster');
-        data=load(path_res_cluster);
-    
-    end
+function [data]=load_data(path_data)
+	% Data loader
+
+    data=load(path_data);
+
     
 end
 

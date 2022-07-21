@@ -7,6 +7,5 @@ function [phantom]=fct_load_phantom(path_phantom)
     
     phantom=load(path_phantom);
     phantom=phantom.scatt;
-%     phantom=phantom.scatterers;
 
 end
