@@ -9,13 +9,13 @@ class simulationHandler():
 
     def __init__(self, pres, pdata):
 
-        self.pres = pres
-        self.pdata = pdata
-        self.path = {}
-        self.success = {}
-        self.tx_events = 128
-        self.tx_store = "raw_data/raw_"
-        self.bmode_store = "bmode_result/RF"
+        self.pres           = pres
+        self.pdata          = pdata
+        self.path           = {}
+        self.success        = {}
+        self.tx_events      = 128
+        self.tx_store       = "raw_data/raw_"
+        self.bmode_store    = "bmode_result/RF"
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_pres(self):
@@ -25,7 +25,7 @@ class simulationHandler():
         for patient in patients:
             self.path[patient] = {}
             id_seq = os.listdir(os.path.join(self.pdata, patient))
-
+            id_seq.sort()
             for seq in id_seq:
                 self.path[patient][seq] = os.path.join(self.pdata, patient, seq)
 
@@ -65,7 +65,7 @@ class simulationHandler():
         """ Check if all tx events are successful. """
 
         raw_files = os.listdir(os.path.join(path, substr))
-
+        raw_files.sort()
         if len(raw_files) == tx_events:
             condition = True
         else:
@@ -75,7 +75,6 @@ class simulationHandler():
 
     # ------------------------------------------------------------------------------------------------------------------
     def move_success(self):
-
         for patient in self.path.keys():
             for id_seq in self.path[patient].keys():
                 source_path = self.path[patient][id_seq]
@@ -104,8 +103,9 @@ def create_dir(path):
 # ----------------------------------------------------------------------------------------------------------------------
 def main():
 
-    pres  = '/run/media/laine/HDD/PROJECTS_IO/SIMULATION/CUBS'
-    pdata = '/home/laine/cluster/PROJECTS_IO/SIMULATION/CUBS'
+    #pres  = '/run/media/laine/HDD/PROJECTS_IO/SIMULATION/CUBS'
+    pres  = '/run/media/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_IN_SILICO'
+    pdata = '/home/laine/cluster/PROJECTS_IO/SIMULATION/SEQ_ICCVG'
 
     simHandler = simulationHandler(pres, pdata)
     simHandler()

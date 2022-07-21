@@ -7,28 +7,18 @@ classdef parametersHandler < handle
     methods
 
         % ------------------------------------------------------------------
-        function obj=parametersHandler()
+        function obj=parametersHandler(jname)
             % Constructor
             
-            fname = fullfile('..', 'mtl_class', 'set_parameters.json');
-            str = fileread(fname);
+            % --- LOAD JSON
+            str = fileread(jname);
             obj.param = jsondecode(str);
             
             % --- RELATIVE TO RESULTS
             obj.param.path_data='';
-            obj.param.path_res='';    % path to save the result
+            obj.param.path_res='';   
             obj.param.phantom_name='';
 
-            % --- ENTER SIMUS OR FIELD
-            obj.param.soft='';
-
-            % --- RELATIVE TO MOVEMENT
-            obj.param.cardiac_cycle_bpm = [50 90];         	% 1 since it is ~60 cardiac cycles per minute
-            obj.param.theta_max_rot 	  = [0.1 2];          % maximal rotation movement
-            obj.param.theta_max_shear 	= [1 10];          	% maximal rotation movement
-            obj.param.scaling_coef 		 = [0.1 5];          % scaling coefficient in %
-            obj.param.fps 			        = [50 90];          % number of frame per second
-            obj.param.stretch_coef 		 = [1 3];            % stretch coefficient
         
         end
         

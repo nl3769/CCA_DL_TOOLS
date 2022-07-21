@@ -6,7 +6,6 @@ function fct_run_image_reconstruction(pres, flag_cluster)
     end
     
     % --- get .mat in folders
-    pres
     raw_data_folder=fct_list_mat_files(pres, 'raw_data');
     parameters_folder=fct_list_mat_files(pres, 'parameters');
     phantom_folder=fct_list_mat_files(pres, 'phantom');
@@ -25,10 +24,7 @@ function fct_run_image_reconstruction(pres, flag_cluster)
     % --- beamforming
     if data.param.mode(1) % scanline based
         
-%         data.beamforming_scanline_based()
         data.DAS_scanline_based('DAS');
-        
-        % --- get bmode image
         data.get_bmode_gamma_correction();
         data.scan_conversion();
        

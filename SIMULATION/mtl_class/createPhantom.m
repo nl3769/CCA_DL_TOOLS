@@ -240,9 +240,8 @@ classdef createPhantom < handle
                     I(round(LI_val.seg(i)), i) = 255; 
                 end
             end                                                                                                          
-            figure()
-            imagesc(I)
-            colormap gray
+
+            
             LI_val.seg = LI_val.seg - obj.param.remove_top_region/obj.data_img.CF;  
             MA_val.seg = MA_val.seg - obj.param.remove_top_region/obj.data_img.CF;
 
@@ -856,10 +855,7 @@ function [struct_image]=load_tiff(path_img, roi)
     y_start=roi(3);
     y_end=roi(4);
 
-    
     image=image(y_start:end-y_end, x_start:end-x_end); % we only consider the ROI, change later
-    imagesc(image)
-    colormap gray
 
     % --- load the size of the pixels
     tmp_=split(path_img, '/');
