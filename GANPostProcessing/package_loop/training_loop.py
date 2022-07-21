@@ -31,10 +31,10 @@ def trn_loop(discriminator, generator, trn_loader, epoch, device, optimizer_gene
         org, sim = org.to(device), sim.to(device)
 
         # --- Create labels
-        valid   = Tensor(np.ones((org.size(0), 1, 1, 1)), device=device)
-        fake    = Tensor(np.zeros((org.size(0), 1, 1, 1)), device=device)
+        valid   = Tensor(np.ones((org.size(0), 1, 1, 1))).to(device)
+        fake    = Tensor(np.zeros((org.size(0), 1, 1, 1))).to(device)
 
-        # --- trn GENERATOR
+        # --- trn generator
         optimizer_generator.zero_grad()
 
         # --- Get predictions

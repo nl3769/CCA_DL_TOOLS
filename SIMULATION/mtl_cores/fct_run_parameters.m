@@ -86,14 +86,6 @@ function fct_run_parameters(varargin)
     parameters.set_path_data(pdata);                                 % TODO
     parameters.set_phantom_name(pname);                              % TODO
     parameters.set_software(software);                               % TODO
-    parameters.set_Nactive(Nactive);                                 % TODO
-    parameters.set_Nelements(Nelement);                              % TODO
-    parameters.set_acquisition_mode(acquisition_mode);               % TODO
-    parameters.set_scatteres_density(scat_density);                  % TODO
-    parameters.set_nb_slice(nb_slice);                               % TODO
-    parameters.set_slice_spacing(slice_spacing);                     % TODO
-    parameters.set_shift(shift);                                     % TODO
-    parameters.set_dynamic_focusing(1);                              % set 1 for dynamic focusing and 0 for STA
     parameters.set_compensation_time(-1);                            % TODO
     parameters.create_directory();                                   % TODO
     parameters.save();                                               % TODO
@@ -130,7 +122,6 @@ function fct_run_parameters(varargin)
     for id_img = 1:1:nb_images
         
         phantom.update_parameters(pres_);                    
-        phantom.get_gaussian_parameters(20);
         phantom.animate_scatteres();
         phantom.clear_moved_image();
         phantom.remove_top_region(parameters.param.remove_top_region);
