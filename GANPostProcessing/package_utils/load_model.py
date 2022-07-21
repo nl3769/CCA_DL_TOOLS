@@ -20,7 +20,7 @@ def load_model(p):
             ngf             = p.NGF,
             norm_layer      = nn.BatchNorm2d,
             kernel_size     = p.KERNEL_SIZE,
-            padding         = (1, 1),
+            padding         = p.PADDING,
             activation      = nn.LeakyReLU(0.2, True),
             use_bias        = p.USE_BIAS
         )

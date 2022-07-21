@@ -17,6 +17,7 @@ class Parameters:
         NB_EPOCH,
         IMAGE_NORMALIZATION,
         KERNEL_SIZE,
+        PADDING,
         USE_BIAS,
         NGF,
         NB_LAYERS,
@@ -38,7 +39,8 @@ class Parameters:
         self.NB_EPOCH               = NB_EPOCH
         self.IMAGE_NORMALIZATION    = IMAGE_NORMALIZATION
         self.KERNEL_SIZE            = KERNEL_SIZE
-        self.USE_BIAS               = USE_BIAS,
+        self.PADDING                = PADDING
+        self.USE_BIAS               = USE_BIAS
         self.NGF                    = NGF
         self.NB_LAYERS              = NB_LAYERS
         self.IMG_SIZE               = IMG_SIZE

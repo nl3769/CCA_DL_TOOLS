@@ -6,15 +6,16 @@ import torch.nn as nn
 class Unet(nn.Module):
 
   def __init__(
-    self, input_nc,
+    self,
+    input_nc,
     output_nc,
-    n_layers = 2,
-    ngf = 64,
-    norm_layer = nn.BatchNorm2d,
-    kernel_size = (3,3),
-    padding = (1,1),
-    activation = nn.LeakyReLU(0.2, True),
-    use_bias = True):
+    n_layers    = 2,
+    ngf         = 64,
+    norm_layer  = nn.BatchNorm2d,
+    kernel_size = (3, 3),
+    padding     = (1, 1),
+    activation  = nn.LeakyReLU(0.2, True),
+    use_bias    = True):
     """
     Parameters:
       input_nc (int) -- the number of channels in input images
