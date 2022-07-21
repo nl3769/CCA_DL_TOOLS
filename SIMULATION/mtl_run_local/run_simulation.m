@@ -7,9 +7,6 @@ if ~isdeployed
     addpath(fullfile('..', 'mtl_class/'))
     addpath(fullfile('..', 'mtl_cores'))
 end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
 %%%%%%% RUM SIMULATION FOR ONE PHANTOM AND ONE SET OF PARAMETERS %%%%%%% 
 
@@ -18,7 +15,7 @@ path_data='/home/laine/Desktop/QUASI_RANDOM/tech_001_id_001_FIELD';
 
 % --- get phantom name
 phantom_folder = fct_list_mat_files(path_data, 'phantom');
-phantom_names=fct_detect_sub_str(phantom_folder, 'dicom');
+phantom_names = fct_detect_sub_str(phantom_folder, 'dicom');
 
 % --- get parameters name
 parameters_folder=fct_list_mat_files(path_data, 'parameters');
@@ -40,7 +37,7 @@ for id_tx=1:1:tx
 % for id_tx=10:1:10
     
     % --- run simulation
-    fct_run_wave_propagation(fullfile(path_data, 'parameters', parameters_folder{1}), fullfile(path_data, 'phantom', phantom_names{1}), false, id_tx);
+    fct_run_wave_propagation(fullfile(path_data, 'parameters', parameters_folder{1}), fullfile(path_data, 'phantom', phantom_names{1}), id_tx);
 
 end
 

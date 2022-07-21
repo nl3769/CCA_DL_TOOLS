@@ -1,8 +1,7 @@
 {
- 
   "c": 1540,
   "fc": 7.5e6,
-  "scat_density": 0.1,
+  "scat_density": 6,
   "probe_name": "L12-3v",
   "range_DB": 50,
   "fnumber": 1.5,
@@ -31,7 +30,8 @@
   "scaling_coef": [0.1, 5],
   "fps": [50, 90],
   "stretch_coef": [1, 3],
-  "nb_images": 5,
+  "nb_images": 130,
+  "save_exec_time": false,
   "comment_c": "speed of sound",
   "comment_fc": "Central frequency of the probe",
   "comment_scat_density": "Scat. density per reoslution ceil",
@@ -63,5 +63,6 @@
   "comment_scaling_coef": "Scaling interval -> [0, 2]",
   "comment_fps": "Frame per second interval -> [40, 80]",
   "comment_stretch_coef": "Stretch interval -> [40, 80]",
-  "comment_nb_images": "Numpber of image in the generated sequence (integer)"
+  "comment_nb_images": "Numpber of image in the generated sequence (integer)",
+  "comment_save_exec_time": "Save execution time for on emitted transducer"
 }

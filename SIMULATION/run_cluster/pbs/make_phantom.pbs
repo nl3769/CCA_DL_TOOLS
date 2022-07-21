@@ -14,12 +14,10 @@ cd /misc/raid/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/mtl_cores
 echo $pfolder
 echo $dname
 echo $pres
+echo $pparam
 echo $info
-echo $soft
-echo $acq_mode
-echo $nb_img
 
-process="matlab -r fct_run_parameters('$pfolder','$dname','$pres','$info','$soft','$acq_mode','$nb_img','1','0','1','0')"
+process="matlab -r fct_run_mk_phantom('$pfolder','$dname','$pres','$pparam','$info')"
 
 echo $process
 $process

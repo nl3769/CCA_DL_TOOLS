@@ -70,7 +70,7 @@ classdef createPhantom < handle
             
             % --- load parameters and store them in a structure
             list_files_param=fct_list_mat_files(path_param, 'parameters');
-            obj.param = fct_load_param(fullfile(path_param, 'parameters', list_files_param{1}), false);
+            obj.param = fct_load_param(fullfile(path_param, 'parameters', list_files_param{1}));
             disp('Parameters are loaded');
                         
             % --- set the type of the image
@@ -554,7 +554,7 @@ classdef createPhantom < handle
             list_files_param=fct_list_mat_files(param, 'parameters');
 
             for id_param=1:1:size(list_files_param, 2)
-                obj.param=fct_load_param(fullfile(param, 'parameters', list_files_param{id_param}), false);
+                obj.param=fct_load_param(fullfile(param, 'parameters', list_files_param{id_param}));
             end
         end
 

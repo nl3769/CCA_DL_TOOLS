@@ -2,19 +2,18 @@ function fct_run_wave_propagation(varargin)
     fclose all;
 
     switch nargin
+        
+      case 3
+        path_param = varargin{1};
+        path_phantom = varargin{2};
+        id_tx = varargin{3};
+        id_tx_end = varargin{3};
+
       case 4 
         path_param = varargin{1};
         path_phantom = varargin{2};
-        flag_cluster = varargin{3};
-        id_tx = varargin{4};
+        id_tx = varargin{3};
         id_tx_end = varargin{4};
-
-      case 5 
-        path_param = varargin{1};
-        path_phantom = varargin{2};
-        flag_cluster = varargin{3};
-        id_tx = varargin{4};
-        id_tx_end = varargin{5};
 
       otherwise
         error('Problem with parameters (fct_run_wave_propagation)')
@@ -42,7 +41,7 @@ function fct_run_wave_propagation(varargin)
     end
 
     % --- create object
-    simulation_obj=wavePropagation(path_param, path_phantom, flag_cluster);
+    simulation_obj=wavePropagation(path_param, path_phantom);
     name_phantom=split(path_phantom, '/');
     name_phantom=name_phantom{end};
 
@@ -68,7 +67,9 @@ function fct_run_wave_propagation(varargin)
       end
 
         % --- save RF data and probe
-        simulation_obj.save_exec_time(name_phantom, i)
+        if simulation_obj.param.save_exec_time == true
+            simulation_obj.save_exec_time(name_phantom, i)
+        end
         simulation_obj.save_raw_data(name_phantom, i);
     
         if i == 1

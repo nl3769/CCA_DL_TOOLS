@@ -17,20 +17,21 @@ classdef wavePropagation < handle
     methods
         
         % ------------------------------------------------------------------
-        function obj=wavePropagation(path_param, path_phantom, flag_cluster)
+        function obj=wavePropagation(path_param, path_phantom)
             % --- constructor
-            obj.phantom=fct_load_phantom(path_phantom);
-            obj.param=fct_load_param(path_param, flag_cluster);
-            obj.probe=getparam(obj.param.probe_name);
-            obj.probe.fnumber=obj.param.fnumber;
-            obj.probe.c=obj.param.c;
-            obj.probe.fc=obj.param.fc;
-            obj.probe.Nelements=obj.param.Nelements;
-            obj.probe.fs=obj.param.fsCoef*obj.probe.fc;
-            obj.sub_probe=obj.probe;
-            obj.sub_probe.Nelements=obj.param.Nactive;
-            obj.tx_delay=txdelay(0, obj.phantom.depth_of_focus, obj.sub_probe);
-            obj.apod=hanning(obj.sub_probe.Nelements)';
+            
+            obj.phantom               = fct_load_phantom(path_phantom);
+            obj.param                 = fct_load_param(path_param);
+            obj.probe                 = getparam(obj.param.probe_name);
+            obj.probe.fnumber         = obj.param.fnumber;
+            obj.probe.c               = obj.param.c;
+            obj.probe.fc              = obj.param.fc;
+            obj.probe.Nelements       = obj.param.Nelements;
+            obj.probe.fs              = obj.param.fsCoef*obj.probe.fc;
+            obj.sub_probe             = obj.probe;
+            obj.sub_probe.Nelements   = obj.param.Nactive;
+            obj.tx_delay              = txdelay(0, obj.phantom.depth_of_focus, obj.sub_probe);
+            obj.apod                  = hanning(obj.sub_probe.Nelements)';
         end
         
         % ------------------------------------------------------------------        

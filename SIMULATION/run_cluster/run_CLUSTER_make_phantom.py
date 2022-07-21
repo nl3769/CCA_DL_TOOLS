@@ -16,18 +16,17 @@ if __name__ == '__main__':
 
     path_shell  = '/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/run_cluster/shell/cluster_make_phantom.sh'
     pdata       = '/home/laine/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images'
+    pres        = '/home/laine/PROJECTS_IO/SIMULATION/SEQ_ICCVG_02'
+    pjson       = '/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/set_parameters_template.json'
+   
     fname       = os.listdir(pdata)
-    pres        = '/home/laine/PROJECTS_IO/SIMULATION/SEQ_ICCVG'
     fname.sort()
 
     # --- PARAMETERS
-    software    = 'FIELD'                  # choose FIELD or SIMUS
-    acq_mode    = 'synthetic_aperture'     # choose synthetic aperture or scanline_based
-    info        = '_3D'                        # added information to file name
-    nb_img      = '130'                        # number of image in a sequence
+    info = '_3D'                        # added information to file name
     
-    for name in fname[:5]:
+    for name in fname[:10]:
         pres_ = os.path.join(pres, name.split('.')[0])
         make_dir(pres_)
         ic(name)
-        subprocess.run(['sh',path_shell,pdata,name,pres_,info,software,acq_mode,nb_img])
+        subprocess.run(['sh',path_shell,pdata,name,pres,pjson,info])

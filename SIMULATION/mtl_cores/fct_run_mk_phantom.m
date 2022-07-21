@@ -71,10 +71,8 @@ function fct_run_mk_phantom(varargin)
         phantom.remove_top_region(parameters.param.remove_top_region);
         phantom.create_OF_GT(id_img);
         phantom.save_image();
-        
-        if id_img > 1
-            phantom.save_scatteres();
-        end
+         phantom.save_scatteres();
+
         phantom.incr_id_sequence();
 
         substr = fct_get_substr_id_seq(phantom.id_seq);
