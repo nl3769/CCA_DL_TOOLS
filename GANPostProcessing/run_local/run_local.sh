@@ -1,12 +1,10 @@
 #!/bin/bash
 
-source ~/anaconda3/etc/profile.d/conda.sh
+# source ~/anaconda3/etc/profile.d/conda.sh
+# conda activate pytorch
 
-conda activate pytorch
-
-WD=~/cluster/REPOSITORIES/carotid_US_DL_tool/POSTPROCESSING/GAN
+WD=/home/laine/cluster/REPOSITORIES/CCA_DL_TOOLS/GANPostProcessing
 
 cd $WD
 
-PYTHONPATH=$WD python scripts/train.py -param GAN_parameters_JZ_kernel_local.py
-# PYTHONPATH=$WD python scripts/evaluation.py -param GAN_parameters.py
+PYTHONPATH=$WD python package_cores/run_train_evaluate_model.py -param lbd-GAN:1-over-30_lbd-pxl:1_kernel:3-3_loss:L1L2.py

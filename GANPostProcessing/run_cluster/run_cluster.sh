@@ -1,19 +1,23 @@
 #!/bin/bash
 
-parameters=("GAN_parameters_L1_GAN1_PIXEL1.py"
-            "GAN_parameters_L2_GAN1_PIXEL1.py"
-            "GAN_parameters_L1L2_GAN1_PIXEL1.py"
-            "GAN_parameters_L1_GAN1_PIXEL5.py"
-            "GAN_parameters_L2_GAN1_PIXEL5.py"
-            "GAN_parameters_L1L2_GAN1_PIXEL5.py"
+parameters=("lbd-GAN:1-over-10_lbd-pxl:1_kernel:3-3_32_loss:L1.py"
+            "lbd-GAN:1-over-10_lbd-pxl:1_kernel:3-3_32_loss:L1L2.py"
+            "lbd-GAN:1-over-10_lbd-pxl:1_kernel:3-3_32_loss:L2.py"
+            "lbd-GAN:1-over-30_lbd-pxl:1_kernel:3-3_32_loss:L1.py"
+            "lbd-GAN:1-over-30_lbd-pxl:1_kernel:3-3_32_loss:L1L2.py"
+            "lbd-GAN:1-over-30_lbd-pxl:1_kernel:3-3_32_loss:L2.py"
+            "lbd-GAN:1-over-30_lbd-pxl:1_kernel:7-7_32_loss:L1L2.py"
+            "lbd-GAN:1-over-30_lbd-pxl:1_kernel:3-3_64_loss:L1L2.py"
             )
 
-exp=("L1_D1_P1"
-     "L2_G1_P1"
-     "L1L2_G1_P1"
-     "L1_G1_P5"
-     "L2_G1_P5"
-     "L1L2_G1_P5"
+exp=("1-over-10_pxl:1_kernel:3-3_loss:L1"
+     "1-over-10_pxl:1_kernel:3-3_loss:L1L2"
+     "1-over-10_pxl:1_kernel:3-3_loss:L2"
+     "1-over-30_pxl:1_kernel:3-3_loss:L1"
+     "1-over-30_pxl:1_kernel:3-3_loss:L1L2"
+     "1-over-30_pxl:1_kernel:3-3_loss:L2"
+     "1-over-30_pxl:1_kernel:7-7_loss:L1L2"
+     "1-over-30_pxl:1_kernel:3-3_loss:L1L2"
      )
 
 
