@@ -133,11 +133,11 @@ classdef createPhantom < handle
             I = obj.data_img.image(:,:,1);
             max_val = double(max(I(:)));
             % --- select the desired distribution
-            if isequal(obj.param.distribution, [1 0 0]) % simple interpolation
+            if isequal(obj.param.distribution, [1; 0; 0]) % simple interpolation
                 corrected_B_mode=(double(I(:,:,1))/max_val).^(1/obj.param.gamma);
-            elseif isequal(obj.param.distribution, [0 1 0]) % interpolation times normal distribution
+            elseif isequal(obj.param.distribution, [0; 1; 0]) % interpolation times normal distribution
                 corrected_B_mode=(double(I(:,:,1))/max_val).^(1/obj.param.gamma).*randn(size(obj.data_img.image(:,:,1)));
-            elseif isequal(obj.param.distribution, [0 0 1]) % interpolation times rayleight distribution
+            elseif isequal(obj.param.distribution, [0; 0; 1]) % interpolation times rayleight distribution
                 corrected_B_mode=(double(I(:,:,1))/max_val).^(1/obj.param.gamma).*raylrnd(1,obj.data_img.height,obj.data_img.width)/sqrt(pi/2);
             end
             % --- inverse operation of the log compression

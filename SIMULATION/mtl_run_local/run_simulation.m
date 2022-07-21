@@ -14,7 +14,7 @@ end
 %%%%%%% RUM SIMULATION FOR ONE PHANTOM AND ONE SET OF PARAMETERS %%%%%%% 
 
 % --- path to data
-path_data='/home/laine/Desktop/TEST_QUASI_RANDOM/tech_001_id_001_SIMUS';
+path_data='/home/laine/Desktop/QUASI_RANDOM/tech_001_id_001_FIELD';
 
 % --- get phantom name
 phantom_folder = fct_list_mat_files(path_data, 'phantom');
@@ -36,7 +36,7 @@ elseif PARAM.mode(2)
     tx = nb_tx;
 end
 
-for id_tx=1:1:192
+for id_tx=1:1:tx
 % for id_tx=10:1:10
     
     % --- run simulation
