@@ -34,7 +34,10 @@ def get_param(ppath):
     info = {}
 
     for key in info_list[:-1]:
-        info[key] = PARAM['p'][key][0,0][0]
+        if key == 'mode':
+            info[key] = PARAM['p'][key][0, 0].squeeze()
+        else:
+            info[key] = PARAM['p'][key][0, 0][0]
 
     if info['mode'][0] == 1:
         info['nb_tx'] = info['Nelements'] - info['Nactive']
@@ -58,27 +61,27 @@ if __name__ == '__main__':
     """ Execute le code sur le cluster pour un plusieurs fantomes contenu dans un même répertoire. """
 
     path_shell = '/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/run_cluster/shell/cluster_full_pipeline.sh'
-    pname = '/home/laine/PROJECTS_IO/SIMULATION/SEQ_ICCVG'
+    pname = '/home/laine/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER'
     patients = os.listdir(pname)
     patients.sort()
     
-    for patient in patients[:1]:
+    for patient in patients:
         fname = os.path.join(pname, patient)
         folders = os.listdir(fname)
         folders.sort()
         ic(fname)
         
-        for exp in folders:
+        for exp in folders[11:20]:
             ic(exp)
            
-            path_param=os.path.join(fname, exp, 'parameters')
-            path_phantom=os.path.join(fname, exp, 'phantom')
-            pRF = os.path.join(fname, exp, 'raw_data')
+            path_param      = os.path.join(fname, exp, 'parameters')
+            path_phantom    = os.path.join(fname, exp, 'phantom')
+            pRF             = os.path.join(fname, exp, 'raw_data')
             
             ph_sub_str, nb_tx, pname_ = get_param(path_param)
-            phname = get_phantom_name(path_phantom, ph_sub_str)
-            log_name = ph_sub_str
-            pres = os.path.join(fname, exp)
+            phname                    = get_phantom_name(path_phantom, ph_sub_str)
+            log_name                  = ph_sub_str
+            pres                      = os.path.join(fname, exp)
 
             # --- run
             subprocess.run(['sh', path_shell, pname_, phname, 'true', log_name, str(nb_tx[0]), pRF, pres])

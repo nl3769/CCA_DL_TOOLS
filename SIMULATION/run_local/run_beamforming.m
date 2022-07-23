@@ -9,7 +9,7 @@ addpath(fullfile('..', 'mtl_cores/'));
 addpath(fullfile('..', 'mtl_utils'));
 
 % --- path to results
-path_res='/home/laine/Desktop/QUASI_RANDOM';
+path_res='/home/laine/Desktop/NEW_TEST';
 files_ = list_files(path_res);
 
 files=files_;
