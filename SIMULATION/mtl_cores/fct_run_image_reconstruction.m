@@ -6,17 +6,17 @@ function fct_run_image_reconstruction(pres, flag_cluster)
     end
     
     % --- get .mat in folders
-    raw_data_folder=fct_list_mat_files(pres, 'raw_data');
-    parameters_folder=fct_list_mat_files(pres, 'parameters');
-    phantom_folder=fct_list_mat_files(pres, 'phantom');
+    raw_data_folder   = fct_list_ext_files(pres, 'mat', 'raw_data');
+    parameters_folder = fct_list_ext_files(pres, 'json','parameters');
+    phantom_folder    = fct_list_ext_files(pres, 'mat', 'phantom');
 
     % --- get data in raw_data folder
-    rf_data_name=fct_get_raw_from_folder(raw_data_folder);
-    probe_name =fct_detect_sub_str(raw_data_folder, 'probe.mat');
-    sub_probe_name=fct_detect_sub_str(raw_data_folder, 'subProbe.mat');    
+    rf_data_name    = fct_get_raw_from_folder(raw_data_folder);
+    probe_name      = fct_detect_sub_str(raw_data_folder, 'probe.mat');
+    sub_probe_name  = fct_detect_sub_str(raw_data_folder, 'subProbe.mat');    
 
     % --- get data in phantom folder
-    phantom_name=fct_detect_sub_str(phantom_folder, 'dicom');
+    phantom_name = fct_detect_sub_str(phantom_folder, 'dicom');
 
     % ---  create object 
     data = imageReconstruction(pres,  rf_data_name{1}, parameters_folder{1}, probe_name{1}, sub_probe_name{1}, phantom_name{1}, flag_cluster);

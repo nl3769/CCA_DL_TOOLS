@@ -1,0 +1,35 @@
+close all;
+clearvars;
+
+
+% --- add path
+addpath(fullfile('..', 'mtl_cores/'));
+addpath(fullfile('..', 'mtl_utils'));
+
+
+pres = '/home/laine/cluster/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER';
+seq = list_files(pres);
+
+for pid=1:1:length(seq)
+    pseq = fullfile(pres, seq{pid});
+    
+    id_seq = list_files(pseq);
+    
+    for idi
+    
+end
+
+% -------------------------------------------------------------------------
+function [files] = list_files(path)
+
+    listing = dir(path);
+    incr=1;
+    
+    for id=1:1:length(listing)
+        if listing(id).name ~= '.'
+            files{incr} = listing(id).name;
+            incr=incr+1;
+        end
+    end
+
+end

@@ -488,9 +488,7 @@ classdef imageReconstruction < handle
             
             % --- save signals in .nii file
             IQ = obj.IQ;
-%             save(rpath_RF, 'IQ', '-v7.3');
-            fullfile(obj.path_res, 'bmode_result', 'IQ_data.nii')
-            niftiwrite(IQ, 'outbrain.nii');
+            niftiwrite(IQ, fullfile(obj.path_res, 'IQ_data.nii'));
             
 
 

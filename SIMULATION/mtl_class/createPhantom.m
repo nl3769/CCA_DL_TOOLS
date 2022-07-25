@@ -69,7 +69,7 @@ classdef createPhantom < handle
             end
             
             % --- load parameters and store them in a structure
-            list_files_param=fct_list_mat_files(path_param, 'parameters');
+            list_files_param=fct_list_ext_files(path_param, 'json', 'parameters');
             obj.param = fct_load_param(fullfile(path_param, 'parameters', list_files_param{1}));
             disp('Parameters are loaded');
                         
@@ -551,7 +551,7 @@ classdef createPhantom < handle
         function update_parameters(obj, param)
             % Load parameters and store them in a structure.
             
-            list_files_param=fct_list_mat_files(param, 'parameters');
+            list_files_param=fct_list_ext_files(param, 'json','parameters');
 
             for id_param=1:1:size(list_files_param, 2)
                 obj.param=fct_load_param(fullfile(param, 'parameters', list_files_param{id_param}));

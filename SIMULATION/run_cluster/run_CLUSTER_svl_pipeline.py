@@ -1,6 +1,7 @@
 import os
 import subprocess
 import glob
+import json
 import scipy.io
 from icecream import ic
 
@@ -27,17 +28,14 @@ def get_mat_files(files):
 # ----------------------------------------------------------------------------------------------------------------------
 def get_param(ppath):
 
-    file = glob.glob(os.path.join(ppath, '*.mat'))
-    PARAM = scipy.io.loadmat(os.path.join(ppath, file[0]))
-
+    file = glob.glob(os.path.join(ppath, '*.json'))
+    with open(os.path.join(ppath, file[0]), 'r') as f:
+        PARAM = json.load(f)
     info_list = ['phantom_name', 'Nelements', 'Nactive', 'mode', 'nb_tx']
     info = {}
 
     for key in info_list[:-1]:
-        if key == 'mode':
-            info[key] = PARAM['p'][key][0, 0].squeeze()
-        else:
-            info[key] = PARAM['p'][key][0, 0][0]
+            info[key] = PARAM[key]
 
     if info['mode'][0] == 1:
         info['nb_tx'] = info['Nelements'] - info['Nactive']
@@ -60,18 +58,20 @@ if __name__ == '__main__':
 
     """ Execute le code sur le cluster pour un plusieurs fantomes contenu dans un même répertoire. """
 
-    path_shell = '/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/run_cluster/shell/cluster_full_pipeline.sh'
-    pname = '/home/laine/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER'
+    path_shell    = '/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/run_cluster/shell/cluster_full_pipeline.sh'
+    pname         = '/home/laine/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER'
+    # path_shell = '/home/laine/cluster/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/run_cluster/shell/cluster_full_pipeline.sh'
+    # pname = '/home/laine/cluster/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER'
     patients = os.listdir(pname)
     patients.sort()
     
-    for patient in patients:
+    for patient in patients[:1]:
         fname = os.path.join(pname, patient)
         folders = os.listdir(fname)
         folders.sort()
         ic(fname)
         
-        for exp in folders[11:20]:
+        for exp in folders[:1]:
             ic(exp)
            
             path_param      = os.path.join(fname, exp, 'parameters')
@@ -84,4 +84,4 @@ if __name__ == '__main__':
             pres                      = os.path.join(fname, exp)
 
             # --- run
-            subprocess.run(['sh', path_shell, pname_, phname, 'true', log_name, str(nb_tx[0]), pRF, pres])
+            subprocess.run(['sh', path_shell, pname_, phname, 'true', log_name, str(nb_tx), pRF, pres])

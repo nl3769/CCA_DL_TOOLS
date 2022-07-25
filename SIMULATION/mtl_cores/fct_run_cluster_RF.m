@@ -4,7 +4,7 @@ function fct_run_cluster_RF(pres)
     run(fullfile('..', 'mtl_utils', 'add_path.m'))
 
     % --- get phantom name
-    RF_name = fct_list_mat_files(pres, 'raw_');
+    RF_name = fct_list_ext_files(pres, 'mat', 'raw_');
     RF_name = natsortfiles(RF_name);
 
     % --- load data

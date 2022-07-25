@@ -140,22 +140,11 @@ classdef parametersHandler < handle
             % Save parameters.
             
             % --- save parmaters in .mat format
-            path_to_save = fullfile(obj.param.path_res, 'parameters', 'parameters.mat');
-            p = obj.param;
-            save(path_to_save, 'p');
-            
+            p = obj.param;            
             path_to_save = fullfile(obj.param.path_res, 'parameters', 'parameters.json');
-            names = fieldnames(obj.param);
-            
-            str = jsonencode(p);           
-            % add a return character after all commas:
-            new_string = strrep(str, ',', ',\n');
-            % add a return character after curly brackets:
-            new_string = strrep(new_string, '{', '{\n');
-
-            % Write the string to file
+            str = jsonencode(p);                     
             fid = fopen(path_to_save, 'w');
-            fprintf(fid, new_string); 
+            fprintf(fid, str); 
             fclose(fid);
             
 

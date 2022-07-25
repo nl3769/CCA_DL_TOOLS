@@ -24,10 +24,10 @@ function fct_analysis(psave, pres_org, pres_sim, x_disp, z_disp)
 
     % --- plot histogram
     z_s = max(z_disp) * 4/5;
-    dz =  2 / 1000; 
+    dz =  abs(z_disp(1) - z_disp(2)) / 8; 
     
     x_s = 0;
-    dx =  2 / 1000; 
+    dx =  abs(x_disp(1) - x_disp(2)) / 8; 
     
     plot_histogram(I_org, x_s, dx, z_s, dz, psave, 'original', x_axis, z_axis);
     plot_histogram(I_sim, x_s, dx, z_s, dz, psave, 'simulation', x_axis, z_axis);
@@ -169,7 +169,7 @@ function plot_histogram(I, x_s, dx, z_s, dz, pres, name, x_axis, z_axis)
     x_box = linspace(x_s, x_s + dx, pix_x_e-pix_x_s);
     z_box = linspace(z_s, z_s + dz, pix_z_e-pix_z_s);
 
-    I_crop = I(pix_x_s:pix_x_e, pix_z_s: pix_z_e);
+    I_crop = I(pix_z_s:pix_z_e, pix_x_s:pix_x_e);
     f = figure('visible', 'off');
     % ---
     subplot(2,2,1)
