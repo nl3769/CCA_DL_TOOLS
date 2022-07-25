@@ -104,8 +104,8 @@ def create_dir(path):
 def main():
 
     #pres  = '/run/media/laine/HDD/PROJECTS_IO/SIMULATION/CUBS'
-    pres  = '/run/media/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_IN_SILICO'
-    pdata = '/home/laine/cluster/PROJECTS_IO/SIMULATION/SEQ_ICCVG'
+    pres  = '/run/media/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER'
+    pdata = '/home/laine/cluster/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER'
 
     simHandler = simulationHandler(pres, pdata)
     simHandler()
