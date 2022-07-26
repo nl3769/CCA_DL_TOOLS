@@ -11,7 +11,7 @@ import torch.nn as nn
 def load_model(p):
 
 
-    if p.MODEL_NAME == 'UnetGZ':
+    if p.MODEL_NAME == 'unet':
         discriminator = Discriminator()
         generator = Unet(
             input_nc        = 1,
@@ -27,34 +27,8 @@ def load_model(p):
 
         return discriminator, generator
 
-    if p.MODEL_NAME == 'GAN_UPCONV':
-
-        discriminator = Discriminator()
-        generator_UNet = GeneratorUNetUPCONV(p)
-
-        return discriminator, generator_UNet
-
-    if p.MODEL_NAME == 'GAN_UPSAMPLE':
-
-        discriminator = Discriminator()
-        generator_UNet = GeneratorUNetUPSAMPLE(p)
-
-        return discriminator, generator_UNet
-    if p.MODEL_NAME == 'GAN_UPSAMPLE_02':
-
-        discriminator = Discriminator()
-        generator_UNet = GAN_UPSAMPLE_02(p)
-
-        return discriminator, generator_UNet
-
     if p.MODEL_NAME == 'SRGAN':
         discriminator = DiscriminatorSR(p)
         generator = GeneratorSR(p)
-
-        return discriminator, generator
-
-    if p.MODEL_NAME == 'AI4HEALTH':
-        discriminator = Discriminator()
-        generator = GeneratorUNet_AI4HEALTH()
 
         return discriminator, generator
