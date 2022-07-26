@@ -105,9 +105,7 @@ class loggerClass():
             plt.title('Validation loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
-            psave = os.path.join(self.p.PRES, self.p.EXPNAME, "figure")
-            pufh.create_dir(psave)
-            plt.savefig(os.path.join(psave, 'loss_validation_BCEDice_seg.png'), dpi=150)
+            plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'loss_validation_BCEDice_seg.png'), dpi=150)
             plt.close()
 
         # --- training
@@ -120,9 +118,7 @@ class loggerClass():
             plt.title('Training loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
-            psave = os.path.join(self.p.PRES, self.p.EXPNAME, "figure")
-            pufh.create_dir(psave)
-            plt.savefig(os.path.join(psave, 'loss_training_BCEDice_seg.png'), dpi=150)
+            plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'loss_training_BCEDice_seg.png'), dpi=150)
             plt.close()
 
         #####################
@@ -139,9 +135,7 @@ class loggerClass():
             plt.title('Validation loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
-            psave = os.path.join(self.p.PRES, self.p.EXPNAME, "figure")
-            pufh.create_dir(psave)
-            plt.savefig(os.path.join(psave, 'loss_validation_EPE_flow.png'), dpi=150)
+            plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'loss_validation_EPE_flow.png'), dpi=150)
             plt.close()
 
         # --- training
@@ -154,9 +148,7 @@ class loggerClass():
             plt.title('Training loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
-            psave = os.path.join(self.p.PRES, self.p.EXPNAME, "figure")
-            pufh.create_dir(psave)
-            plt.savefig(os.path.join(psave, 'loss_training_EPE_flow.png'), dpi=150)
+            plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'loss_training_EPE_flow.png'), dpi=150)
             plt.close()
 
         #####################
@@ -173,9 +165,7 @@ class loggerClass():
             plt.title('Validation loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
-            psave = os.path.join(self.p.PRES, self.p.EXPNAME, "figure")
-            pufh.create_dir(psave)
-            plt.savefig(os.path.join(psave, 'loss_validation_full.png'), dpi=150)
+            plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'loss_validation_full.png'), dpi=150)
             plt.close()
 
         # --- training
@@ -188,9 +178,7 @@ class loggerClass():
             plt.title('Training loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
-            psave = os.path.join(self.p.PRES, self.p.EXPNAME, "figure")
-            pufh.create_dir(psave)
-            plt.savefig(os.path.join(psave, 'loss_training_full.png'), dpi=150)
+            plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'loss_training_full.png'), dpi=150)
             plt.close()
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -214,9 +202,7 @@ class loggerClass():
             plt.xlabel('Epoch')
             plt.ylabel('Metrics')
             plt.legend(self.metrics_flow['validation'].keys())
-            psave = os.path.join(self.p.PRES, self.p.EXPNAME, "figure")
-            pufh.create_dir(psave)
-            plt.savefig(os.path.join(psave, 'metrics_validation_flow.png'), dpi=150)
+            plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'metrics_validation_flow.png'), dpi=150)
             plt.close()
 
         # --- training
@@ -232,9 +218,7 @@ class loggerClass():
             plt.xlabel('Epoch')
             plt.ylabel('Metrics')
             plt.legend(self.metrics_flow['training'].keys())
-            psave = os.path.join(self.p.PRES, self.p.EXPNAME, "figure")
-            pufh.create_dir(psave)
-            plt.savefig(os.path.join(psave, 'metrics_training_flow.png'), dpi=150)
+            plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'metrics_training_flow.png'), dpi=150)
             plt.close()
 
         #######################
@@ -256,9 +240,7 @@ class loggerClass():
             legend_ = self.metrics_seg['validation'].keys()
             legend_ = [key.replace('_', '') for key in legend_]
             plt.legend(legend_)
-            psave = os.path.join(self.p.PRES, self.p.EXPNAME, "figure")
-            pufh.create_dir(psave)
-            plt.savefig(os.path.join(psave, 'metrics_validation_seg.png'), dpi=150)
+            plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'metrics_validation_seg.png'), dpi=150)
             plt.close()
 
         # --- training
@@ -277,9 +259,7 @@ class loggerClass():
             legend_ = [key.replace('_', '') for key in legend_]
             plt.legend(legend_)
             plt.legend(legend_)
-            psave = os.path.join(self.p.PRES, self.p.EXPNAME, "figure")
-            pufh.create_dir(psave)
-            plt.savefig(os.path.join(psave, 'metrics_training_seg.png'), dpi=150)
+            plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'metrics_training_seg.png'), dpi=150)
             plt.close()
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -298,7 +278,7 @@ class loggerClass():
         keys = self.history_model.keys()
 
         for key in keys:
-            textfile = open(os.path.join(self.p.PRES, self.p.EXPNAME, key + '.txt'), "w")
+            textfile = open(os.path.join(self.p.PATH_MODEL_HISTORY, key + '.txt'), "w")
             for el in self.history_model[key]:
                 textfile.write(el + "\n")
             textfile.close()
@@ -317,9 +297,7 @@ class loggerClass():
                 disp = f'Epoch: {epoch} |  training loss: {loss_train[-1]} | validation loss: {loss_val[-1]} | MODEL_VALIDATION SAVED.'
                 print(disp)
                 for key in models.keys():
-                    psave = os.path.join(self.p.PRES, self.p.EXPNAME, "saved_models")
-                    pufh.create_dir(psave)
-                    torch.save(models[key].state_dict(), os.path.join(psave, key + '_val.pth'))
+                    torch.save(models[key].state_dict(), os.path.join(self.p.PATH_SAVE_MODEL, key + '_val.pth'))
                 self.model_history(set='validation_based', string=disp)
 
         # --- save the model which minimize the training loss
@@ -331,13 +309,11 @@ class loggerClass():
                 disp = f'Epoch: {epoch} | training loss: {loss_train[-1]} | MODEL_TRAINING SAVED.'
             print(disp)
             for key in models.keys():
-                psave = os.path.join(self.p.PRES, self.p.EXPNAME, "saved_models")
-                pufh.create_dir(psave)
-                torch.save(models[key].state_dict(), os.path.join(psave, key + '_train.pth'))
+                torch.save(models[key].state_dict(), os.path.join(self.p.PATH_SAVE_MODEL, key + '_train.pth'))
             self.model_history(set='training_based', string=disp)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def plot_pred(self, I1, I2, M1_gt, M2_gt, M1_pred, M2_pred, OF_gt, OF_pred, epoch_id, fname):
+    def plot_pred(self, I1, I2, M1_gt, M2_gt, M1_pred, M2_pred, OF_gt, OF_pred, epoch_id, psave, set, fname):
 
         ftsize = 6
         plt.rcParams['text.usetex'] = True
@@ -402,11 +378,9 @@ class loggerClass():
 
         plt.tight_layout()
 
-        psave = os.path.join(self.p.PRES, self.p.EXPNAME, "random_backup_prediction")
-        pufh.create_dir(psave)
         fname = fname.replace('/', '_')
         fname = fname.replace('.png', '')
-        fname = "epoch_" + str(epoch_id) + "_" + fname + '.png'
+        fname = set + "_epoch_" + str(epoch_id) + "_" + fname + '.png'
 
         # --- save fig and close
         plt.savefig(os.path.join(psave, fname), bbox_inches='tight', dpi=1000)

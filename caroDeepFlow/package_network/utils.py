@@ -6,7 +6,8 @@ from torch                                          import nn
 from package_network.netFlow                        import NetFlow
 from package_network.netEncoder                     import NetEncoder
 from package_network.netSegDecoder                  import NetSegDecoder
-from package_network.dilatedUnet                    import DilatedUnet
+# from package_network.dilatedUnet                    import DilatedUnet
+from package_network._dilated_Unet                  import unet
 
 # ----------------------------------------------------------------------------------------------------------------------
 def initialize_weights(m):
@@ -66,15 +67,13 @@ def load_model(param):
 
         netEncoder  = NetEncoder(param)
         netFlow     = NetFlow(param)
-        netSeg      = DilatedUnet(
-            input_nc        = 1,
-            output_nc       = 1,
+        netSeg      = unet(
+            input_nc        = 2,
+            output_nc       = 2,
             n_layers        = param.NB_LAYERS,
             ngf             = param.NGF,
-            norm_layer      = nn.BatchNorm2d,
             kernel_size     = param.KERNEL_SIZE,
             padding         = param.PADDING,
-            activation      = nn.LeakyReLU(0.2, True),
             use_bias        = param.USE_BIAS
         )
 
@@ -119,4 +118,21 @@ def load_model_seg(param):
         netSeg.apply(initialize_weights)
 
     return netSeg
+
 # ----------------------------------------------------------------------------------------------------------------------
+def save_print(model, path, mname):
+   """ Save model architecture and number of parameters. """
+
+   with open(os.path.join(path, mname + '.txt'), 'w') as f:
+       print(model, file=f)
+       print('', file=f)
+       for i in range(3):
+           print('###########################################################################################', file=f)
+       print('', file=f)
+       print("Parameter Count: %d" % count_parameters(model), file=f)
+
+# ----------------------------------------------------------------------------------------------------------------------
+def count_parameters(model):
+   """ Count the number of parameters in the model. """
+
+   return sum(p.numel() for p in model.parameters() if p.requires_grad)

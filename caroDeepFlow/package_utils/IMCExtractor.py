@@ -15,28 +15,28 @@ class IMCExtractor():
 
     def __init__(self, adventitia_part):
 
-        self.in_masks = np.empty(0)
-        self.out_masks = np.empty(0)
-        self.batch_size = 0
-        self.mask_size = 0
-        self.seed = []
-        self.adventitia_part = adventitia_part
-        self.zCF = 0
-        self.IMC = 0
-        self.seg = 0
+        self.in_masks           = np.empty(())
+        self.out_masks          = np.empty(())
+        self.batch_size         = 0
+        self.mask_size          = 0
+        self.seed               = []
+        self.adventitia_part    = adventitia_part
+        self.zCF                = 0
+        self.IMC                = 0
+        self.seg                = 0
 
     # ------------------------------------------------------------------------------------------------------------------
     def update(self, masks, zCF):
 
         # self.in_masks = np.array(masks.detach().cpu())
-        self.in_masks = masks.detach().cpu()
-        self.out_masks = np.zeros(self.in_masks.shape)
+        self.in_masks   = masks.detach().cpu()
+        self.out_masks  = np.zeros(self.in_masks.shape)
         self.batch_size = self.in_masks.shape[0]
-        self.mask_size = self.in_masks.shape[2:]
-        self.seed = []
-        self.zCF = zCF
-        self.IMC = np.zeros(self.batch_size)
-        self.seg = np.zeros((self.batch_size,) + (self.mask_size[1],) + (2,))
+        self.mask_size  = self.in_masks.shape[2:]
+        self.seed       = []
+        self.zCF        = zCF
+        self.IMC        = np.zeros(self.batch_size)
+        self.seg        = np.zeros((self.batch_size,) + (self.mask_size[1],) + (2,))
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_biggest_connected_region(self):
@@ -51,7 +51,8 @@ class IMCExtractor():
             label_image, nbLabels = label(img_fill_holes_, return_num=True)
 
             regionSize = []
-            if nbLabels != 1:
+
+            if nbLabels > 1:
 
                 for k in range(1, nbLabels + 1):
                     regionSize.append(np.sum(label_image == k))
@@ -62,11 +63,16 @@ class IMCExtractor():
                 label_image[label_image == idx] = 1
                 img_fill_holes_ = label_image
 
+            elif nbLabels < 1:
+                img_fill_holes_ = np.zeros(img_.shape)
+                img_fill_holes_[5:-5, :] = 1
+
             self.out_masks[id_batch, 0, ] = img_fill_holes_
+
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_seeds(self):
-        """ Compute center of mass of the mask and and return the x and y coordinates. """
+        """ Compute center of mass of the mask and return the x and y coordinates. """
 
         for id_batch in range(self.batch_size):
             white_pixels = np.array(np.where(self.out_masks[id_batch, 0, ] == 1))
@@ -105,8 +111,7 @@ class IMCExtractor():
 
     # ------------------------------------------------------------------------------------------------------------------
     def __call__(self, *args, **kwargs):
-        """ Compute the biggest connected region, then the intima media complexe interfaces is computed using the
-        masks. """
+        """ Compute the biggest connected region, then compute intima media complexe interfaces. """
 
         self.get_biggest_connected_region()
         self.get_seeds()

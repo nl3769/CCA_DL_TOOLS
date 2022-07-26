@@ -48,11 +48,6 @@ def validation_loop_split(param, networks, segLoss, flowLoss, logger, loader, id
 
         fmap1, skc1, fmap2, skc2 = networks["netEncoder"](I1, I2)
         M1_pred, M2_pred = networks["netSeg"](I1, I2)
-        cp_M1 = torch.clone(M1_pred).detach()
-        cp_M1 = pupp.treshold_mask(cp_M1)
-        IMCExtractor.update(cp_M1, CF['yCF'])
-        M1_c, _, IMT1 = IMCExtractor()
-        M1_c = torch.tensor(M1_c).to(device)
         flow_pred = networks["netFlow"](I1, fmap1, fmap2, M1_c)
 
         seg_loss, seg_metrics = segLoss(M1_pred, M2_pred, M1, M2)
@@ -83,7 +78,7 @@ def validation_loop_split(param, networks, segLoss, flowLoss, logger, loader, id
             OF_pred, OF_gt = OF_pred[0, ], OF_gt[0, ]
             I1_, I2_ = I1.cpu().detach().numpy(), I2.cpu().detach().numpy()
             I1_, I2_ = I1_[0, 0, ], I2_[0, 0, ]
-            logger.plot_pred(I1_, I2_, mask1_gt, mask2_gt, mask1_pred, mask2_pred, OF_gt, OF_pred, id_epoch, fname[0])
+            logger.plot_pred(I1_, I2_, mask1_gt, mask2_gt, mask1_pred, mask2_pred, OF_gt, OF_pred, id_epoch, param.PATH_SAVE_PRED_TRAINING, "val", fname[0])
             save = False
 
     #############################

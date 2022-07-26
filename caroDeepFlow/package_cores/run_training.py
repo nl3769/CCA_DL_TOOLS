@@ -52,6 +52,11 @@ def main():
     netSeg      = netSeg.to(device)
     netFlow     = netFlow.to(device)
 
+    # --- print model in txt file
+    pnu.save_print(netEncoder, p.PATH_PRINT_MODEL, 'netEncoder')
+    pnu.save_print(netSeg, p.PATH_PRINT_MODEL, 'netSeg')
+    pnu.save_print(netFlow, p.PATH_PRINT_MODEL, 'netFlow')
+
     # --- optimizer/scheduler
     optimizerEncoder, schedulerEncoder = fetch_optimizer(p, netEncoder, n_step=math.ceil(len(training_dataloader.dataset.image_list) / p.BATCH_SIZE) * p.NB_EPOCH)
     optimizerDecoder, schedulerDecoder = fetch_optimizer(p, netSeg, n_step=math.ceil(len(training_dataloader.dataset.image_list) / p.BATCH_SIZE) * p.NB_EPOCH)
@@ -62,15 +67,18 @@ def main():
     flowLoss = plll.lossFlow()
 
     # --- store optimizers/schedulers and optimizers
-    networks = {"netEncoder": netEncoder,
-                "netSeg": netSeg,
-                "netFlow": netFlow}
-    optimizers = {"netEncoder": optimizerEncoder,
-                  "netSeg": optimizerDecoder,
-                  "netFlow": optimizerFlow}
-    schedulers = {"netEncoder": schedulerEncoder,
-                 "netSeg": schedulerDecoder,
-                 "netFlow": schedulerFlow}
+    networks = {
+        "netEncoder": netEncoder,
+        "netSeg": netSeg,
+        "netFlow": netFlow}
+    optimizers = {
+        "netEncoder": optimizerEncoder,
+        "netSeg": optimizerDecoder,
+        "netFlow": optimizerFlow}
+    schedulers = {
+        "netEncoder": schedulerEncoder,
+        "netSeg": schedulerDecoder,
+        "netFlow": schedulerFlow}
 
     # --- logger
     logger = plog.loggerClass(p, segLoss.metrics.keys(), flowLoss.metrics.keys())

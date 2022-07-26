@@ -9,7 +9,6 @@ class Parameters:
         PRES,
         PSPLIT,
         LEARNING_RATE,
-        EPOCH,
         BATCH_SIZE,
         NB_EPOCH,
         VALIDATION,
@@ -41,7 +40,6 @@ class Parameters:
         self.PRES                               = PRES
         self.PSPLIT                             = PSPLIT
         self.LEARNING_RATE                      = LEARNING_RATE
-        self.EPOCH                              = EPOCH
         self.BATCH_SIZE                         = BATCH_SIZE
         self.NB_EPOCH                           = NB_EPOCH
         self.VALIDATION                         = VALIDATION
@@ -72,6 +70,7 @@ class Parameters:
         self.PATH_SAVE_MODEL                    = os.path.join(self.PRES, 'model')
         self.PATH_MODEL_HISTORY                 = os.path.join(self.PRES, 'training_history')
         self.PATH_SAVE_FIGURE                   = os.path.join(self.PRES, 'training_figure')
+        self.PATH_SAVE_PRED_TRAINING            = os.path.join(self.PRES, 'training_pred')
 
         # --- create directories
         fh.create_dir(self.PATH_RANDOM_PRED_TRN)
@@ -79,3 +78,4 @@ class Parameters:
         fh.create_dir(self.PATH_SAVE_MODEL)
         fh.create_dir(self.PATH_MODEL_HISTORY)
         fh.create_dir(self.PATH_SAVE_FIGURE)
+        fh.create_dir(self.PATH_SAVE_PRED_TRAINING)
