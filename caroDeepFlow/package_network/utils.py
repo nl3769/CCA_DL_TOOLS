@@ -66,8 +66,17 @@ def load_model(param):
 
         netEncoder  = NetEncoder(param)
         netFlow     = NetFlow(param)
-        netSeg      = DilatedUnet(in_channels=2, out_channels=2)
-
+        netSeg      = DilatedUnet(
+            input_nc        = 1,
+            output_nc       = 1,
+            n_layers        = param.NB_LAYERS,
+            ngf             = param.NGF,
+            norm_layer      = nn.BatchNorm2d,
+            kernel_size     = param.KERNEL_SIZE,
+            padding         = param.PADDING,
+            activation      = nn.LeakyReLU(0.2, True),
+            use_bias        = param.USE_BIAS
+        )
 
     # -----------------------
     # ---- ADAPT WEIGHTS ----

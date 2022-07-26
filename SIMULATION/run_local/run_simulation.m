@@ -11,10 +11,10 @@ end
 %%%%%%% RUM SIMULATION FOR ONE PHANTOM AND ONE SET OF PARAMETERS %%%%%%% 
 
 % --- path to data
-path_data='/home/laine/Desktop/NEW_TEST/tech_001/tech_001_id_001_FIELD';
+path_data='/home/laine/cluster/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER/tech_001/tech_001_id_004_FIELD_3D';
 
 % --- get phantom name
-phantom_folder = fct_list_ext_files(path_data, 'mat','phantom');
+phantom_folder = fct_list_ext_files(path_data, 'mat', 'phantom');
 phantom_names = fct_detect_sub_str(phantom_folder, 'dicom');
 
 % --- get parameters name

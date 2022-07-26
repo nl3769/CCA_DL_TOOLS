@@ -1,161 +1,160 @@
-'''
-@Author  :   <Nolann Lainé>
-@Contact :   <nolann.laine@outlook.fr>
-'''
-
+import numpy as np
 import torch
-import torch.nn                             as  nn
+import torch.nn as nn
 
-
-# ----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------
 class DilatedUnet(nn.Module):
-    def __init__(self, in_channels, out_channels):
-        super(DilatedUnet, self).__init__()
 
-        self.down1 = UNetDown(in_channels, 64)
-        self.down2 = UNetDown(64, 128)
-        self.down3 = UNetDown(128, 256)
-        self.down4 = UNetDown(256, 512)
-        self.down5 = UNetDown(512, 512)
-
-        self.bottleneck = bottleneck(512, 128)
-
-        self.up1 = UNetUp(512, 512)
-        self.up2 = UNetUp(1024, 256)
-        self.up3 = UNetUp(512, 128)
-        self.up4 = UNetUp(256, 64)
-
-        self.final = FinalLayer(128, out_channels)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def forward(self, I1, I2):
-
-        x = torch.cat((I1, I2), 1)
-
-        d1 = self.down1(x)
-        d2 = self.down2(d1)
-        d3 = self.down3(d2)
-        d4 = self.down4(d3)
-        d5 = self.down5(d4)
-
-        # b0 = self.bottleneck(d5)
-
-        u1 = self.up1(d5)
-        u2 = self.up2(u1, d4)
-        u3 = self.up3(u2, d3)
-        u4 = self.up4(u3, d2)
-
-        out = self.final(u4, d1)
-        M1, M2 = torch.chunk(out, 2, 1)
-
-        return M1, M2
-
-# ----------------------------------------------------------------------------------------------------------------------
-class UNetDown(nn.Module):
-    """Descending block of the U-Net.
-
-    Args:
-        in_size: (int) number of channels in the input image.
-        out_size : (int) number of channels in the output image.
-
+  def __init__(
+    self,
+    input_nc,
+    output_nc,
+    n_layers    = 2,
+    ngf         = 64,
+    norm_layer  = nn.BatchNorm2d,
+    kernel_size = (3, 3),
+    padding     = (1, 1),
+    activation  = nn.LeakyReLU(0.2, True),
+    use_bias    = True):
     """
-    def __init__(self, in_size, out_size):
-        super(UNetDown, self).__init__()
-        self.model = nn.Sequential(
-            nn.Conv2d(in_size, out_size, kernel_size=3, stride=2, padding=1),
-            nn.InstanceNorm2d(out_size),
-            nn.LeakyReLU(0.2)
-          )
+    Parameters:
+      input_nc (int) -- the number of channels in input images
+      output_nc (int) -- the number of channels in output images
+      n_layers (int) -- number of layers of the Unet, must be at least 2
+      ngf (int) -- the number of filters in the last (outermost) conv layer
+      norm_layer -- normalization layer
+      use_bias -- flag if convolutional layers should include bias terms
 
-    # ------------------------------------------------------------------------------------------------------------------
-    def forward(self, x):
-        return self.model(x)
-
-# ----------------------------------------------------------------------------------------------------------------------
-class UNetUp(nn.Module):
-    """Ascending block of the U-Net.
-
-    Args:
-        in_size: (int) number of channels in the input image.
-        out_size : (int) number of channels in the output image.
-
+    We construct the U-Net from the innermost layer to the outermost layer.
+    It is a recursive process.
     """
-    def __init__(self, in_size, out_size):
-        super(UNetUp, self).__init__()
-        self.model = nn.Sequential(
-            nn.ConvTranspose2d(in_size, out_size, kernel_size=4,
-                               stride=2, padding=1),
-            nn.InstanceNorm2d(out_size),
-            nn.ReLU(inplace=True)
-        )
+    super(DilatedUnet, self).__init__()
 
-    # ------------------------------------------------------------------------------------------------------------------
-    def forward(self, x, skip_input=None):
-        if skip_input is not None:
-            x = torch.cat((x, skip_input), 1)  # add the skip connection
-        x = self.model(x)
-        return x
+    # Add innermost layer
+    unet_block = UnetSkipConnectionBlock(
+      outer_nc      = ngf * 2**(n_layers-2),
+      inner_nc      = ngf * 2**(n_layers-1),
+      kernel_size   = kernel_size,
+      padding       = padding,
+      activation    = activation,
+      input_nc      = None,
+      submodule     = None,
+      norm_layer    = norm_layer,
+      innermost     = True,
+      use_bias      = use_bias)
 
-class bottleneck(nn.Module):
+    # Add intermediate layers
+    for i in range(n_layers-2, 0, -1):
+      unet_block = UnetSkipConnectionBlock(
+        outer_nc    = ngf * 2**(i-1),
+        inner_nc    = ngf * 2**i,
+        kernel_size = kernel_size,
+        padding     = padding,
+        activation  = activation,
+        input_nc    = None,
+        submodule   = unet_block,
+        norm_layer  = norm_layer,
+        use_bias    = use_bias)
 
-    def __init__(self, in_size, out_size):
-        super(bottleneck, self).__init__()
+    # Add outermost layer
+    unet_block = UnetSkipConnectionBlock(
+      outer_nc      = output_nc,
+      inner_nc      = ngf,
+      kernel_size   = kernel_size,
+      padding       = padding,
+      activation    = activation,
+      input_nc      = input_nc,
+      submodule     = unet_block,
+      outermost     = True,
+      norm_layer    = norm_layer,
+      use_bias      = use_bias)
 
-        self.convd1 = nn.Conv2d(in_size, out_size, kernel_size=3, padding='same', dilation=1)
-        self.convd2 = nn.Conv2d(in_size, out_size, kernel_size=3, padding='same', dilation=2)
-        self.convd3 = nn.Conv2d(in_size, out_size, kernel_size=3, padding='same', dilation=3)
-        self.convd4 = nn.Conv2d(in_size, out_size, kernel_size=3, padding='same', dilation=4)
+    self.model = unet_block
 
-        self.batchNorm1 = nn.BatchNorm2d(out_size, affine=True)
-        self.batchNorm2 = nn.BatchNorm2d(out_size, affine=True)
-        self.batchNorm3 = nn.BatchNorm2d(out_size, affine=True)
-        self.batchNorm4 = nn.BatchNorm2d(out_size, affine=True)
 
-        self.relu = nn.ReLU()
+  def forward(self, input_data):
+    return self.model(input_data)
 
-    # ------------------------------------------------------------------------------------------------------------------
-    def forward(self, x):
 
-        out1 = self.convd1(x)
-        out1 = self.batchNorm1(out1)
+# ----------------------------------------------------------------
+class UnetSkipConnectionBlock(nn.Module):
+  """
+  Defines the Unet submodule with skip connection.
+  X -------------------identity-------------------------------------------------------------------(+)--> output
+  |max-pool -- conv+norm+Relu -- conv+norm+Relu -- |submodule| -- conv+norm+Relu -- conv+norm+Relu -- upsample|
+  """
 
-        out2 = self.convd2(x)
-        out2 = self.batchNorm2(out2)
-
-        out3 = self.convd3(x)
-        out3 = self.batchNorm3(out3)
-
-        out4 = self.convd4(x)
-        out4 = self.batchNorm4(out4)
-
-        out = torch.cat((out1, out2, out3, out4), 1)
-        out = self.relu(out)
-
-        return out
-
-    # ------------------------------------------------------------------------------------------------------------------
-
-# ----------------------------------------------------------------------------------------------------------------------
-class FinalLayer(nn.Module):
-    """Final block of the U-Net.
-
-    Args:
-        in_size: (int) number of channels in the input image.
-        out_size : (int) number of channels in the output image.
-
+  def __init__(
+    self,
+    outer_nc,
+    inner_nc,
+    kernel_size,
+    padding,
+    activation,
+    input_nc = None,
+    submodule = None,
+    outermost = False,
+    innermost = False,
+    norm_layer = nn.BatchNorm2d,
+    use_bias = False):
     """
-    def __init__(self, in_size, out_size):
-        super(FinalLayer, self).__init__()
-        self.model = nn.Sequential(
-            nn.Upsample(scale_factor=2),
-            nn.Conv2d(in_size, out_size, kernel_size=3, padding=1),
-            nn.Sigmoid(),
-        )
+    Construct a Unet submodule with skip connections.
+    Parameters:
+      outer_nc (int) -- the number of filters in the outer conv layer
+      inner_nc (int) -- the number of filters in the inner conv layer
+      input_nc (int) -- the number of channels in input images/features
+      submodule (UnetSkipConnectionBlock) -- previously defined submodules
+      outermost (bool) -- if this module is the outermost module
+      innermost (bool) -- if this module is the innermost module
+      norm_layer -- normalization layer
+      user_dropout (bool) -- if use dropout layers.
+    """
 
-    def forward(self, x, skip_input=None):
-        if skip_input is not None:
-            x = torch.cat((x, skip_input), 1)  # add the skip connection
-        x = self.model(x)
-        return x
+    super(UnetSkipConnectionBlock, self).__init__()
+    self.outermost = outermost
+    if input_nc is None:
+      input_nc = outer_nc
 
-# ----------------------------------------------------------------------------------------------------------------------
+    input_to_inner_conv = \
+      nn.Conv2d(input_nc, inner_nc, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate')
+    outer_to_inner_conv = \
+      nn.Conv2d(outer_nc, inner_nc, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate')
+    inner_to_inner_conv_1 = \
+      nn.Conv2d(inner_nc, inner_nc, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate')
+    inner_to_inner_conv_2 = \
+      nn.Conv2d(inner_nc, inner_nc, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate')
+    three_inner_to_inner_conv = \
+      nn.Conv2d(3*inner_nc, inner_nc, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate')
+    inner_to_outer_conv = \
+      nn.Conv2d(inner_nc, outer_nc, kernel_size=1, stride=1, padding=0, bias=use_bias, padding_mode='replicate')
+
+    maxpool = nn.MaxPool2d(kernel_size=2)
+    upsample = nn.Upsample(scale_factor=2)
+
+    if outermost:
+      down = [input_to_inner_conv, norm_layer(inner_nc), activation, inner_to_inner_conv_1, norm_layer(inner_nc), activation]
+      up = [three_inner_to_inner_conv, norm_layer(inner_nc), activation, inner_to_inner_conv_2, norm_layer(inner_nc), activation, inner_to_outer_conv]
+      model = down + [submodule] + up
+
+    elif innermost:
+      down = [maxpool, outer_to_inner_conv, norm_layer(inner_nc), activation, inner_to_inner_conv_1, norm_layer(inner_nc), activation]
+      up = [upsample]
+      model = down + up
+
+    else:
+      down = [maxpool, outer_to_inner_conv, norm_layer(inner_nc), activation, inner_to_inner_conv_1, norm_layer(inner_nc), activation]
+      up = [three_inner_to_inner_conv, norm_layer(inner_nc), activation, inner_to_inner_conv_2, norm_layer(inner_nc), activation, upsample]
+      model = down + [submodule] + up
+
+    self.model = nn.Sequential(*model)
+
+
+  def forward(self, x):
+    if self.outermost:
+      res = self.model(x)
+      return res
+    else:
+      # Add skip connections
+      res0 = self.model(x)
+      res = torch.cat([x, res0], 1)
+      return res

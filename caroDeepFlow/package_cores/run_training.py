@@ -48,9 +48,9 @@ def main():
 
     # --- load models
     netEncoder, netSeg, netFlow = pnu.load_model(p)
-    netEncoder = netEncoder.to(device)
-    netSeg = netSeg.to(device)
-    netFlow = netFlow.to(device)
+    netEncoder  = netEncoder.to(device)
+    netSeg      = netSeg.to(device)
+    netFlow     = netFlow.to(device)
 
     # --- optimizer/scheduler
     optimizerEncoder, schedulerEncoder = fetch_optimizer(p, netEncoder, n_step=math.ceil(len(training_dataloader.dataset.image_list) / p.BATCH_SIZE) * p.NB_EPOCH)
@@ -111,12 +111,13 @@ def fetch_optimizer(p, model, n_step):
     optimizer = optim.Adam(model.parameters(), lr=p.LEARNING_RATE)
 
     # --- schedular
-    param = {'max_lr': p.LEARNING_RATE,
-             'total_steps': n_step,
-             'epochs': p.NB_EPOCH,
-             'pct_start': 0.05,
-             'cycle_momentum': False,
-             'anneal_strategy': 'linear'}
+    param = {
+        'max_lr': p.LEARNING_RATE,
+         'total_steps': n_step,
+         'epochs': p.NB_EPOCH,
+         'pct_start': 0.05,
+         'cycle_momentum': False,
+         'anneal_strategy': 'linear'}
     scheduler = optim.lr_scheduler.OneCycleLR(optimizer, **param)
 
     return optimizer, scheduler

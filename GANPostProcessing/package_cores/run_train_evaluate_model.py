@@ -55,7 +55,7 @@ def main():
     val_loader, len_dataset_val = fetch_dataloader(p, set = 'validation', shuffle = True, data_aug = False)
 
     # --- Optimizers
-    optimizer_generator, optimizer_discriminator = fetch_optimizer(p, generator, discriminator, n_step=math.ceil(len_dataset_trn / p.BATCH_SIZE) * p.NB_EPOCH)
+    optimizer_generator, optimizer_discriminator,  scheduler = fetch_optimizer(p, generator, discriminator, n_step=math.ceil(len_dataset_trn / p.BATCH_SIZE) * p.NB_EPOCH)
 
     # --- Loss class
     loss = lossClass(p)
@@ -83,7 +83,7 @@ def main():
             'val_l1':       val_out[3],
             'val_l2':       val_out[4],
         })
-
+        scheduler.step()
         if logger.get_criterium_early_stop():
             break
 
@@ -147,7 +147,9 @@ def fetch_optimizer(p, generator, discriminator, n_step):
          'cycle_momentum'   : False,
          'anneal_strategy'  : 'linear'}
 
-    return optimizer_generator, optimizer_discriminator
+    scheduler = StepLR(optimizer, step_size=p.LEARNING_RATE, gamma=0.5)
+
+    return optimizer_generator, optimizer_discriminator, scheduler
 
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':

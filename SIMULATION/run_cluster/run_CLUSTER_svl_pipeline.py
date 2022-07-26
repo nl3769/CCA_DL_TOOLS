@@ -65,13 +65,13 @@ if __name__ == '__main__':
     patients = os.listdir(pname)
     patients.sort()
     
-    for patient in patients[:1]:
+    for patient in patients[10:15]:
         fname = os.path.join(pname, patient)
         folders = os.listdir(fname)
         folders.sort()
         ic(fname)
         
-        for exp in folders[:1]:
+        for exp in folders[:10]:
             ic(exp)
            
             path_param      = os.path.join(fname, exp, 'parameters')

@@ -11,8 +11,8 @@ def split_data(pdata, pres, training_part, validation_part, testing_part):
     pfh.create_dir(pres)
 
     patients = os.listdir(pdata)
-    if "parameters" in patients:
-        patients.remove("parameters")
+    if "backup_parameters" in patients:
+        patients.remove("backup_parameters")
     if "GIF" in patients:
         patients.remove("GIF")
     random.shuffle(patients)
@@ -38,7 +38,7 @@ def split_data(pdata, pres, training_part, validation_part, testing_part):
 if __name__ == '__main__':
 
     # --- VARIABLES DECLARATION
-    pdata = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET_3MM_00'
+    pdata = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/_DATASET_3MM_00'
     pres = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/SPLIT_DATA'
     training_part = 0.7
     validation_part = 0.1

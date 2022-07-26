@@ -9,7 +9,7 @@ addpath(fullfile('..', 'mtl_cores/'));
 addpath(fullfile('..', 'mtl_utils'));
 
 % --- path to results
-path_res='/home/laine/Desktop/NEW_TEST/tech_001';
+path_res='/home/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER/tech_002';
 % path_res='/home/laine/Desktop/NEW_TEST/tech_001/tech_001_id_001_FIELD';
 files_ = list_files(path_res);
 

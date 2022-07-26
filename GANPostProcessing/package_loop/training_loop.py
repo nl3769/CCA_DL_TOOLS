@@ -13,7 +13,7 @@ def trn_loop(discriminator, generator, trn_loader, epoch, device, optimizer_gene
     cuda = True if torch.cuda.is_available() else False
     Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
-    # --- initilization to store metrics and losses
+    # --- initialization to store metrics and losses
     loss_generator_trn      = []
     loss_generator_org_trn  = {'loss_GAN': [], 'loss_pixel': []}
     loss_discriminator_trn  = []
