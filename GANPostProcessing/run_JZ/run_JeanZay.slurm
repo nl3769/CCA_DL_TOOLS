@@ -15,4 +15,4 @@ export MPLBACKEND='Agg' # solve pb with matplotlib
 WD=/linkhome/rech/gencre01/uby91ul/REPOSITORIES/CCA_DL_TOOLS/GANPostProcessing
 cd $WD
 echo $param
-PYTHONPATH=$WD python package_core/run_train_model.py -param $param
+PYTHONPATH=$WD python package_cores/run_train_evaluate_model.py -param $param
