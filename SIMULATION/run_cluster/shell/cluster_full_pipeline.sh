@@ -19,7 +19,7 @@ echo "path res:         $7"      # pres
 echo '""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""'
 
 # --- RUN SIMULATION
-SIMULATION=$(qsub -N $4 -v path_param=$1,path_phantom=$2,id_tx=$5 pbs/simulation.pbs)
+SIMULATION=$(qsub -N $4 -v path_param=$1,log_name=$4,path_phantom=$2,id_tx=$5 pbs/simulation.pbs)
 echo $SIMULATION
 
 # --- CLUSTER RF DATA
