@@ -454,7 +454,7 @@ def data_extraction(LI1, LI2, MA1, MA2, I1, I2, OF, coordinates, pixel_width, pi
 
 # ----------------------------------------------------------------------------------------------------------------------
 def adapt_seg_borders(LI1, LI2, MA1, MA2, roi_borders):
-    """ Adapt segmentation -> fit with 0 values stritly lower than the then border and strictly higher than the right border. """
+    """ Adapt segmentation -> fit with 0 values strictly lower than the then border and strictly higher than the right border. """
 
     width = LI1.shape[0]
 

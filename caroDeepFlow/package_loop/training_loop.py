@@ -57,7 +57,6 @@ def training_loop_split(param, networks, segLoss, flowLoss, optimizers, schedule
         seg_loss, seg_metrics = segLoss(M1_pred, M2_pred, M1, M2)
         loss = flow_loss + seg_loss
 
-        # loss.backward()
         flow_loss.backward()
         seg_loss.backward()
 

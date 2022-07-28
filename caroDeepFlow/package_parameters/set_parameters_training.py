@@ -16,7 +16,7 @@ def setParameters():
         PSPLIT                      = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/SPLIT_DATA',
         LEARNING_RATE               = 0.0001,
         BATCH_SIZE                  = 2,                                                                        # size of a batch
-        NB_EPOCH                    = 5,
+        NB_EPOCH                    = 200,
         VALIDATION                  = True,
         DROPOUT                     = 0.0,                                                                      # dropout during training
         GAMMA                       = 0.8,                                                                      # see later what it is
@@ -25,7 +25,7 @@ def setParameters():
         CORRELATION_RADIUS          = 4,                                                                        # see later what it is
         NB_ITERATION                = 12,
         ALTERNATE_COORDINATE        = False,                                                                    # see later what it is
-        WORKERS                     = 0,
+        WORKERS                     = 4,
         POSITION_ONLY               = False,
         POSITION_AND_CONTENT        = False,
         NUM_HEAD                    = 4,
