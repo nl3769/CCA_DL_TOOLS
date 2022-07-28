@@ -65,7 +65,7 @@ if __name__ == '__main__':
     patients = os.listdir(pname)
     patients.sort()
     
-    for patient in patients[10:15]:
+    for patient in patients[6:15]:
         fname = os.path.join(pname, patient)
         folders = os.listdir(fname)
         folders.sort()
