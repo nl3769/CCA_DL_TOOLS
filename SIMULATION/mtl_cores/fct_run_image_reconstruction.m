@@ -1,4 +1,4 @@
-function fct_run_image_reconstruction(pres, flag_cluster)
+function fct_run_image_reconstruction(pres)
     
     % --- add path
     if ~isdeployed
@@ -19,7 +19,7 @@ function fct_run_image_reconstruction(pres, flag_cluster)
     phantom_name = fct_detect_sub_str(phantom_folder, 'dicom');
 
     % ---  create object 
-    data = imageReconstruction(pres,  rf_data_name{1}, parameters_folder{1}, probe_name{1}, sub_probe_name{1}, phantom_name{1}, flag_cluster);
+    data = imageReconstruction(pres,  rf_data_name{1}, parameters_folder{1}, probe_name{1}, sub_probe_name{1}, phantom_name{1});
     
     % --- beamforming
     if data.param.mode(1) % scanline based

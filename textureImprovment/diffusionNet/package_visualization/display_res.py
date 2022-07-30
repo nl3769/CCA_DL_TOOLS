@@ -25,11 +25,11 @@ def sample_timestep(model, x, t, betas, sqrt_one_minus_alphas_cumprod, sqrt_reci
     )
     posterior_variance_t = get_index_from_list(posterior_variance, t, x.shape)
 
-    if t == 0:
-        return model_mean
-    else:
-        noise = torch.randn_like(x)
-        return model_mean + torch.sqrt(posterior_variance_t) * noise
+    # if t == 0:
+    return model_mean
+    # else:
+    #     noise = torch.randn_like(x)
+    #     return model_mean + torch.sqrt(posterior_variance_t) * noise
 
 # -----------------------------------------------------------------------------------------------------------------------
 @torch.no_grad()

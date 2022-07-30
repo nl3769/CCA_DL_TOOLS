@@ -10,5 +10,5 @@
 
 # --- RUN THE SCRIPT
 cd /misc/raid/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/mtl_cores
-instruction="matlab -r fct_run_image_reconstruction('${pres}','{$flag_cluster}')"
+instruction="matlab -r fct_run_image_reconstruction('${pres}')"
 $instruction

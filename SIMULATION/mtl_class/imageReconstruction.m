@@ -31,16 +31,15 @@ classdef imageReconstruction < handle
             % Constructor
             
             switch nargin
-                case 7
+                case 6
                     % varargin{1} -> path_data
                     % varargin{2} -> name of the radio frequence data
                     % varargin{3} -> param_name
                     % varargin{4} -> probe name
                     % varargin{5} -> subprobe name
-                    % varargin{7} -> phantom_name
-                    % varargin{7} -> flag cluster
+                    % varargin{6} -> phantom_name
                     
-                    [obj.RF_aperture, obj.probe, obj.sub_probe, obj.param, obj.phantom]=get_data(varargin{1}, varargin{2}, varargin{3}, varargin{4}, varargin{5}, varargin{6}, varargin{7});
+                    [obj.RF_aperture, obj.probe, obj.sub_probe, obj.param, obj.phantom]=get_data(varargin{1}, varargin{2}, varargin{3}, varargin{4}, varargin{5}, varargin{6});
                     obj.tsart = zeros(size(obj.RF_aperture, 1), 1);
                     obj.tcompensation = 0;
                     %obj.param.path_res = '/home/laine/Desktop/STA_TEST_CUDA/tech_001/tech_001_id_001_FIELD_3D/';
@@ -780,7 +779,7 @@ classdef imageReconstruction < handle
 end
 
 % ------------------------------------------------------------------------------------------------------------------------------
-function [RF_aperture, probe, sub_probe, param, phantom]=get_data(path_data, rf_data_name, param_name, probe_name, sub_probe_name, phantom_name, flag_cluster)
+function [RF_aperture, probe, sub_probe, param, phantom]=get_data(path_data, rf_data_name, param_name, probe_name, sub_probe_name, phantom_name)
     % Load data required for image reconstruction.
     
 

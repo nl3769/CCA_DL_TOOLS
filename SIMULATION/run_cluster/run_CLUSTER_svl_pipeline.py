@@ -71,7 +71,7 @@ if __name__ == '__main__':
         folders.sort()
         ic(fname)
         
-        for exp in folders[:10]:
+        for exp in folders:
             ic(exp)
            
             path_param      = os.path.join(fname, exp, 'parameters')

@@ -25,7 +25,7 @@ if __name__ == '__main__':
     # --- PARAMETERS
     info = '_3D'                        # added information to file name
     
-    for name in fname[21:40]:
+    for name in fname[40:100]:
         pres_ = os.path.join(pres, name.split('.')[0])
         make_dir(pres_)
         ic(name)
