@@ -1,28 +1,21 @@
 from package_network.discriminator                  import Discriminator
-from package_network.GAN_UPCONV                     import GeneratorUNetUPCONV
-from package_network.GAN_UPSAMPLE                   import GeneratorUNetUPSAMPLE
-from package_network.GAN_UPSAMPLE_02                import GAN_UPSAMPLE_02
 from package_network.SRGAN                          import GeneratorSR, DiscriminatorSR
-from package_network.GAN_AI4HEALTH                  import GeneratorUNet_AI4HEALTH
 from package_network.network_unet                   import Unet
-
 import torch.nn as nn
-
 def load_model(p):
 
 
     if p.MODEL_NAME == 'unet':
         discriminator = Discriminator()
         generator = Unet(
-            input_nc        = 1,
-            output_nc       = 1,
-            n_layers        = p.NB_LAYERS, 
-            ngf             = p.NGF,
-            norm_layer      = nn.BatchNorm2d,
-            kernel_size     = p.KERNEL_SIZE,
-            padding         = p.PADDING,
-            activation      = nn.LeakyReLU(0.2, True),
-            use_bias        = p.USE_BIAS
+            input_nc            = 1,
+            output_nc           = 1,
+            n_layers            = p.NB_LAYERS,
+            ngf                 = p.NGF,
+            kernel_size         = p.KERNEL_SIZE,
+            padding             = p.PADDING,
+            use_bias            = p.USE_BIAS,
+            output_activation   = p.OUTPUT_ACTIVATION
         )
 
         return discriminator, generator

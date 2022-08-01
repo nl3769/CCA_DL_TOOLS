@@ -11,7 +11,7 @@ end
 %%%%%%% RUM SIMULATION FOR ONE PHANTOM AND ONE SET OF PARAMETERS %%%%%%% 
 
 % --- path to data
-path_data='/home/laine/cluster/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER/tech_001/tech_001_id_004_FIELD_3D';
+path_data='/home/laine/cluster/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER/tech_054/tech_054_id_003_FIELD_3D';
 
 % --- get phantom name
 phantom_folder = fct_list_ext_files(path_data, 'mat', 'phantom');
@@ -32,7 +32,7 @@ elseif PARAM.mode(2)
     tx = nb_tx;
 end
 
-for id_tx=1:1:tx
+parfor id_tx=1:1:tx
 % for id_tx=10:1:10
     
     % --- run simulation

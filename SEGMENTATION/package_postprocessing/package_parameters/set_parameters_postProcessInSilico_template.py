@@ -11,7 +11,7 @@ import os
 def setParameters():
 
     p = Parameters(
-        PDATA           = "/home/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER/tech_004",
+        PDATA           = "/home/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER/tech_001",
         PRES            = "/home/laine/Documents/PROJECTS_IO/SEGMENTATION/POST_PROCESSING",
         PMODEL          = "/home/laine/Documents/PROJECTS_IO/DATA/GAN/TRAINED_MODEL/model_validation.pth",
         DIM_IMG_GAN     = (256, 256),

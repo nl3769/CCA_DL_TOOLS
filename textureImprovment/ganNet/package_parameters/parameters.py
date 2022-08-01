@@ -1,4 +1,7 @@
 import os
+
+import torch.nn                         as nn
+
 from package_utils.utils                import check_dir
 
 class Parameters:
@@ -25,6 +28,7 @@ class Parameters:
         DROPOUT,
         WORKERS,
         EARLY_STOP,
+        OUTPUT_ACTIVATION,
         PATH_RES):
 
         self.MODEL_NAME             = MODEL_NAME
@@ -46,6 +50,7 @@ class Parameters:
         self.IMG_SIZE               = IMG_SIZE
         self.DROPOUT                = DROPOUT
         self.WORKERS                = WORKERS
+        self.OUTPUT_ACTIVATION      = OUTPUT_ACTIVATION
         self.EARLY_STOP             = EARLY_STOP
         self.PATH_RES               = PATH_RES
         self.PATH_RANDOM_PRED_TRN   = os.path.join(self.PATH_RES, 'training_pred')
