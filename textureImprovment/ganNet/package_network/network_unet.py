@@ -70,7 +70,6 @@ class decoder(nn.Module):
     kernel_size,
     padding,
     use_bias,
-    output_activation,
     dropout=None
     ):
 
@@ -92,8 +91,7 @@ class decoder(nn.Module):
                 nn.Conv2d(ch_out_, ch_out_, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias,  padding_mode='replicate'),
                 nn.BatchNorm2d(ch_out_),
                 nn.LeakyReLU(negative_slope=0.1),
-                nn.Conv2d(ch_out_, output_nc, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias,  padding_mode='replicate'),
-                output_activation
+                nn.Conv2d(ch_out_, output_nc, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias,  padding_mode='replicate')
                 )
         else:
             self.dec["layers_" + str(i - 1)] = nn.Sequential(
@@ -132,7 +130,7 @@ class Unet(nn.Module):
         ):
 
         super(Unet, self).__init__()
-    
+        self.output_activation = output_activation
         # --- encoder part of the Unet
         self.enc = encoder(
           input_nc      = input_nc,
@@ -151,7 +149,6 @@ class Unet(nn.Module):
           kernel_size       = kernel_size,
           padding           = padding,
           use_bias          = use_bias,
-          output_activation = output_activation
           )
           
         # ---------------------------------------------------------------------------------------------------------------------
@@ -161,5 +158,6 @@ class Unet(nn.Module):
         # --- Unet forward pass
         x, skip = self.enc(I)
         x       = self.dec(x, skip)
+        x = self.output_activation(x)
 
         return x
