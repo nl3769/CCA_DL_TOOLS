@@ -75,7 +75,10 @@ class preProcessing():
         sim = self.histogram_extension(sim, self.interval)
         if self.data_aug:
             org, sim = self.augmentation(org, sim)
-
-        return torch.tensor(org), torch.tensor(sim)
+        
+        org = torch.tensor(org)
+        sim = torch.tensor(sim)
+        
+        return org.clone().detach(), sim.clone().detach()
 
     # ------------------------------------------------------------------------------------------------------------------
