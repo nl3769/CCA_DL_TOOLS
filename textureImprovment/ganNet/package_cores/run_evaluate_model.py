@@ -7,7 +7,7 @@ import pandas                                       as pd
 import numpy                                        as np
 
 from tqdm                                           import tqdm
-from package_utils.load_model                       import load_model
+from package_network.load_model                     import load_model
 from package_dataloader.fetch_data_loader           import fetch_dataloader
 from package_utils.utils_evaluation                 import get_path_model, save_evaluation_res, save_pred
 from package_utils.compute_metrics                  import compute_EPE, compute_PSNR

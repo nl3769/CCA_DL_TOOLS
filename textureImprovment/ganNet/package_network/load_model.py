@@ -1,5 +1,5 @@
-from package_network.discriminator                  import Discriminator
-from package_network.SRGAN                          import GeneratorSR, DiscriminatorSR
+from package_network.network_discriminator                  import Discriminator
+from package_network.network_SRGan                          import SRGan
 from package_network.network_unet                   import Unet
 import torch.nn as nn
 def load_model(p):
@@ -16,12 +16,18 @@ def load_model(p):
             padding             = p.PADDING,
             use_bias            = p.USE_BIAS,
             output_activation   = p.OUTPUT_ACTIVATION
-        )
+            )
 
         return discriminator, generator
 
-    if p.MODEL_NAME == 'SRGAN':
-        discriminator = DiscriminatorSR(p)
-        generator = GeneratorSR(p)
+    if p.MODEL_NAME == 'SRGan':
+        discriminator = Discriminator()
+        generator = SRGan(
+            input_nc    = 1,
+            output_nc   = 1,
+            kernel_size = p.KERNEL_SIZE,
+            padding     = p.PADDING,
+            use_bias    = p.USE_BIAS,
+            )
 
         return discriminator, generator

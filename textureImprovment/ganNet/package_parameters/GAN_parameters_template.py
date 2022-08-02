@@ -9,7 +9,7 @@ from package_utils.utils                import check_dir
 def setParameters():
 
   p = Parameters(
-    MODEL_NAME                 = 'unet',
+    MODEL_NAME                 = 'SRGan',
     PDATA                      = '/home/laine/Documents/PROJECTS_IO/DATA/GAN',
     DATABASE                   = {
         'training': '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_v01/training.txt',
@@ -34,7 +34,7 @@ def setParameters():
     WORKERS                    = 4,
     EARLY_STOP                 = 100,
     OUTPUT_ACTIVATION          = nn.ReLU(),
-    PATH_RES                   = '/home/laine/Documents/PROJECTS_IO/GAN/lambda_1_pixel_1_L1'
+    PATH_RES                   = '/home/laine/Documents/PROJECTS_IO/GAN/SRGan'
     )
 
   # --- Print all attributes in the console

@@ -6,7 +6,7 @@ import torch
 import math
 import wandb
 
-from package_utils.load_model                   import load_model
+from package_network.load_model                 import load_model
 from package_utils.model_information            import save_print
 from package_utils.weights_init                 import weights_init
 from package_dataloader.fetch_data_loader       import fetch_dataloader
