@@ -1,4 +1,4 @@
-This script ensure realistic simulation of the common carotid artery using FIELDII or SIMUS.
+Script for realistic simulation of the common carotid artery (CCA) using FIELDII or SIMUS.
 
 Four scripts must be run to get the final image:
 1 - mtl_cores/fct_run_mk_phantom.m
