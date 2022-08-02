@@ -14,10 +14,11 @@ class preProcessing():
         self.interval = p.IMAGE_NORMALIZATION
         self.augmenter = iaa.Sequential([iaa.Fliplr(0.5),
                                          iaa.Flipud(0.5),
-                                         # iia.scale{"x": (0.8, 1.2), "y": (0.8, 1.2)},
+                                         iaa.ScaleX((0.9, 1.1)),
+                                         iaa.ScaleY((0.9, 1.1)),
                                          iaa.Affine(shear=(-5, 5),
-                                                    rotate=(-5, 5),
-                                                    translate_px={"y": (-30, 30), "x": (-30, 30)})])
+                                                    rotate=(-2, 2),
+                                                    translate_px={"y": (-10, 10), "x": (-10, 10)})])
 
     # ------------------------------------------------------------------------------------------------------------------
     def augmentation(self, org, sim):

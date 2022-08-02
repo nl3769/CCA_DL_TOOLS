@@ -1,6 +1,5 @@
 import torch
 import math
-
 import torch.nn                             as nn
 
 # ----------------------------------------------------------------
@@ -27,10 +26,10 @@ class encoder(nn.Module):
         self.enc["layers_" + str(i + 1)] = nn.Sequential(
             nn.Conv2d(input_nc, ngf, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate'),
             nn.BatchNorm2d(ngf),
-            nn.LeakyReLU(negative_slope=0.1),
+            nn.PReLU(),
             nn.Conv2d(ngf, ngf, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate'),
             nn.BatchNorm2d(ngf),
-            nn.LeakyReLU(negative_slope=0.1)
+            nn.PReLU()
             )
 
 
@@ -40,10 +39,10 @@ class encoder(nn.Module):
         self.enc["layers_" + str(i + 1)] = nn.Sequential(
             nn.Conv2d(ch_in_, ch_out_, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate'),
             nn.BatchNorm2d(ch_out_),
-            nn.LeakyReLU(negative_slope=0.1),
+            nn.PReLU(),
             nn.Conv2d(ch_out_, ch_out_, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate'),
             nn.BatchNorm2d(ch_out_),
-            nn.LeakyReLU(negative_slope=0.1)
+            nn.PReLU()
             )
 
   # ---------------------------------------------------------------------------------------------------------------------
@@ -87,20 +86,20 @@ class decoder(nn.Module):
             self.dec["layers_" + str(i - 1)] = nn.Sequential(
                 nn.Conv2d(ch_in_, ch_out_, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate'),
                 nn.BatchNorm2d(ch_out_),
-                nn.LeakyReLU(negative_slope=0.1),
+                nn.PReLU(),
                 nn.Conv2d(ch_out_, ch_out_, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias,  padding_mode='replicate'),
                 nn.BatchNorm2d(ch_out_),
-                nn.LeakyReLU(negative_slope=0.1),
+                nn.PReLU(),
                 nn.Conv2d(ch_out_, output_nc, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias,  padding_mode='replicate')
                 )
         else:
             self.dec["layers_" + str(i - 1)] = nn.Sequential(
                 nn.Conv2d(ch_in_, ch_out_, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate'),
                 nn.BatchNorm2d(ch_out_),
-                nn.LeakyReLU(negative_slope=0.1),
+                nn.PReLU(),
                 nn.Conv2d(ch_out_, ch_out_, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate'),
                 nn.BatchNorm2d(ch_out_),
-                nn.LeakyReLU(negative_slope=0.1)
+                nn.PReLU()
                 )
 
   # --------------------------------------------------------------------------------------------------------------------

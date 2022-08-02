@@ -32,7 +32,7 @@ def setParameters():
         ADVENTICIA_DIM              = 1,                                                                        # part of adventitia in mm
         USER                        = 'LAINE',
         EXPNAME                     = 'TEST_00',
-        DEVICE                      = 'cuda',                                                                   # cuda/cpu
+        DEVICE                      = 'cpu',                                                                   # cuda/cpu
         RESTORE_CHECKPOINT          = True,
         FEATURES                    = 'split',                                                                 # shared or split
         # --- If feature is split, then chose parameters for Unet

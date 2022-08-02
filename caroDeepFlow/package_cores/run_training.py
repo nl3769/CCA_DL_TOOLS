@@ -10,18 +10,18 @@ import math
 import random
 import wandb
 
-import torch.optim				                  as optim
-import package_dataloader.utils 		          as pdlu
-import package_network.utils 			          as pnu
-import package_loss.lossSeg 			          as plls
-import package_loss.lossFlow 			          as plll
-import package_logger.logger 			          as plog
-import package_loop.training_loop                 as prtl
-import package_loop.validation_loop               as prvl
-import package_debug.visualisation 		          as pdv
+import torch.optim                              as optim
+import package_dataloader.utils                 as pdlu
+import package_network.utils                    as pnu
+import package_loss.lossSeg                     as plls
+import package_loss.lossFlow                    as plll
+import package_logger.logger                    as plog
+import package_loop.training_loop               as prtl
+import package_loop.validation_loop             as prvl
+import package_debug.visualisation              as pdv
 
-from icecream 				                      import ic
-from package_utils.IMCExtractor                   import IMCExtractor
+from icecream                                   import ic
+from package_utils.IMCExtractor                 import IMCExtractor
 
 ################################
 # --- RUN TRAINING ROUTINE --- #

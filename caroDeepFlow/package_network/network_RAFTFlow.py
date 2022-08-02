@@ -5,12 +5,12 @@
 
 import torch
 
-import package_network.update               as  updateNet
-import package_network.features_extractor   as  featureExtractor
-import package_network.correlation          as  correlation
-import package_network.grid_handler         as  gridHandler
-import torch.nn                             as  nn
-import torch.nn.functional                  as  F
+import package_network.network_RAFTUpdate           as  updateNet
+import package_network.network_featuresExtractor    as  featureExtractor
+import package_network.correlation                  as  correlation
+import package_network.grid_handler                 as  gridHandler
+import torch.nn                                     as  nn
+import torch.nn.functional                          as  F
 
 # ----------------------------------------------------------------------------------------------------------------------
 class NetFlow(nn.Module):

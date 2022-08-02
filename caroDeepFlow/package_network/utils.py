@@ -2,12 +2,10 @@ import os
 import torch
 
 from torch                                          import nn
-
-from package_network.netFlow                        import NetFlow
-from package_network.netEncoder                     import NetEncoder
-from package_network.netSegDecoder                  import NetSegDecoder
-# from package_network.dilatedUnet                    import DilatedUnet
-from package_network._dilated_Unet                  import unet
+from package_network.network_RAFTFlow               import NetFlow
+from package_network.network_encoder                import NetEncoder
+from package_network.network_segDecoder             import NetSegDecoder
+from package_network.network_dilatedUnet            import dilatedUnet
 
 # ----------------------------------------------------------------------------------------------------------------------
 def initialize_weights(m):
@@ -55,26 +53,17 @@ def load_model(param):
     # ---- LOAD MODELS ----
     # ---------------------
 
-    if param.FEATURES == "shared":
 
-        netEncoder  = NetEncoder(param)
-        netSeg      = NetSegDecoder(param)
-        netFlow     = NetFlow(param)
-
-        return netEncoder, netSeg, netFlow
-
-    elif param.FEATURES == 'split':
-
-        netEncoder  = NetEncoder(param)
-        netFlow     = NetFlow(param)
-        netSeg      = unet(
-            input_nc        = 2,
-            output_nc       = 2,
-            n_layers        = param.NB_LAYERS,
-            ngf             = param.NGF,
-            kernel_size     = param.KERNEL_SIZE,
-            padding         = param.PADDING,
-            use_bias        = param.USE_BIAS
+    netEncoder  = NetEncoder(param)
+    netFlow     = NetFlow(param)
+    netSeg      = dilatedUnet(
+        input_nc        = 2,
+        output_nc       = 2,
+        n_layers        = param.NB_LAYERS,
+        ngf             = param.NGF,
+        kernel_size     = param.KERNEL_SIZE,
+        padding         = param.PADDING,
+        use_bias        = param.USE_BIAS
         )
 
     # -----------------------

@@ -140,7 +140,7 @@ class bottleneck(nn.Module):
 
 
 # ----------------------------------------------------------------
-class unet(nn.Module):
+class dilatedUnet(nn.Module):
 
   def __init__(
     self,
@@ -151,9 +151,10 @@ class unet(nn.Module):
     kernel_size,
     padding,
     use_bias,
-    dropout=None):
+    dropout=None
+    ):
 
-    super(unet, self).__init__()
+    super(dilatedUnet, self).__init__()
 
     self.enc = encoder(
       input_nc    = input_nc,

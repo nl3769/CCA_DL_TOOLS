@@ -3,8 +3,8 @@
 @Contact :   <nolann.laine@outlook.fr>
 '''
 
-import package_network.features_extractor   as  featureExtractor
-import torch.nn                             as  nn
+import package_network.network_featuresExtractor    as  featureExtractor
+import torch.nn                                     as  nn
 
 # ----------------------------------------------------------------------------------------------------------------------
 class NetEncoder(nn.Module):
