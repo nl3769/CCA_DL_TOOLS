@@ -12,7 +12,7 @@ conda activate pytorch
 export MPLBACKEND='Agg' # solve pb with matplotlib
 
 # package_core the script
-WD=/linkhome/rech/gencre01/uby91ul/REPOSITORIES/CCA_DL_TOOLS/GANPostProcessing
+WD=/linkhome/rech/gencre01/uby91ul/REPOSITORIES/CCA_DL_TOOLS/textureImprovment/ganNet
 cd $WD
 echo $param
 PYTHONPATH=$WD python package_cores/run_train_evaluate_model.py -param $param
