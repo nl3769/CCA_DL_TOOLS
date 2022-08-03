@@ -1,5 +1,5 @@
 ######################
-#### caroDeedFlow ####
+#### caroDeepFlow ####
 ######################
 
 Contains code for flow estimation of the common carotid artery (CCA)
