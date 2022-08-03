@@ -43,14 +43,14 @@ def main():
     else:
         device = 'cpu'
 
-    # --- get dataloader
-    training_dataloader, validation_dataloader, _ = pdlu.fetch_dataloader(p)
-
     # --- load models
     netEncoder, netSeg, netFlow = pnu.load_model(p)
     netEncoder  = netEncoder.to(device)
     netSeg      = netSeg.to(device)
     netFlow     = netFlow.to(device)
+
+    # --- get dataloader
+    training_dataloader, validation_dataloader, _ = pdlu.fetch_dataloader(p)
 
     # --- print model in txt file
     pnu.save_print(netEncoder, p.PATH_PRINT_MODEL, 'netEncoder')

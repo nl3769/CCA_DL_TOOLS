@@ -5,30 +5,36 @@
 
 import torch
 
-import package_network.network_raft                 as updateNet
 import package_network.network_featuresExtractor    as featureExtractor
 import package_network.correlation                  as correlation
 import package_network.grid_handler                 as gridHandler
 import torch.nn                                     as nn
 import torch.nn.functional                          as F
 
+from package_network.network_gmaUpdator             import GMAUpdateBlock
+from package_network.network_gma                    import Attention
+
 # ----------------------------------------------------------------------------------------------------------------------
-class RAFT_NetFlow(nn.Module):
+class GMA_NetFlow(nn.Module):
 
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, p):
-        super(RAFT_NetFlow, self).__init__()
+        super(GMA_NetFlow, self).__init__()
         self.p = p
 
         # --- use the biggest model
-        self.hidden_dim = hdim = 128
-        self.context_dim = cdim = 128
-        
+        self.hidden_dim  = 128
+        self.context_dim = 128
+        self.num_heads   = 8
+
         # --- features extraction
-        self.cnet = featureExtractor.BasicEncoder(output_dim=hdim + cdim, norm_fn='batch', dropout=self.p.DROPOUT)
+        self.cnet = featureExtractor.BasicEncoder(output_dim=self.hidden_dim + self.context_dim, norm_fn='batch', dropout=self.p.DROPOUT)
         
         # --- update block
-        self.update_block = updateNet.BasicUpdateBlock(self.p, hidden_dim=hdim)
+        self.update_block = GMAUpdateBlock(p, self.hidden_dim, self.num_heads)
+
+        # --- attention module
+        self.att = Attention(dim=self.context_dim, heads=self.num_heads, max_pos_size=160, dim_head=self.context_dim)
 
     # ------------------------------------------------------------------------------------------------------------------
     def initialize_flow(self, img):
@@ -58,7 +64,7 @@ class RAFT_NetFlow(nn.Module):
 
     # ------------------------------------------------------------------------------------------------------------------
     def forward(self, I1, fmap1, fmap2, M1, iters=12, flow_init=None, upsample=True, test_mode=False):
-        """ Estimate optical flow between pairs of images. """
+        """ Estimate optical flow between pair of images. """
 
         I1 = I1.contiguous()
 
@@ -74,12 +80,12 @@ class RAFT_NetFlow(nn.Module):
             corr_fn = correlation.CorrBlock(fmap1, fmap2, radius=self.p.CORRELATION_RADIUS)
 
         # --- context network
-        cnet, _ = self.cnet(I1)
-        net, inp = torch.split(cnet, [hdim, cdim], dim=1)
-        net = torch.tanh(net)
-        inp = torch.relu(inp)
-
-        coords0, coords1 = self.initialize_flow(I1)
+        cnet, _             = self.cnet(I1)
+        net, inp            = torch.split(cnet, [hdim, cdim], dim=1)
+        net                 = torch.tanh(net)
+        inp                 = torch.relu(inp)
+        attention           = self.att(inp)
+        coords0, coords1    = self.initialize_flow(I1)
 
         if flow_init is not None:
             coords1 = coords1 + flow_init
@@ -90,10 +96,11 @@ class RAFT_NetFlow(nn.Module):
             coords1 = coords1.detach()
             corr = corr_fn(coords1)         # index correlation volume (on enregistre la correlation interpolee à tous les niveaux de la pyramide)
             
-            # --- compute residual flow
-            flow = coords1 - coords0        # on calcul le flow
-            
-            net, up_mask, delta_flow = self.update_block(net, inp, corr, flow)
+            # --- residual flow
+            flow = coords1 - coords0
+           
+            # --- update flow
+            net, up_mask, delta_flow = self.update_block(net, inp, corr, flow, attention)
             coords1 = coords1 + delta_flow
 
             # --- Upsample prediction

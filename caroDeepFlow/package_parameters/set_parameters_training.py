@@ -11,6 +11,7 @@ from shutil import copyfile
 def setParameters():
 
     p = Parameters(
+        MODEL_NAME                  = 'gma',                                                                    # chose gma or raft
         PDATA                       = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/_DATASET_3MM_00',         # PATH TO LOAD DATA
         PRES                        = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/TRAINING_001',            # PATH TO SAVE TRAINING RESULTS
         PSPLIT                      = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/SPLIT_DATA',
@@ -32,7 +33,7 @@ def setParameters():
         ADVENTICIA_DIM              = 1,                                                                        # part of adventitia in mm
         USER                        = 'LAINE',
         EXPNAME                     = 'TEST_00',
-        DEVICE                      = 'cpu',                                                                   # cuda/cpu
+        DEVICE                      = 'cuda',                                                                   # cuda/cpu
         RESTORE_CHECKPOINT          = True,
         FEATURES                    = 'split',                                                                 # shared or split
         # --- If feature is split, then chose parameters for Unet

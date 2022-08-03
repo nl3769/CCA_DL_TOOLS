@@ -5,6 +5,7 @@ class Parameters:
 
     def __init__(
         self,
+        MODEL_NAME,
         PDATA,
         PRES,
         PSPLIT,
@@ -35,7 +36,8 @@ class Parameters:
         NGF,
         NB_LAYERS
 ):
-
+        
+        self.MODEL_NAME                         = MODEL_NAME
         self.PDATA                              = PDATA
         self.PRES                               = PRES
         self.PSPLIT                             = PSPLIT

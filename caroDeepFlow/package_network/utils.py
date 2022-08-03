@@ -2,7 +2,8 @@ import os
 import torch
 
 from torch                                          import nn
-from package_network.network_RAFTFlow               import NetFlow
+from package_network.network_RAFTFlow               import RAFT_NetFlow
+from package_network.network_GMAFlow                import GMA_NetFlow
 from package_network.network_encoder                import NetEncoder
 from package_network.network_segDecoder             import NetSegDecoder
 from package_network.network_dilatedUnet            import dilatedUnet
@@ -55,7 +56,6 @@ def load_model(param):
 
 
     netEncoder  = NetEncoder(param)
-    netFlow     = NetFlow(param)
     netSeg      = dilatedUnet(
         input_nc        = 2,
         output_nc       = 2,
@@ -65,6 +65,11 @@ def load_model(param):
         padding         = param.PADDING,
         use_bias        = param.USE_BIAS
         )
+    
+    if param.MODEL_NAME == 'raft': 
+        netFlow = RAFT_NetFlow(param)
+    elif param.MODEL_NAME == 'gma':
+        netFlow = GMA_NetFlow(param)
 
     # -----------------------
     # ---- ADAPT WEIGHTS ----
