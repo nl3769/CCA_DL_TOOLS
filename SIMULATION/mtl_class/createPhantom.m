@@ -275,59 +275,89 @@ classdef createPhantom < handle
                
             % --- load segmentation
             format_spec = '%f';
-
-            fileID=fopen(path_LI, 'r');
-            LI = fscanf(fileID, format_spec); 
-            LI = LI(2:2:end);
-
-            fileID=fopen(path_MA, 'r');
-            MA = fscanf(fileID, format_spec); 
-            MA = MA(2:2:end);
             
-            % --- adapt according to offset (image cropping)
-            LI = LI(obj.data_img.x_start:end-obj.data_img.x_end) - (obj.data_img.z_start - 1) + 1;
-            MA = MA(obj.data_img.x_start:end-obj.data_img.x_end) - (obj.data_img.z_start - 1) + 1;
+            if isfile(path_LI) && isfile(path_MA)
+                fileID=fopen(path_LI, 'r');
+                LI = fscanf(fileID, format_spec); 
+                LI = LI(2:2:end);
+
+                fileID=fopen(path_MA, 'r');
+                MA = fscanf(fileID, format_spec); 
+                MA = MA(2:2:end);
+                
+                % --- adapt according to offset (image cropping)
+                LI = LI(obj.data_img.x_start:end-obj.data_img.x_end) - (obj.data_img.z_start - 1) + 1;
+                MA = MA(obj.data_img.x_start:end-obj.data_img.x_end) - (obj.data_img.z_start - 1) + 1;
+                
+                % --- center aound 0
+                LI_x = (0:1:length(LI)-1) * obj.data_img.CF;
+                LI_max = max(LI_x);
+                LI_x = LI_x - LI_max/2;
+    
+                MA_x = (0:1:length(MA)-1) * obj.data_img.CF;
+                MA_max = max(MA_x);
+                MA_x = MA_x - MA_max/2;
             
-            % --- center aound 0
-            LI_x = (0:1:length(LI)-1) * obj.data_img.CF;
-            LI_max = max(LI_x);
-            LI_x = LI_x - LI_max/2;
-
-            MA_x = (0:1:length(MA)-1) * obj.data_img.CF;
-            MA_max = max(MA_x);
-            MA_x = MA_x - MA_max/2;
-        
-            % --- get corresponding non-zeros scatterers
-            LI_x_pos = find(LI>1);
-            MA_x_pos = find(MA>1);
-            
-            % --- save values
-            obj.seg_LI.x_scatt = LI_x(LI_x_pos)';
-            obj.seg_MA.x_scatt = MA_x(MA_x_pos)';
-
-            obj.seg_LI.z_scatt = (LI(LI_x_pos) - 1) * obj.data_img.CF;
-            obj.seg_MA.z_scatt = (MA(MA_x_pos) - 1) * obj.data_img.CF;
-
-            obj.seg_LI.y_scatt = zeros(size(obj.seg_LI.z_scatt, 1), 1);
-            obj.seg_MA.y_scatt = zeros(size(obj.seg_MA.z_scatt, 1), 1);
-
-            obj.seg_LI.x_min = min(obj.seg_LI.x_scatt);
-            obj.seg_LI.x_max = max(obj.seg_LI.x_scatt);
-            obj.seg_MA.x_min = min(obj.seg_MA.x_scatt);
-            obj.seg_MA.x_max = max(obj.seg_MA.x_scatt);
-            
-            obj.seg_LI.z_min = min(obj.seg_LI.z_scatt);
-            obj.seg_LI.z_max = max(obj.seg_LI.z_scatt);
-            obj.seg_MA.z_min = min(obj.seg_MA.z_scatt);
-            obj.seg_MA.z_max = max(obj.seg_MA.z_scatt);
-
-            obj.seg_LI.y_max = 0;
-            obj.seg_LI.y_min = 0;
-            obj.seg_MA.y_max = 0;
-            obj.seg_MA.y_min = 0;
-
-            obj.seg_LI_ref = obj.seg_LI;
-            obj.seg_MA_ref = obj.seg_MA;
+                % --- get corresponding non-zeros scatterers
+                LI_x_pos = find(LI>1);
+                MA_x_pos = find(MA>1);
+                
+                % --- save values
+                obj.seg_LI.x_scatt = LI_x(LI_x_pos)';
+                obj.seg_MA.x_scatt = MA_x(MA_x_pos)';
+    
+                obj.seg_LI.z_scatt = (LI(LI_x_pos) - 1) * obj.data_img.CF;
+                obj.seg_MA.z_scatt = (MA(MA_x_pos) - 1) * obj.data_img.CF;
+    
+                obj.seg_LI.y_scatt = zeros(size(obj.seg_LI.z_scatt, 1), 1);
+                obj.seg_MA.y_scatt = zeros(size(obj.seg_MA.z_scatt, 1), 1);
+    
+                obj.seg_LI.x_min = min(obj.seg_LI.x_scatt);
+                obj.seg_LI.x_max = max(obj.seg_LI.x_scatt);
+                obj.seg_MA.x_min = min(obj.seg_MA.x_scatt);
+                obj.seg_MA.x_max = max(obj.seg_MA.x_scatt);
+                
+                obj.seg_LI.z_min = min(obj.seg_LI.z_scatt);
+                obj.seg_LI.z_max = max(obj.seg_LI.z_scatt);
+                obj.seg_MA.z_min = min(obj.seg_MA.z_scatt);
+                obj.seg_MA.z_max = max(obj.seg_MA.z_scatt);
+    
+                obj.seg_LI.y_max = 0;
+                obj.seg_LI.y_min = 0;
+                obj.seg_MA.y_max = 0;
+                obj.seg_MA.y_min = 0;
+    
+                obj.seg_LI_ref = obj.seg_LI;
+                obj.seg_MA_ref = obj.seg_MA;
+                
+            else
+                                % --- save values
+                obj.seg_LI.x_scatt = [0,1,2,3]';
+                obj.seg_MA.x_scatt = [0,1,2,3]';
+    
+                obj.seg_LI.z_scatt = [0,0,0,0]';
+                obj.seg_MA.z_scatt = [0,0,0,0]';
+    
+                obj.seg_LI.y_scatt = zeros(size(obj.seg_LI.z_scatt, 1), 1);
+                obj.seg_MA.y_scatt = zeros(size(obj.seg_MA.z_scatt, 1), 1);
+    
+                obj.seg_LI.x_min = min(obj.seg_LI.x_scatt);
+                obj.seg_LI.x_max = max(obj.seg_LI.x_scatt);
+                obj.seg_MA.x_min = min(obj.seg_MA.x_scatt);
+                obj.seg_MA.x_max = max(obj.seg_MA.x_scatt);
+                
+                obj.seg_LI.z_min = min(obj.seg_LI.z_scatt);
+                obj.seg_LI.z_max = max(obj.seg_LI.z_scatt);
+                obj.seg_MA.z_min = min(obj.seg_MA.z_scatt);
+                obj.seg_MA.z_max = max(obj.seg_MA.z_scatt);
+                obj.seg_LI.y_max = 0;
+                obj.seg_LI.y_min = 0;
+                obj.seg_MA.y_max = 0;
+                obj.seg_MA.y_min = 0;
+    
+                obj.seg_LI_ref = obj.seg_LI;
+                obj.seg_MA_ref = obj.seg_MA;
+            end
         end
   
         % ----------------------------------------------------------------------------------------------------------------------
