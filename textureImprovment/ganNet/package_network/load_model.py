@@ -2,7 +2,6 @@ from package_network.network_discriminator                  import Discriminator
 from package_network.network_SRGan                          import SRGan
 from package_network.network_unet                           import Unet
 from package_network.network_dilatedUnet                    import dilatedUnet
-import torch.nn as nn
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 def load_model(p):
