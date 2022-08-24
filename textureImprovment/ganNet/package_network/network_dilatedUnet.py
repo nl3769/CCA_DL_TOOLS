@@ -198,13 +198,15 @@ class dilatedUnet(nn.Module):
             kernel_size     = (3, 3),
             use_bias        = use_bias
             )
-    
+
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     def forward(self, x):
 
         x, skip = self.enc(x)
         x       = self.bottleneck(x)
         x       = self.dec(x, skip)
-        x = self.output_activation(x)
-        
+
+        if self.output_activation is not None:
+            x = self.output_activation(x)
+
         return x
