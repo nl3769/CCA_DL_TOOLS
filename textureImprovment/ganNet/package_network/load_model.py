@@ -17,8 +17,9 @@ def load_model(p):
             kernel_size         = p.KERNEL_SIZE,
             padding             = p.PADDING,
             use_bias            = p.USE_BIAS,
-            output_activation   = p.OUTPUT_ACTIVATION
-            )
+            output_activation   = p.OUTPUT_ACTIVATION,
+            upconv              = p.UPCONV
+)
 
         return discriminator, generator
 

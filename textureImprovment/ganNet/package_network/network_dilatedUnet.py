@@ -68,17 +68,24 @@ class decoder(nn.Module):
         kernel_size,
         padding,
         use_bias,
+        upconv,
         dropout=None
         ):
 
         super(decoder, self).__init__()
         self.dec = nn.ModuleDict({})
-        self.upscale = nn.Upsample(scale_factor=2)
+        self.upscale = nn.ModuleDict({})
         self.nb_skip = n_layers - 1
         for i in range(n_layers, 0, -1):
 
             ch_out_ = ngf * 2 ** (i-1)
             ch_in_  = ngf * 2 ** (i) + ngf * 2 ** (i-1)
+
+            if upconv == True:
+                self.upscale["layers_" + str(i - 1)] = nn.ConvTranspose2d(ngf * 2 ** i, ngf * 2 ** i, kernel_size=4,
+                                                                          stride=2, padding=1)
+            else:
+                self.upscale["layers_" + str(i - 1)] = nn.Upsample(scale_factor=2)
 
             if i == 1:
                 self.dec["layers_" + str(i + 1)] = nn.Sequential(
@@ -168,6 +175,7 @@ class dilatedUnet(nn.Module):
         padding,
         use_bias,
         output_activation,
+        upconv,
         dropout=None
         ):
 
@@ -188,7 +196,8 @@ class dilatedUnet(nn.Module):
             ngf         = ngf,
             kernel_size = kernel_size,
             padding     = padding,
-            use_bias    = use_bias
+            use_bias    = use_bias,
+            upconv      = upconv
             )
 
         self.bottleneck = bottleneck(

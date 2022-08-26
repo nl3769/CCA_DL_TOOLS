@@ -51,7 +51,7 @@ def main():
     save_print(generator, p.PATH_PRINT_MODEL)
 
     # --- create trn_loader/val_loader
-    trn_loader, len_dataset_trn = fetch_dataloader(p, set = 'training',   shuffle = True,  data_aug = True)
+    trn_loader, len_dataset_trn = fetch_dataloader(p, set = 'training',   shuffle = True,  data_aug = p.DATA_AUG)
     val_loader, len_dataset_val = fetch_dataloader(p, set = 'validation', shuffle = True, data_aug = False)
 
     # --- Optimizers
@@ -138,9 +138,10 @@ def fetch_optimizer(p, generator, discriminator, n_step):
 
     beta1, beta2 = 0.9, 0.999
 
-    optimizer_generator = torch.optim.Adam(generator.parameters(), lr=p.LEARNING_RATE, betas=(beta1, beta2))
+    #optimizer_generator     = torch.optim.Adam(generator.parameters(), lr=p.LEARNING_RATE, betas=(beta1, beta2))
     optimizer_discriminator = torch.optim.Adam(discriminator.parameters(), lr=p.LEARNING_RATE, betas=(beta1, beta2))
-
+    optimizer_generator     = torch.optim.SGD(generator.parameters(), lr=p.LEARNING_RATE, momentum=0.99)
+    
     # --- schedular
     param = \
         {'max_lr'           : p.LEARNING_RATE,
@@ -150,8 +151,10 @@ def fetch_optimizer(p, generator, discriminator, n_step):
          'cycle_momentum'   : False,
          'anneal_strategy'  : 'linear'}
 
-    scheduler_gen = torch.optim.lr_scheduler.StepLR(optimizer_generator, step_size=p.LEARNING_RATE, gamma=0.5)
-    scheduler_disc = torch.optim.lr_scheduler.StepLR(optimizer_discriminator, step_size=p.LEARNING_RATE, gamma=0.5)
+    scheduler_gen = torch.optim.lr_scheduler.StepLR(optimizer_generator, step_size=1, gamma=0.99)
+    #scheduler_gen = torch.optim.lr_scheduler.StepLR(optimizer_generator, step_size=p.LEARNING_RATE, gamma=0.5)
+    scheduler_disc = torch.optim.lr_scheduler.StepLR(optimizer_discriminator, step_size=1, gamma=0.99)
+    #scheduler_disc = torch.optim.lr_scheduler.StepLR(optimizer_discriminator, step_size=p.LEARNING_RATE, gamma=0.5)
 
     return optimizer_generator, optimizer_discriminator, scheduler_gen, scheduler_disc
 
