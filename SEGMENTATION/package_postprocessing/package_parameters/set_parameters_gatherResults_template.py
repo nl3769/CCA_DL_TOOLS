@@ -3,7 +3,7 @@
 @Contact :   <nolann.laine@outlook.fr>
 '''
 
-from package_parameters.parameters_postProcessInSilico  import Parameters
+from package_parameters.parameters_gatherResults        import Parameters
 from shutil                                             import copyfile
 import package_utils.fold_handler                       as fh
 import os
@@ -11,16 +11,12 @@ import os
 def setParameters():
 
     p = Parameters(
-        PDATA           = "/home/laine/Documents/PROJECTS_IO/SIMULATION/cluster_res/tech_002",
-        PRES            = "/home/laine/Documents/PROJECTS_IO/SEGMENTATION/POST_PROCESSING",
-        PMODEL          = "/home/laine/tux/JEAN_ZAY/RESULTS/GAN/GAN/GAN:.1_pxl:1_lss:L2_ker_7_7-hist:0-20/model/model_validation.pth",
-        DIM_IMG_GAN     = (256, 256),
-        INTERVAL        = (0, 20),
-        NB_LAYERS       = 5,
-        NGF             = 32,
-        KERNEL_SIZE     = (7, 7),
-        PADDING         = (3, 3),
-        USE_BIAS        = True
+        PRES              = "/home/laine/Documents/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/COMPRESSION/gather_results",
+        PDATA             = {
+            "seg_caroSegDeep-GAN-without_fine_tuning"       : "/home/laine/Documents/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/COMPRESSION/seg_caroSegDeep-GAN-without_fine_tuning",
+            "seg_caroSegDeep-SIMULATED-without_fine_tuning" : "/home/laine/Documents/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/COMPRESSION/seg_caroSegDeep-SIMULATED-without_fine_tuning",
+            "seg_gt"                                        : "/home/laine/Documents/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/COMPRESSION/seg_gt"
+            }
         )
 
     pparam = os.path.join(p.PRES, 'backup_parameters')

@@ -2,6 +2,8 @@ from PIL            import Image
 from icecream       import ic
 import numpy        as np
 import nibabel      as nib
+import pickle       as pkl
+
 # ----------------------------------------------------------------------------------------------------------------------
 def write_image(I, pres):
 
@@ -22,3 +24,8 @@ def mk_nifty(seq, pres, CF):
     ni_seq = nib.Nifti1Image(seq_array, affine)
     print(ni_seq.header)
     nib.save(ni_seq, pres)
+
+# ----------------------------------------------------------------------------------------------------------------------
+def save_np_to_pickle(arr, path):
+    with open(path, 'wb') as f:
+        pkl.dump(arr, f)

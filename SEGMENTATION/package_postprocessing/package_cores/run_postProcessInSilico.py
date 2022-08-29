@@ -80,6 +80,9 @@ def main():
     # --- save the sequence (nii format)
     puw.mk_nifty(I_org, os.path.join(p.PSEQ, 'seq_org.nii'), CF)
     puw.mk_nifty(I_gan, os.path.join(p.PSEQ, 'seq_gan.nii'), CF)
+    # --- save CF
+    with open(os.path.join(p.PSEQ, 'CF.txt'), 'w') as f:
+        f.write(str(CF))
 
     # --- mk gif (without segmentation)
     io.mimsave(os.path.join(p.PGIF, 'GAN.gif'), I_gan, fps = 10)

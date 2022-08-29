@@ -1,6 +1,9 @@
-import imageio  as iio
-import numpy    as np
-from mat4py import loadmat
+import os
+
+import imageio          as iio
+import numpy            as np
+import pickle           as pkl
+from mat4py             import loadmat
 
 # ----------------------------------------------------------------------------------------------------------------------
 def load_mat(fname: str):
@@ -38,3 +41,31 @@ def load_CF(path):
     CF = I['image']['CF']
     
     return CF
+
+# ----------------------------------------------------------------------------------------------------------------------
+def get_seg(pseg, LI):
+    
+    seg_dic = {}
+
+    for key in LI:
+        idx = []
+        pos = []
+        path = os.path.join(pseg, key)
+        with open(path, 'r') as f:
+            seg = f.readlines()
+        
+        for val in seg:
+            idx.append(int(val.split(' ')[0]))
+            pos.append(float(val.split(' ')[-1].split('\n')[0]))
+
+        seg_dic[key] = [idx, pos]
+    
+    return seg_dic
+# ----------------------------------------------------------------------------------------------------------------------------------------------------
+
+def load_pickle(path):
+    
+    with open(path, 'rb') as f:
+        x = pkl.load(f)
+
+    return x
