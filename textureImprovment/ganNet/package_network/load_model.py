@@ -2,7 +2,6 @@ from package_network.network_discriminator                  import Discriminator
 from package_network.network_SRGan                          import SRGan
 from package_network.network_unet                           import Unet
 from package_network.network_dilatedUnet                    import dilatedUnet
-import torch.nn as nn
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 def load_model(p):
@@ -18,8 +17,9 @@ def load_model(p):
             kernel_size         = p.KERNEL_SIZE,
             padding             = p.PADDING,
             use_bias            = p.USE_BIAS,
-            output_activation   = p.OUTPUT_ACTIVATION
-            )
+            output_activation   = p.OUTPUT_ACTIVATION,
+            upconv              = p.UPCONV
+)
 
         return discriminator, generator
 

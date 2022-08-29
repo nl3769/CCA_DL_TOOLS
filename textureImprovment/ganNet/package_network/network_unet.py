@@ -69,18 +69,24 @@ class decoder(nn.Module):
     kernel_size,
     padding,
     use_bias,
+    upconv,
     dropout=None
     ):
 
     super(decoder, self).__init__()
     self.dec      = nn.ModuleDict({})
-    self.upscale    = nn.Upsample(scale_factor=2)
+    self.upscale = nn.ModuleDict({})
     self.nb_skip    = n_layers
 
     for i in range(n_layers-1, 0, -1):
 
         ch_out_ = ngf * 2 ** (i-1)
-        ch_in_  = ngf * 2 ** (i) + ngf * 2 ** (i-1)
+        ch_in_  = ngf * 2 ** i + ngf * 2 ** (i-1)
+        
+        if upconv == True:
+            self.upscale["layers_" + str(i - 1)] = nn.ConvTranspose2d(ngf * 2 ** i, ngf * 2 ** i, kernel_size=4, stride=2, padding=1)
+        else:
+            self.upscale["layers_" + str(i - 1)] = nn.Upsample(scale_factor=2)
 
         if i == 1:
             self.dec["layers_" + str(i - 1)] = nn.Sequential(
@@ -106,7 +112,7 @@ class decoder(nn.Module):
   def forward(self, x, skip):
 
     for id, key in enumerate(self.dec.keys()):
-        x = self.upscale(x)
+        x = self.upscale[key](x)
         x = torch.cat((x, skip[self.nb_skip - id - 2]), 1)
         x = self.dec[key](x)
 
@@ -125,6 +131,7 @@ class Unet(nn.Module):
         padding,
         use_bias,
         output_activation,
+        upconv,
         dropout             = None
         ):
 
@@ -148,6 +155,7 @@ class Unet(nn.Module):
           kernel_size       = kernel_size,
           padding           = padding,
           use_bias          = use_bias,
+          upconv            = upconv
           )
           
         # ---------------------------------------------------------------------------------------------------------------------
@@ -157,6 +165,7 @@ class Unet(nn.Module):
         # --- Unet forward pass
         x, skip = self.enc(I)
         x       = self.dec(x, skip)
-        x = self.output_activation(x)
+        if self.output_activation is not None:
+            x = self.output_activation(x)
 
         return x

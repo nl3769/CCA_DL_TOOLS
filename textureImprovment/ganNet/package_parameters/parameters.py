@@ -19,9 +19,11 @@ class Parameters:
         BATCH_SIZE,
         NB_EPOCH,
         IMAGE_NORMALIZATION,
+        DATA_AUG,
         KERNEL_SIZE,
         PADDING,
         USE_BIAS,
+        UPCONV,
         NGF,
         NB_LAYERS,
         IMG_SIZE,
@@ -29,7 +31,8 @@ class Parameters:
         WORKERS,
         EARLY_STOP,
         OUTPUT_ACTIVATION,
-        PATH_RES):
+        PATH_RES
+        ):
 
         self.MODEL_NAME             = MODEL_NAME
         self.PDATA                  = PDATA
@@ -42,9 +45,11 @@ class Parameters:
         self.BATCH_SIZE             = BATCH_SIZE
         self.NB_EPOCH               = NB_EPOCH
         self.IMAGE_NORMALIZATION    = IMAGE_NORMALIZATION
+        self.DATA_AUG               = DATA_AUG
         self.KERNEL_SIZE            = KERNEL_SIZE
         self.PADDING                = PADDING
         self.USE_BIAS               = USE_BIAS
+        self.UPCONV                 = UPCONV
         self.NGF                    = NGF
         self.NB_LAYERS              = NB_LAYERS
         self.IMG_SIZE               = IMG_SIZE
