@@ -72,14 +72,21 @@ class preProcessing():
 
         org, sim = self.reshape(org, sim, self.im_size)
         org = self.histogram_extension(org, self.interval)
-        org, sim = self.adapt_dim(org, sim)
-        #org = torch.pow(org, 2)
         sim = self.histogram_extension(sim, self.interval)
+        org, sim = self.adapt_dim(org, sim)
+
+
         if self.data_aug:
             org, sim = self.augmentation(org, sim)
-        org = torch.tensor(org)
-        sim = torch.tensor(sim)
-        
-        return org.clone().detach(), sim.clone().detach()
+
+        if not torch.is_tensor(org):
+            org = torch.from_numpy(org).float()
+        if not torch.is_tensor(sim):
+            sim = torch.from_numpy(sim).float()
+
+        # org.requires_grad_()
+        # sim.requires_grad_()
+
+        return org, sim
 
     # ------------------------------------------------------------------------------------------------------------------

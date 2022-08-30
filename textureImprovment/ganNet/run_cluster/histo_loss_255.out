@@ -1,0 +1,335 @@
+MODEL_NAME: unet
+PDATA: /home/laine/PROJECTS_IO/DATA/GAN
+DATABASE: {'training': '/home/laine/PROJECTS_IO/DATA/GAN/split_00/training.txt', 'validation': '/home/laine/PROJECTS_IO/DATA/GAN/split_00/validation.txt', 'testing': '/home/laine/PROJECTS_IO/DATA/GAN/split_00/testing.txt'}
+VALIDATION: True
+LOSS: histo_loss
+lambda_GAN: 0.001
+lambda_pixel: 1
+LEARNING_RATE: 0.0001
+BATCH_SIZE: 2
+NB_EPOCH: 500
+IMAGE_NORMALIZATION: (0, 255)
+DATA_AUG: False
+KERNEL_SIZE: (5, 5)
+PADDING: (2, 2)
+USE_BIAS: True
+UPCONV: True
+NGF: 64
+NB_LAYERS: 4
+IMG_SIZE: (256, 512)
+DROPOUT: 0
+WORKERS: 4
+OUTPUT_ACTIVATION: ReLU()
+EARLY_STOP: 100
+PATH_RES: /home/laine/PROJECTS_IO/GAN/Unet_L2_upconv_histo_loss_255
+PATH_RANDOM_PRED_TRN: /home/laine/PROJECTS_IO/GAN/Unet_L2_upconv_histo_loss_255/training_pred
+PATH_PRINT_MODEL: /home/laine/PROJECTS_IO/GAN/Unet_L2_upconv_histo_loss_255/print_model
+PATH_SAVE_MODEL: /home/laine/PROJECTS_IO/GAN/Unet_L2_upconv_histo_loss_255/model
+PATH_MODEL_HISTORY: /home/laine/PROJECTS_IO/GAN/Unet_L2_upconv_histo_loss_255/training_history
+PATH_SAVE_FIGURE: /home/laine/PROJECTS_IO/GAN/Unet_L2_upconv_histo_loss_255/training_figure
+PATH_PRED_EVALUATION: /home/laine/PROJECTS_IO/GAN/Unet_L2_upconv_histo_loss_255/evaluation_pred
+PATH_SAVE_CVS: /home/laine/PROJECTS_IO/GAN/Unet_L2_upconv_histo_loss_255/evaluation_CVS
+----------------------------------------------------------------
+device:  cuda
+training with 611 images 
+validation with 73 images 
+EPOCH 0 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 0 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 1
+EPOCH 1 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 1 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 2
+EPOCH 2 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 2 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 3
+EPOCH 3 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 3 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 4
+EPOCH 4 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 4 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 5
+EPOCH 5 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 5 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 6
+EPOCH 6 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 6 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 7
+EPOCH 7 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 7 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 8
+EPOCH 8 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 8 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 9
+EPOCH 9 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 9 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 10
+EPOCH 10 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 10 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 11
+EPOCH 11 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 11 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 12
+EPOCH 12 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 12 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 13
+EPOCH 13 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 13 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 14
+EPOCH 14 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 14 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 15
+EPOCH 15 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 15 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 16
+EPOCH 16 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 16 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 17
+EPOCH 17 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 17 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 18
+EPOCH 18 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 18 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 19
+EPOCH 19 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 19 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 20
+EPOCH 20 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 20 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 21
+EPOCH 21 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 21 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 22
+EPOCH 22 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 22 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 23
+EPOCH 23 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 23 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 24
+EPOCH 24 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 24 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 25
+EPOCH 25 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 25 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 26
+EPOCH 26 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 26 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 27
+EPOCH 27 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 27 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 28
+EPOCH 28 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 28 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 29
+EPOCH 29 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 29 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 30
+EPOCH 30 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 30 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 31
+EPOCH 31 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 31 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 32
+EPOCH 32 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 32 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 33
+EPOCH 33 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 33 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 34
+EPOCH 34 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 34 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 35
+EPOCH 35 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 35 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 36
+EPOCH 36 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 36 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 37
+EPOCH 37 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 37 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 38
+EPOCH 38 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 38 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 39
+EPOCH 39 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 39 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 40
+EPOCH 40 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 40 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 41
+EPOCH 41 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 41 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 42
+EPOCH 42 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 42 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 43
+EPOCH 43 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 43 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 44
+EPOCH 44 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 44 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 45
+EPOCH 45 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 45 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 46
+EPOCH 46 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 46 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 47
+EPOCH 47 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 47 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 48
+EPOCH 48 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 48 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 49
+EPOCH 49 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 49 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 50
+EPOCH 50 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 50 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 51
+EPOCH 51 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 51 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 52
+EPOCH 52 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 52 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 53
+EPOCH 53 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 53 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 54
+EPOCH 54 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 54 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 55
+EPOCH 55 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 55 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 56
+EPOCH 56 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 56 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 57
+EPOCH 57 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 57 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 58
+EPOCH 58 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 58 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 59
+EPOCH 59 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 59 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 60
+EPOCH 60 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 60 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 61
+EPOCH 61 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 61 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 62
+EPOCH 62 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 62 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 63
+EPOCH 63 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 63 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 64
+EPOCH 64 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 64 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 65
+EPOCH 65 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 65 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 66
+EPOCH 66 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 66 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 67
+EPOCH 67 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 67 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 68
+EPOCH 68 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 68 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 69
+EPOCH 69 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 69 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 70
+EPOCH 70 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 70 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 71
+EPOCH 71 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 71 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 72
+EPOCH 72 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 72 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 73
+EPOCH 73 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 73 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 74
+EPOCH 74 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 74 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 75
+EPOCH 75 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 75 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 76
+EPOCH 76 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 76 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 77
+EPOCH 77 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 77 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 78
+EPOCH 78 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 78 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 79
+EPOCH 79 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 79 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 80
+EPOCH 80 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 80 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 81
+EPOCH 81 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 81 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 82
+EPOCH 82 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 82 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 83
+EPOCH 83 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 83 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 84
+EPOCH 84 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 84 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 85
+EPOCH 85 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 85 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 86
+EPOCH 86 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 86 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 87
+EPOCH 87 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 87 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 88
+EPOCH 88 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 88 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 89
+EPOCH 89 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 89 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 90
+EPOCH 90 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 90 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 91
+EPOCH 91 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 91 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 92
+EPOCH 92 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 92 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 93
+EPOCH 93 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 93 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 94
+EPOCH 94 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 94 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 95
+EPOCH 95 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 95 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 96
+EPOCH 96 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 96 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 97
+EPOCH 97 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 97 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 98
+EPOCH 98 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 98 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 99
+EPOCH 99 --- training loss: nan  / loss_GAN: nan / loss_pixel: nan
+EPOCH 99 --- validation loss: nan  / loss_GAN: nan / loss_pixel: nan
+self.early_stop_criterium = 100

@@ -138,9 +138,9 @@ def fetch_optimizer(p, generator, discriminator, n_step):
 
     beta1, beta2 = 0.9, 0.999
 
-    #optimizer_generator     = torch.optim.Adam(generator.parameters(), lr=p.LEARNING_RATE, betas=(beta1, beta2))
+    optimizer_generator     = torch.optim.Adam(generator.parameters(), lr=p.LEARNING_RATE, betas=(beta1, beta2))
     optimizer_discriminator = torch.optim.Adam(discriminator.parameters(), lr=p.LEARNING_RATE, betas=(beta1, beta2))
-    optimizer_generator     = torch.optim.SGD(generator.parameters(), lr=p.LEARNING_RATE, momentum=0.99)
+    #optimizer_generator     = torch.optim.SGD(generator.parameters(), lr=p.LEARNING_RATE, momentum=0.99)
     
     # --- schedular
     param = \
