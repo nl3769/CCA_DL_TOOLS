@@ -23,8 +23,8 @@ class DataHandler(GANDataSet):
             sim = sorted(glob(os.path.join(fname, '*simulated.png')))[0]
             self.sim_list += [[sim]]
 
-        # self.sim_list = self.sim_list[:20]
-        # self.org_list = self.org_list[:20]
+        # self.sim_list = self.sim_list[:5]
+        # self.org_list = self.org_list[:5]
 
     # ------------------------------------------------------------------------------------------------------------------
 

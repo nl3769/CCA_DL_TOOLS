@@ -11,10 +11,10 @@ import os
 def setParameters():
 
     p = Parameters(
-        PSEG        = "/home/laine/cluster/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/tech_002/TECH_002/seg_caroSegDeep-SIMULATED-without_fine_tuning",
-        PRES        = "/home/laine/cluster/PROJECTS_IO/SEGMENTATION/POST_PROCESSING//tech_002/COMPRESSION",
+        PSEG        = "/home/laine/cluster/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/tech_002/TECH_002/seg_caroSegDeep-SIMULATED-with_fine_tuning",
+        PRES        = "/home/laine/cluster/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/tech_002/COMPRESSION",
         PCF         = "/home/laine/cluster/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/tech_002/TECH_002/seq/CF.txt",
-        EXPERIMENT  = 'seg_caroSegDeep-SIMULATED-without_fine_tuning',
+        EXPERIMENT  = 'seg_caroSegDeep-SIMULATED-with_fine_tuning',
         ROI         = (110, 150)
         )
 

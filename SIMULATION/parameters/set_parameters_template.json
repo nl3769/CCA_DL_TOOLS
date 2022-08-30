@@ -1,7 +1,7 @@
 {
   "c": 1540,
   "fc": 7.5e6,
-  "scat_density": 6,
+  "scat_density": 10,
   "probe_name": "L12-3v",
   "range_DB": 0,
   "fnumber": 1.5,
@@ -20,7 +20,7 @@
   "preprocessing": false,
   "mode": [0, 1],
   "slice_spacing": 0.00005,
-  "nb_slices": 5,
+  "nb_slices": 8,
   "compensation_time": -1,
   "remove_top_region": 0.001,
   "random_mode": "QUASI_RANDOM",

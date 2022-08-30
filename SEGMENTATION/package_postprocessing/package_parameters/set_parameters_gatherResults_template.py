@@ -11,11 +11,13 @@ import os
 def setParameters():
 
     p = Parameters(
-        PRES              = "/home/laine/Documents/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/COMPRESSION/gather_results",
+        PRES              = "/home/laine/cluster/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/tech_002/COMPRESSION/gather_results",
         PDATA             = {
-            "seg_caroSegDeep-GAN-without_fine_tuning"       : "/home/laine/Documents/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/COMPRESSION/seg_caroSegDeep-GAN-without_fine_tuning",
-            "seg_caroSegDeep-SIMULATED-without_fine_tuning" : "/home/laine/Documents/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/COMPRESSION/seg_caroSegDeep-SIMULATED-without_fine_tuning",
-            "seg_gt"                                        : "/home/laine/Documents/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/COMPRESSION/seg_gt"
+            "seg_caroSegDeep-GAN-without_fine_tuning"       :   "/home/laine/cluster/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/tech_002/COMPRESSION/seg_caroSegDeep-GAN-without_fine_tuning",
+            "seg_caroSegDeep-GAN-with_fine_tuning"       :      "/home/laine/cluster/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/tech_002/COMPRESSION/seg_caroSegDeep-GAN-with_fine_tuning",
+            "seg_caroSegDeep-SIMULATED-without_fine_tuning" :   "/home/laine/cluster/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/tech_002/COMPRESSION/seg_caroSegDeep-SIMULATED-without_fine_tuning",
+            "seg_caroSegDeep-SIMULATED-with_fine_tuning" :      "/home/laine/cluster/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/tech_002/COMPRESSION/seg_caroSegDeep-SIMULATED-with_fine_tuning",
+            "seg_gt"                                        :   "/home/laine/cluster/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/tech_002/COMPRESSION/seg_gt"
             }
         )
 

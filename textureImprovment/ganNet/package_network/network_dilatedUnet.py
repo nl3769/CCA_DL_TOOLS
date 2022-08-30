@@ -82,10 +82,9 @@ class decoder(nn.Module):
             ch_in_  = ngf * 2 ** (i) + ngf * 2 ** (i-1)
 
             if upconv == True:
-                self.upscale["layers_" + str(i - 1)] = nn.ConvTranspose2d(ngf * 2 ** i, ngf * 2 ** i, kernel_size=4,
-                                                                          stride=2, padding=1)
+                self.upscale["layers_" + str(i + 1)] = nn.ConvTranspose2d(ngf * 2 ** i, ngf * 2 ** i, kernel_size=4, stride=2, padding=1)
             else:
-                self.upscale["layers_" + str(i - 1)] = nn.Upsample(scale_factor=2)
+                self.upscale["layers_" + str(i + 1)] = nn.Upsample(scale_factor=2)
 
             if i == 1:
                 self.dec["layers_" + str(i + 1)] = nn.Sequential(
@@ -95,7 +94,7 @@ class decoder(nn.Module):
                     nn.Conv2d(ch_out_, ch_out_, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias,  padding_mode='replicate'),
                     nn.BatchNorm2d(ch_out_),
                     nn.PReLU(),
-                    nn.Conv2d(ch_out_, output_nc, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias,  padding_mode='replicate'),
+                    nn.Conv2d(ch_out_, output_nc, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias,  padding_mode='replicate')
                     )
             else:
                 self.dec["layers_" + str(i + 1)] = nn.Sequential(
@@ -114,7 +113,7 @@ class decoder(nn.Module):
     def forward(self, x, skip):
 
         for id, key in enumerate(self.dec.keys()):
-            x = self.upscale(x)
+            x = self.upscale[key](x)
             x = torch.cat((x, skip[self.nb_skip-id]), 1)
             x = self.dec[key](x)
 
@@ -176,10 +175,13 @@ class dilatedUnet(nn.Module):
         use_bias,
         output_activation,
         upconv,
+        max=255,
         dropout=None
         ):
 
         super(dilatedUnet, self).__init__()
+        self.max = max
+        self.tresh = nn.Threshold(0, 0)
         self.output_activation = output_activation
         self.enc = encoder(
             input_nc    = input_nc,
@@ -214,6 +216,10 @@ class dilatedUnet(nn.Module):
         x, skip = self.enc(x)
         x       = self.bottleneck(x)
         x       = self.dec(x, skip)
+
+        # x = torch.add(x, -self.max)
+        # x = self.tresh(x)
+        # x = torch.add(x, self.max)
 
         if self.output_activation is not None:
             x = self.output_activation(x)

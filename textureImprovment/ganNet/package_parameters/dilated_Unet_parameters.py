@@ -9,12 +9,12 @@ from package_utils.utils                import check_dir
 def setParameters():
 
   p = Parameters(
-    MODEL_NAME                 = 'SRGan',
+    MODEL_NAME                 = 'dilatedUnet',
     PDATA                      = '/home/laine/Documents/PROJECTS_IO/DATA/GAN',
     DATABASE                   = {
-        'training': '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_v01/training.txt',
-        'validation': '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_v01/validation.txt',
-        'testing': '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_v01/testing.txt'
+        'training':   '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_v02/training.txt',
+        'validation': '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_v02/validation.txt',
+        'testing':    '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_v02/testing.txt'
         },
     VALIDATION                 = True,
     LOSS                       = 'L2',
@@ -23,19 +23,18 @@ def setParameters():
     LEARNING_RATE              = 0.0001,
     BATCH_SIZE                 = 2,
     NB_EPOCH                   = 500,
-    IMAGE_NORMALIZATION        = (0, 1),
+    IMAGE_NORMALIZATION        = (0, 255),
     KERNEL_SIZE                = (5, 5),
     PADDING                    = (2, 2),
     USE_BIAS                   = True,
-    UPCONV                     = True,
-    NGF                        = 32,
-    NB_LAYERS                  = 5,
-    IMG_SIZE                   = (256, 256),
+    NGF                        = 64,
+    NB_LAYERS                  = 3,
+    IMG_SIZE                   = (256, 512),
     DROPOUT                    = 0,
     WORKERS                    = 4,
     EARLY_STOP                 = 100,
-    OUTPUT_ACTIVATION          = nn.ReLU(),
-    PATH_RES                   = '/home/laine/Documents/PROJECTS_IO/GAN/SRGan'
+    OUTPUT_ACTIVATION          = None,
+    PATH_RES                   = '/home/laine/Documents/PROJECTS_IO/GAN/dilatedUnet'
     )
 
   # --- Print all attributes in the console

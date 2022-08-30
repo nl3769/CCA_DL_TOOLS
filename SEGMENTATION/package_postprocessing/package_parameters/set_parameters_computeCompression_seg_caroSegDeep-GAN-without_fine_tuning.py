@@ -11,9 +11,9 @@ import os
 def setParameters():
 
     p = Parameters(
-        PSEG        = "/home/laine/Documents/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/tech_002/seg_caroSegDeep-GAN-without_fine_tuning",
-        PRES        = "/home/laine/Documents/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/COMPRESSION",
-        PCF         = "/home/laine/Documents/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/tech_002/seq/CF.txt",
+        PSEG        = "/home/laine/cluster/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/tech_002/TECH_002/seg_caroSegDeep-GAN-without_fine_tuning",
+        PRES        = "/home/laine/cluster/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/tech_002/COMPRESSION",
+        PCF         = "/home/laine/cluster/PROJECTS_IO/SEGMENTATION/POST_PROCESSING/tech_002/TECH_002/seq/CF.txt",
         EXPERIMENT  = 'seg_caroSegDeep-GAN-without_fine_tuning',
         ROI         = (110, 150)
         )

@@ -112,6 +112,6 @@ def main():
 
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    """ Sorting of the successful simulation. """
+    """ Sort successful simulation. """
 
     main()
