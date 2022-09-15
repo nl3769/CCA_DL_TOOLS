@@ -30,10 +30,6 @@ classdef createPhantom < handle
         stretch_coef;       % (double) maximal stretching
         time_sample_simu;   % (double) total number of time samples for simulation
         fps;
-
-        gaussian_x;         % (double) gaussian parameters -> unused
-        gaussian_y;         % (double) gaussian parameters -> unused
-        gaussian_z;         % (double) gaussian parameters -> unused
         
     end
     
@@ -246,8 +242,10 @@ classdef createPhantom < handle
             MA_val.seg = MA_val.seg - obj.param.remove_top_region/obj.data_img.CF;
 
             if isempty(volume)
+                addpath(fullfile('..', 'mtl_utils'));
                 fct_save_scatterers_2D(obj.data_scatt, obj.param, '');
-                fct_save_scatterers_2D(scatt_data_to_save, obj.param, str_scat_id)
+                fct_save_scatterers_2D(obj.data_scatt, obj.param, str_scat_id)
+%               fct_save_scatterers_2D(scatt_data_to_save, obj.param, str_scat_id)
                 
            
                 LI_path=fullfile(obj.param.path_res, 'phantom', 'LI.mat');
@@ -566,14 +564,10 @@ classdef createPhantom < handle
             param_simu.id_seq = obj.id_seq;
             param_simu.time_sample_simu = obj.time_sample_simu;
 
-            % --- gaussian
-            gaussian.x = obj.gaussian_x;
-            gaussian.y = obj.gaussian_y; 
-            gaussian.z = obj.gaussian_z;
              
-            obj.data_scatt_moved = add_movement(obj.data_scatt_moved,offset, param_simu, gaussian); % scatteres map
-            obj.seg_LI = add_movement(obj.seg_LI_ref, offset, param_simu, gaussian);                % segmentation (LI)
-            obj.seg_MA = add_movement(obj.seg_MA_ref, offset, param_simu, gaussian);                % segmentation (MA)
+            obj.data_scatt_moved = add_movement(obj.data_scatt_moved,offset, param_simu); % scatteres map
+            obj.seg_LI = add_movement(obj.seg_LI_ref, offset, param_simu);                % segmentation (LI)
+            obj.seg_MA = add_movement(obj.seg_MA_ref, offset, param_simu);                % segmentation (MA)
             
         end
         
@@ -693,14 +687,9 @@ classdef createPhantom < handle
             param_simu.f_simu = obj.f_simu;
             param_simu.id_seq = obj.id_seq;
             param_simu.time_sample_simu = obj.time_sample_simu;
-
-            % --- gaussian
-            gaussian.x = obj.gaussian_x;
-            gaussian.y = obj.gaussian_y; 
-            gaussian.z = obj.gaussian_z;
              
             obj.scatt_pos_ref{2} = scatt_ref_moved;
-            scatt_ref_moved = add_movement(scatt_ref_moved, offset, param_simu, gaussian);
+            scatt_ref_moved = add_movement(scatt_ref_moved, offset, param_simu);
             obj.scatt_pos_ref{3} = scatt_ref_moved;
             
             % --- compute flow
@@ -752,85 +741,33 @@ classdef createPhantom < handle
         end
         
         % ----------------------------------------------------------------------------------------------------------------------
-        function get_gaussian_parameters(obj, n)
-            % we combine n gaussians with different parameters
-
-            rng("shuffle")
-            
-            % --- define interval
-            x_min = obj.scatt_pos_ref{1}.x_min;
-            x_max = obj.scatt_pos_ref{1}.x_max;
-            y_max = obj.scatt_pos_ref{1}.y_min;
-            y_min = obj.scatt_pos_ref{1}.y_max;
-            z_max = obj.scatt_pos_ref{1}.z_min;
-            z_min = obj.scatt_pos_ref{1}.z_max;
-            
-            % --- define paremeters
-            sigma_x = [(x_max-x_min)/100 (x_max-x_min)/10];
-            sigma_y = [(y_max-y_min)/100 (y_max-y_min)/10];
-            sigma_z = [(z_max-z_min)/100 (z_max-z_min)/10];
-            
-            % amp = [0 0.005];
-            amp = [0 0];
-            
-            mu_x = [x_min x_max];
-            mu_y = [y_min y_max];
-            mu_z = [z_min z_max];
-                        
-            for id=1:1:n
-                
-                % --- x-axis
-                mu_x_ = mu_x(1) + (mu_x(2) - mu_x(1)) * rand(1, 1);
-                sigma_x_ = sigma_x(1) + (sigma_x(2) - sigma_x(1)) * rand(1, 1);
-                amp_x_ = amp(1) + (amp(2) - amp(1)) * rand(1, 1);
-
-                obj.gaussian_x{id}.mu_x = mu_x_;
-                obj.gaussian_x{id}.sigma_x = sigma_x_;
-                obj.gaussian_x{id}.amp_x = amp_x_;
-                
-
-                % --- y-axis
-                mu_y_ = mu_y(1) + (mu_y(2) - mu_y(1)) * rand(1, 1);
-                sigma_y_ = sigma_y(1) + (sigma_y(2) - sigma_y(1)) * rand(1, 1);
-                amp_y_ = amp(1) + (amp(2) - amp(1)) * rand(1, 1);
-
-                obj.gaussian_y{id}.mu_y = mu_y_;
-                obj.gaussian_y{id}.sigma_y = sigma_y_;
-                obj.gaussian_y{id}.amp_y = amp_y_;
-
-                % --- z-axis
-                mu_z_ = mu_z(1) + (mu_z(2) - mu_z(1)) * rand(1, 1);
-                sigma_z_ = sigma_z(1) + (sigma_z(2) - sigma_z(1)) * rand(1, 1);
-                amp_z_ = amp(1) + (amp(2) - amp(1)) * rand(1, 1);
-
-                obj.gaussian_z{id}.mu_z = mu_z_;
-                obj.gaussian_z{id}.sigma_z = sigma_z_;
-                obj.gaussian_z{id}.amp_z = amp_z_;
-            end
-
-        end
-
-        % ----------------------------------------------------------------------------------------------------------------------
         function phantom_tmp(obj)
             
-            k=5;
+            k=4;
 
-            z_pos=linspace(obj.data_scatt.z_max*0.1, obj.data_scatt.z_max, k);
-            x_pos=linspace(obj.data_scatt.x_min,     obj.data_scatt.x_max, k);
+            z_pos=linspace(obj.data_scatt.z_max*0.1, obj.data_scatt.z_max - obj.data_scatt.z_max * 0.1, k);
+            x_pos=linspace(obj.data_scatt.x_min + obj.data_scatt.x_max*0.1,     obj.data_scatt.x_max - obj.data_scatt.x_max*0.1, k);
+%             obj.data_scatt.x_min = obj.data_scatt.x_min * 0.5;
+%             obj.data_scatt.x_max = obj.data_scatt.x_max * 0.5;
 
             obj.data_scatt.y_scatt=[];
             obj.data_scatt.x_scatt=[];
             obj.data_scatt.z_scatt=[];
             obj.data_scatt.RC_scatt=[];
 
-            for i=1:1:k
-                for j=1:k
+            for i=2:1:k-1
+                for j=2:k
                     obj.data_scatt.y_scatt=[obj.data_scatt.y_scatt; 0];
                     obj.data_scatt.z_scatt=[obj.data_scatt.z_scatt; z_pos(j)];
                     obj.data_scatt.x_scatt=[obj.data_scatt.x_scatt; x_pos(i)];
                     obj.data_scatt.RC_scatt=[obj.data_scatt.RC_scatt; 1];
                 end
             end
+
+%             obj.data_scatt.y_scatt= [0];
+%             obj.data_scatt.z_scatt= [obj.data_scatt.z_max/2];
+%             obj.data_scatt.x_scatt= [0];
+%             obj.data_scatt.RC_scatt=[1];
 
             obj.data_scatt.z_scatt=obj.data_scatt.z_scatt+obj.param.shift;
             obj.data_scatt.depth_of_focus=max(obj.data_scatt.z_scatt);
@@ -946,7 +883,7 @@ end
 % ------------------------------------------------------------------------------------------------------------------------------
 function [phantom_out] = add_rotation(phantom_in, theta_max, id, time, f)
     
-    theta_sup_rot = (theta_max*pi)/180;
+    theta_sup_rot = (theta_max*pi) / 180;
     motion_rot = @(t) theta_sup_rot * sin(2 * pi * f * t);
 
 
@@ -958,14 +895,11 @@ function [phantom_out] = add_rotation(phantom_in, theta_max, id, time, f)
                      0,       0,           0, 1];
 
     % --- INITIALIZATION       
-
     phantom_out = phantom_in;
     rotation = arrayfun( @(x) (affine3d(rot_transf(x))), motion_rot(time));
     projection = rotation(id).transformPointsForward(cat(2, phantom_in.x_scatt,...
                                                             phantom_in.z_scatt,...
                                                             phantom_in.y_scatt));
-  
-%     projection = rotation(id).transformPointsForward([phantom_in.x_scatt,phantom_in.z_scatt,phantom_in.y_scatt]);
     % --- provide new attributes
     phantom_out.x_scatt = projection(:,1);
     phantom_out.z_scatt = projection(:,2);
@@ -1072,8 +1006,8 @@ function [phantom] = move_origin(phantom, x_off, y_off, z_off)
 end
 
 % ------------------------------------------------------------------------------------------------------------------------------
-function [scatt] = add_movement(scatt, offset, param, gaussian)
-    % Add motion: rotation, shearing, scaling, stretching, gaussian noise
+function [scatt] = add_movement(scatt, offset, param)
+    % Add motion: rotation, shearing, scaling, stretching
 
     % --- ROTATION
     scatt = move_origin(scatt, offset.rot(1), offset.rot(2), offset.rot(3));
@@ -1095,20 +1029,4 @@ function [scatt] = add_movement(scatt, offset, param, gaussian)
     scatt = add_stretch(scatt, param.stretch_coef, param.id_seq, param.time_sample_simu, param.f_simu);
     scatt = move_origin(scatt, -offset.stretch(1), -offset.stretch(2), -offset.stretch(3));
     
-%     % --- ADD GAUSSIAN
-%     nb_gaussian = length(gaussian.x);
-%     gauss = @(x,mu,sig,amp) amp*exp(-(((x-mu).^2)/(2*sig.^2)));
-%     
-%     for id=1:1:nb_gaussian
-%         if mod(id, 2)
-%             scatt.x_scatt = scatt.x_scatt + scatt.x_scatt .* gauss(scatt.x_scatt, gaussian.x{id}.mu_x, gaussian.x{id}.sigma_x, gaussian.x{id}.amp_x);
-%             scatt.y_scatt = scatt.y_scatt + 3*scatt.y_scatt .* gauss(scatt.y_scatt, gaussian.y{id}.mu_y, gaussian.y{id}.sigma_y, gaussian.y{id}.amp_y);
-%             scatt.z_scatt = scatt.z_scatt + scatt.z_scatt .* gauss(scatt.z_scatt, gaussian.z{id}.mu_z, gaussian.z{id}.sigma_z, gaussian.z{id}.amp_z);
-%         else
-%             scatt.x_scatt = scatt.x_scatt - scatt.x_scatt .* gauss(scatt.x_scatt, gaussian.x{id}.mu_x, gaussian.x{id}.sigma_x, gaussian.x{id}.amp_x);
-%             scatt.y_scatt = scatt.y_scatt - 3*scatt.y_scatt .* gauss(scatt.y_scatt, gaussian.y{id}.mu_y, gaussian.y{id}.sigma_y, gaussian.y{id}.amp_y);
-%             scatt.z_scatt = scatt.z_scatt - scatt.z_scatt .* gauss(scatt.z_scatt, gaussian.z{id}.mu_z, gaussian.z{id}.sigma_z, gaussian.z{id}.amp_z);
-%         end
-%     end
-
 end
