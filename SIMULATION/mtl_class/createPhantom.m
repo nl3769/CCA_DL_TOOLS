@@ -130,11 +130,11 @@ classdef createPhantom < handle
             max_val = double(max(I(:)));
             % --- select the desired distribution
             if isequal(obj.param.distribution, [1; 0; 0]) % simple interpolation
-                corrected_B_mode=(double(I(:,:,1))/max_val).^(1/obj.param.gamma);
+                corrected_B_mode = (double(I(:,:,1))/max_val).^(1/obj.param.gamma);
             elseif isequal(obj.param.distribution, [0; 1; 0]) % interpolation times normal distribution
-                corrected_B_mode=(double(I(:,:,1))/max_val).^(1/obj.param.gamma).*randn(size(obj.data_img.image(:,:,1)));
+                corrected_B_mode = (double(I(:,:,1))/max_val).^(1/obj.param.gamma).*randn(size(obj.data_img.image(:,:,1)));
             elseif isequal(obj.param.distribution, [0; 0; 1]) % interpolation times rayleight distribution
-                corrected_B_mode=(double(I(:,:,1))/max_val).^(1/obj.param.gamma).*raylrnd(1,obj.data_img.height,obj.data_img.width)/sqrt(pi/2);
+                corrected_B_mode = (double(I(:,:,1))/max_val).^(1/obj.param.gamma).*raylrnd(1,obj.data_img.height,obj.data_img.width)/sqrt(pi/2);
             end
             % --- inverse operation of the log compression
             interpolant=scatteredInterpolant(x_m(:),z_m(:),corrected_B_mode(:), 'linear');
@@ -151,28 +151,28 @@ classdef createPhantom < handle
 
             elseif obj.param.random_mode == "UNIFORM"
             
-                x_scat_=random('unif', 0, obj.data_img.width, fix(nb_scatteres_speckle), 1);
-                z_scat_=random('unif', 0, obj.data_img.height, fix(nb_scatteres_speckle), 1);
+                x_scat_ = random('unif', 0, obj.data_img.width, fix(nb_scatteres_speckle), 1);
+                z_scat_ = random('unif', 0, obj.data_img.height, fix(nb_scatteres_speckle), 1);
             
             end         
 
             % --- get the reflexion coefficient
-            RC_scat=interpolant(x_scat_, z_scat_);
+            RC_scat = interpolant(x_scat_, z_scat_);
             % --- convert x_scat and z_scatt in m
             x_scat=x_scat_*obj.data_img.CF-obj.data_img.width*obj.data_img.CF/2;         % we center x_scatt around 0
             z_scat=z_scat_*obj.data_img.CF;
             % --- store the results
-            obj.data_scatt.z_max=z_max+obj.param.shift;
-            obj.data_scatt.z_min=z_min;
-            obj.data_scatt.x_max=x_max;
-            obj.data_scatt.x_min=x_min;
-            obj.data_scatt.y_max=0;
-            obj.data_scatt.y_min=0;
-            obj.data_scatt.x_scatt=x_scat;
-            obj.data_scatt.z_scatt=z_scat+obj.param.shift;
-            obj.data_scatt.y_scatt=zeros(size(x_scat, 1), 1);
-            obj.data_scatt.RC_scatt=RC_scat;
-            obj.data_scatt.depth_of_focus=3/4*(z_max)+obj.param.shift;
+            obj.data_scatt.z_max = z_max+obj.param.shift;
+            obj.data_scatt.z_min = z_min;
+            obj.data_scatt.x_max = x_max;
+            obj.data_scatt.x_min = x_min;
+            obj.data_scatt.y_max = 0;
+            obj.data_scatt.y_min = 0;
+            obj.data_scatt.x_scatt = x_scat;
+            obj.data_scatt.z_scatt = z_scat+obj.param.shift;
+            obj.data_scatt.y_scatt = zeros(size(x_scat, 1), 1);
+            obj.data_scatt.RC_scatt = RC_scat;
+            obj.data_scatt.depth_of_focus = 3/4*(z_max)+obj.param.shift;
 
             obj.data_scatt_moved = obj.data_scatt;
         end
@@ -248,8 +248,8 @@ classdef createPhantom < handle
 %               fct_save_scatterers_2D(scatt_data_to_save, obj.param, str_scat_id)
                 
            
-                LI_path=fullfile(obj.param.path_res, 'phantom', 'LI.mat');
-                MA_path=fullfile(obj.param.path_res, 'phantom', 'MA.mat');
+                LI_path = fullfile(obj.param.path_res, 'phantom', 'LI.mat');
+                MA_path = fullfile(obj.param.path_res, 'phantom', 'MA.mat');
 
                 save(MA_path, 'MA_val');
                 save(LI_path, 'LI_val');        
@@ -258,8 +258,8 @@ classdef createPhantom < handle
                 fct_save_scatterers_3D(obj.data_scatt, obj.param, '');
                 fct_save_scatterers_3D(scatt_data_to_save, obj.param, str_scat_id)
            
-                LI_path=fullfile(obj.param.path_res, 'phantom', 'LI.mat');
-                MA_path=fullfile(obj.param.path_res, 'phantom', 'MA.mat');
+                LI_path = fullfile(obj.param.path_res, 'phantom', 'LI.mat');
+                MA_path = fullfile(obj.param.path_res, 'phantom', 'MA.mat');
 
                 save(MA_path, 'MA_val');
                 save(LI_path, 'LI_val');
@@ -275,11 +275,11 @@ classdef createPhantom < handle
             format_spec = '%f';
             
             if isfile(path_LI) && isfile(path_MA)
-                fileID=fopen(path_LI, 'r');
+                fileID = fopen(path_LI, 'r');
                 LI = fscanf(fileID, format_spec); 
                 LI = LI(2:2:end);
 
-                fileID=fopen(path_MA, 'r');
+                fileID = fopen(path_MA, 'r');
                 MA = fscanf(fileID, format_spec); 
                 MA = MA(2:2:end);
                 
@@ -329,7 +329,7 @@ classdef createPhantom < handle
                 obj.seg_MA_ref = obj.seg_MA;
                 
             else
-                                % --- save values
+                % --- save values
                 obj.seg_LI.x_scatt = [0,1,2,3]';
                 obj.seg_MA.x_scatt = [0,1,2,3]';
     
@@ -364,10 +364,10 @@ classdef createPhantom < handle
 
             idx = find(obj.data_scatt_moved.z_scatt > dist);
             
-            obj.data_scatt_moved.z_scatt=obj.data_scatt_moved.z_scatt(idx);
-            obj.data_scatt_moved.x_scatt=obj.data_scatt_moved.x_scatt(idx);
-            obj.data_scatt_moved.y_scatt=obj.data_scatt_moved.y_scatt(idx);
-            obj.data_scatt_moved.RC_scatt=obj.data_scatt_moved.RC_scatt(idx);
+            obj.data_scatt_moved.z_scatt = obj.data_scatt_moved.z_scatt(idx);
+            obj.data_scatt_moved.x_scatt = obj.data_scatt_moved.x_scatt(idx);
+            obj.data_scatt_moved.y_scatt = obj.data_scatt_moved.y_scatt(idx);
+            obj.data_scatt_moved.RC_scatt = obj.data_scatt_moved.RC_scatt(idx);
             
             % --- modify min and max value
             obj.data_scatt_moved.z_min = min(obj.data_scatt_moved.z_scatt); 
@@ -383,9 +383,9 @@ classdef createPhantom < handle
             
             if extrusion
                 
-                slice_spacing=obj.param.slice_spacing;
+                slice_spacing = obj.param.slice_spacing;
                 iter = obj.param.nb_slices;
-                nb_scat=length(obj.data_scatt.x_scatt);
+                nb_scat = length(obj.data_scatt.x_scatt);
 
                 % --- copy of scatterers in 2D plan
                 x_scatt = obj.data_scatt.x_scatt;
@@ -552,7 +552,7 @@ classdef createPhantom < handle
 
             offset.shearing = offset_shearing;
             offset.rot = offset_rot;
-            offset.scaling= offset_scaling;
+            offset.scaling = offset_scaling;
             offset.stretch = offset_stretch;
             
             % --- param simu
@@ -575,10 +575,10 @@ classdef createPhantom < handle
         function update_parameters(obj, param)
             % Load parameters and store them in a structure.
             
-            list_files_param=fct_list_ext_files(param, 'json','parameters');
+            list_files_param = fct_list_ext_files(param, 'json','parameters');
 
             for id_param=1:1:size(list_files_param, 2)
-                obj.param=fct_load_param(fullfile(param, 'parameters', list_files_param{id_param}));
+                obj.param = fct_load_param(fullfile(param, 'parameters', list_files_param{id_param}));
             end
         end
 
@@ -596,31 +596,31 @@ classdef createPhantom < handle
             
             % --- remove out of box scatterers (<z_max)
             idx = find(phantom.z_scatt < z_max);
-            phantom.z_scatt=phantom.z_scatt(idx);
-            phantom.x_scatt=phantom.x_scatt(idx);
-            phantom.y_scatt=phantom.y_scatt(idx);
-            phantom.RC_scatt=phantom.RC_scatt(idx);
+            phantom.z_scatt = phantom.z_scatt(idx);
+            phantom.x_scatt = phantom.x_scatt(idx);
+            phantom.y_scatt = phantom.y_scatt(idx);
+            phantom.RC_scatt = phantom.RC_scatt(idx);
 
             % --- remove out of box scatterers (>z_min)
             idx = find(phantom.z_scatt > z_min);
-            phantom.z_scatt=phantom.z_scatt(idx);
-            phantom.x_scatt=phantom.x_scatt(idx);
-            phantom.y_scatt=phantom.y_scatt(idx);
-            phantom.RC_scatt=phantom.RC_scatt(idx);
+            phantom.z_scatt = phantom.z_scatt(idx);
+            phantom.x_scatt = phantom.x_scatt(idx);
+            phantom.y_scatt = phantom.y_scatt(idx);
+            phantom.RC_scatt = phantom.RC_scatt(idx);
 
             % --- remove out of box scatterers (>x_min)
             idx = find(phantom.x_scatt > x_min);
-            phantom.z_scatt=phantom.z_scatt(idx);
-            phantom.x_scatt=phantom.x_scatt(idx);
-            phantom.y_scatt=phantom.y_scatt(idx);
-            phantom.RC_scatt=phantom.RC_scatt(idx);
+            phantom.z_scatt = phantom.z_scatt(idx);
+            phantom.x_scatt = phantom.x_scatt(idx);
+            phantom.y_scatt = phantom.y_scatt(idx);
+            phantom.RC_scatt = phantom.RC_scatt(idx);
 
             % --- remove out of box scatterers (<x_max)
             idx = find(phantom.x_scatt < x_max);
-            phantom.z_scatt=phantom.z_scatt(idx);
-            phantom.x_scatt=phantom.x_scatt(idx);
-            phantom.y_scatt=phantom.y_scatt(idx);
-            phantom.RC_scatt=phantom.RC_scatt(idx);
+            phantom.z_scatt = phantom.z_scatt(idx);
+            phantom.x_scatt = phantom.x_scatt(idx);
+            phantom.y_scatt = phantom.y_scatt(idx);
+            phantom.RC_scatt = phantom.RC_scatt(idx);
             
             obj.data_scatt_moved = phantom;
         end
@@ -692,20 +692,21 @@ classdef createPhantom < handle
             scatt_ref_moved = add_movement(scatt_ref_moved, offset, param_simu);
             obj.scatt_pos_ref{3} = scatt_ref_moved;
             
-            % --- compute flow
+            % --- compute displacement field
             if id_img > 1
                 
-                Pos_0=[obj.scatt_pos_ref{2}.x_scatt obj.scatt_pos_ref{2}.y_scatt obj.scatt_pos_ref{2}.z_scatt];
-                Pos_1=[obj.scatt_pos_ref{3}.x_scatt obj.scatt_pos_ref{3}.y_scatt obj.scatt_pos_ref{3}.z_scatt];
-                diff=Pos_1-Pos_0;
+                Pos_0 = [obj.scatt_pos_ref{2}.x_scatt obj.scatt_pos_ref{2}.y_scatt obj.scatt_pos_ref{2}.z_scatt];
+                Pos_1 = [obj.scatt_pos_ref{3}.x_scatt obj.scatt_pos_ref{3}.y_scatt obj.scatt_pos_ref{3}.z_scatt];
+                diff = Pos_1-Pos_0;
 
-                % --- flow in meter
-                flow = reshape(diff,[obj.data_img.height obj.data_img.width 3]); 
+                % --- displacement displacement field in meter
+                displacement_field = reshape(diff,[obj.data_img.height obj.data_img.width 3]); 
                 pixel_size = obj.data_img.CF;
 
                 % --- convert the flow in pixels displacment
-                flow = flow/pixel_size;
-%                 % can't be used on VIP platform
+                displacement_field = displacement_field/pixel_size;
+
+                %%%%%%%% can't be used on VIP platform
 %                 fct_save_scatt_ref(obj.scatt_pos_ref{1}, obj.data_img.height, ...
 %                                    fullfile(obj.param.path_res, 'phantom', ['scatt_pos_org' num2str(obj.id_seq-1)]));
 %                 
@@ -714,10 +715,11 @@ classdef createPhantom < handle
 %                 
 %                 fct_save_scatt_ref(obj.scatt_pos_ref{3}, obj.data_img.height, ...
 %                                    fullfile(obj.param.path_res, 'phantom', ['scatt_pos_id_' num2str(obj.id_seq)]));
-                
-                fct_save_OF_GT(flow, fullfile(obj.param.path_res, 'phantom', ['OF_' num2str(obj.id_seq-1) '_' num2str(obj.id_seq)]));
-%                 % can't bu used on VIP platform
-%                 fct_save_flow(flow, fullfile(obj.param.path_res, 'phantom', ['optical_pos_id_', num2str(obj.id_seq)]));
+
+                fct_save_OF_GT(displacement_field, fullfile(obj.param.path_res, 'phantom', ['OF_' num2str(obj.id_seq-1) '_' num2str(obj.id_seq)]));
+
+                %                 % can't bu used on VIP platform
+%                 fct_save_flow(displacement_field, fullfile(obj.param.path_res, 'phantom', ['optical_pos_id_', num2str(obj.id_seq)]));
             
             else
 %                 % can't be used on VIP platform
@@ -725,7 +727,6 @@ classdef createPhantom < handle
 %                                    fullfile(obj.param.path_res, 'phantom', ['scatt_pos_id_' num2str(obj.id_seq)]));
             end
             
-%             obj.scatt_pos_ref{2} = obj.scatt_pos_ref{3};
         end
         
         % ----------------------------------------------------------------------------------------------------------------------
@@ -735,7 +736,7 @@ classdef createPhantom < handle
             image = obj.data_img; 
             parameters = obj.param;
             % --- save variables in .mat format
-            path_res=fullfile(parameters.path_res, 'phantom/image_information.mat');
+            path_res = fullfile(parameters.path_res, 'phantom/image_information.mat');
             save(path_res, 'image');
             
         end
@@ -757,10 +758,10 @@ classdef createPhantom < handle
 
             for i=2:1:k-1
                 for j=2:k
-                    obj.data_scatt.y_scatt=[obj.data_scatt.y_scatt; 0];
-                    obj.data_scatt.z_scatt=[obj.data_scatt.z_scatt; z_pos(j)];
-                    obj.data_scatt.x_scatt=[obj.data_scatt.x_scatt; x_pos(i)];
-                    obj.data_scatt.RC_scatt=[obj.data_scatt.RC_scatt; 1];
+                    obj.data_scatt.y_scatt = [obj.data_scatt.y_scatt; 0];
+                    obj.data_scatt.z_scatt = [obj.data_scatt.z_scatt; z_pos(j)];
+                    obj.data_scatt.x_scatt = [obj.data_scatt.x_scatt; x_pos(i)];
+                    obj.data_scatt.RC_scatt = [obj.data_scatt.RC_scatt; 1];
                 end
             end
 
@@ -769,8 +770,8 @@ classdef createPhantom < handle
 %             obj.data_scatt.x_scatt= [0];
 %             obj.data_scatt.RC_scatt=[1];
 
-            obj.data_scatt.z_scatt=obj.data_scatt.z_scatt+obj.param.shift;
-            obj.data_scatt.depth_of_focus=max(obj.data_scatt.z_scatt);
+            obj.data_scatt.z_scatt = obj.data_scatt.z_scatt+obj.param.shift;
+            obj.data_scatt.depth_of_focus = max(obj.data_scatt.z_scatt);
             obj.data_scatt_moved = obj.data_scatt;
 
         end
@@ -785,9 +786,9 @@ function [struct_image]=load_JPEG(path_img)
     % Loads tiff image
 
     % --- read the image
-    image=imread(path_img);
+    image = imread(path_img);
     if size(image, 3) == 3
-        image=rgb2gray(image); % we convert in grayscale
+        image = rgb2gray(image); % we convert in grayscale
     end
     
     % --- we define the size of the pixels in a random way according to the average size of the pixels of US 
@@ -799,10 +800,10 @@ function [struct_image]=load_JPEG(path_img)
     CF = CF_min + (CF_max - CF_min) * rand(1,1);
 
     % --- fill obj
-    struct_image.CF=CF;
-    struct_image.width=size(image, 2);
-    struct_image.height=size(image, 1);
-    struct_image.image=image;
+    struct_image.CF = CF;
+    struct_image.width = size(image, 2);
+    struct_image.height = size(image, 1);
+    struct_image.image = image;
 
 end
 
@@ -811,35 +812,35 @@ function [struct_image]=load_tiff(path_img, roi)
     % Loads tiff image
 
     % --- read the image
-    image=imread(path_img);
+    image = imread(path_img);
     if size(image, 3) == 3
-        image=rgb2gray(image); % we convert in grayscale
+        image = rgb2gray(image); % we convert in grayscale
     end
 
     
-    x_start=roi(1);
-    x_end=roi(2);
-    y_start=roi(3);
-    y_end=roi(4);
+    x_start = roi(1);
+    x_end = roi(2);
+    y_start = roi(3);
+    y_end = roi(4);
 
-    image=image(y_start:end-y_end, x_start:end-x_end); % we only consider the ROI, change later
+    image = image(y_start:end-y_end, x_start:end-x_end); % we only consider the ROI, change later
 
     % --- load the size of the pixels
-    tmp_=split(path_img, '/');
-    str_=fct_build_path(tmp_, 2);
-    patient_id=tmp_{end};
-    patient_id=split(patient_id, '.');
-    patient_id=patient_id{1};
-    path_to_cf=fullfile(str_, 'CF', strcat(patient_id, '_CF.txt'));
+    tmp_ = split(path_img, '/');
+    str_ = fct_build_path(tmp_, 2);
+    patient_id = tmp_{end};
+    patient_id = split(patient_id, '.');
+    patient_id = patient_id{1};
+    path_to_cf = fullfile(str_, 'CF', strcat(patient_id, '_CF.txt'));
     format_spec = '%f';
-    fileID=fopen(path_to_cf, 'r');
-    CF=fscanf(fileID,format_spec)*1e-3; % pixel size in m
+    fileID = fopen(path_to_cf, 'r');
+    CF = fscanf(fileID,format_spec)*1e-3; % pixel size in m
     
     % --- fill obj
-    struct_image.CF=CF;
-    struct_image.width=size(image, 2);
-    struct_image.height=size(image, 1);
-    struct_image.image=image;
+    struct_image.CF = CF;
+    struct_image.width = size(image, 2);
+    struct_image.height = size(image, 1);
+    struct_image.image = image;
     struct_image.x_start = x_start;
     struct_image.x_end = x_end;
     struct_image.z_start = y_start;
@@ -852,31 +853,31 @@ function [struct_image]=load_dicom(path_img, sequence)
     % Load DICOM sequence.
 
     % --- probe info
-    info=dicominfo(path_img);
+    info = dicominfo(path_img);
     rect = [info.SequenceOfUltrasoundRegions.Item_1.RegionLocationMinX0 + 80,...
-        info.SequenceOfUltrasoundRegions.Item_1.RegionLocationMinY0 + 50,... # 50
-        info.SequenceOfUltrasoundRegions.Item_1.RegionLocationMaxX1 - 185,...
-        info.SequenceOfUltrasoundRegions.Item_1.RegionLocationMaxY1 - 110];
+            info.SequenceOfUltrasoundRegions.Item_1.RegionLocationMinY0 + 50,... # 50
+            info.SequenceOfUltrasoundRegions.Item_1.RegionLocationMaxX1 - 185,...
+            info.SequenceOfUltrasoundRegions.Item_1.RegionLocationMaxY1 - 110];
 
     % --- we load the information
     if sequence
-        image_=dicomread(path_img);
+        image_ = dicomread(path_img);
         for i=1:1:size(image_, 4)
-            image(:,:,i)=rgb2gray(imcrop(image_(:,:,:,i), rect));
+            image(:,:,i) = rgb2gray(imcrop(image_(:,:,:,i), rect));
         end
     else
-        image=dicomread(path_img, 'frame', 1); % we load the first frame of the sequence
-        image=rgb2gray(imcrop(image,rect));
+        image = dicomread(path_img, 'frame', 1); % we load the first frame of the sequence
+        image = rgb2gray(imcrop(image,rect));
     end
 
     % --- calibration factor
-    CF=info.SequenceOfUltrasoundRegions.Item_1.PhysicalDeltaX*1e-2;
+    CF = info.SequenceOfUltrasoundRegions.Item_1.PhysicalDeltaX*1e-2;
 
     % --- we fill struct_image
-    struct_image.CF=CF;
-    struct_image.width=size(image, 2);
-    struct_image.height=size(image, 1);
-    struct_image.image=image;
+    struct_image.CF = CF;
+    struct_image.width = size(image, 2);
+    struct_image.height = size(image, 1);
+    struct_image.image = image;
                                                                                               
 end
 
@@ -922,7 +923,6 @@ function [phantom_out] = add_shearing(phantom_in, theta_max, id, time, f)
                        0,      0,   0,   1];
 
     % --- INITIALIZATION       
-
     phantom_out = phantom_in;
     shearing = arrayfun( @(x) (affine3d(shear_transf(x))), motion_shear(time));
     projection = shearing(id).transformPointsForward(cat(2, phantom_in.x_scatt,...
@@ -948,7 +948,6 @@ function [phantom_out] = add_scaling(phantom_in, coef_scaling, id, time, f)
                        0, 0, 0, 1];
 
     % --- INITIALIZATION       
-
     phantom_out = phantom_in;
     scaling = arrayfun( @(x) (affine3d(scale_transf(x))), motion_scale(time));
     projection = scaling(id).transformPointsForward(cat(2, phantom_in.x_scatt,...
@@ -967,7 +966,7 @@ function [phantom_out] = add_stretch(phantom_in, coef_scaling, id, time, f)
     motion_stretch = @(t) coef_scaling/100 * sin(2 * pi * f * t);
 
     % --- AFFINE TRANSFORMATION
-    % -- rotation transformation
+    % -- stretch transformation
     transl_transf=@(x) [1 + x, 0, 0, 0; 
                         0,     1, 0, 0; 
                         0,     0, 1, 0; 
