@@ -244,7 +244,7 @@ classdef createPhantom < handle
             if isempty(volume)
                 addpath(fullfile('..', 'mtl_utils'));
                 fct_save_scatterers_2D(obj.data_scatt, obj.param, '');
-                fct_save_scatterers_2D(obj.data_scatt, obj.param, str_scat_id)
+                fct_save_scatterers_2D(scatt_data_to_save, obj.param, str_scat_id)
 %               fct_save_scatterers_2D(scatt_data_to_save, obj.param, str_scat_id)
                 
            
@@ -396,7 +396,7 @@ classdef createPhantom < handle
                     % --- compute y-position 
                     pos = i * slice_spacing;
 
-                    % --- do it twice time for +/- pos
+                    % --- do it twice for +/- pos
                     y_scatt_1 = ones(nb_scat, 1) * pos;                
                     y_scatt_2 = -y_scatt_1 ;
 
@@ -429,19 +429,22 @@ classdef createPhantom < handle
                 
                 
                 if obj.param.random_mode == "QUASI_RANDOM"
-                    p = haltonset(3,'Skip', 1e3,'Leap', 1e2);
+                    p = haltonset(3, 'Skip', 1e3, 'Leap', 1e2);
                     p = scramble(p, 'RR2');
                     pts = net(p, fix(nb_scat));
                     x_scat = pts(:,1) * (x_max - x_min) + x_min;
                     y_scat = pts(:,2) * (y_max - y_min) + y_min;
                     z_scat = pts(:,3) * (z_max - z_min) + z_min;
+                    
                 elseif obj.param.random_mode == "UNIFORM"
                     y_scat = random('unif', y_min, y_max, nb_scat, 1);
-                    x_scat= random('unif', x_min, x_max, nb_scat, 1); 
-                    z_scat= random('unif', z_min, z_max, nb_scat, 1);
+                    x_scat = random('unif', x_min, x_max, nb_scat, 1); 
+                    z_scat = random('unif', z_min, z_max, nb_scat, 1);
+                
                 end
 
                 RC_scatt = interpolant(x_scat, z_scat, y_scat);
+                
                 % --- update
                 obj.data_scatt.x_scatt = x_scat;
                 obj.data_scatt.y_scatt = y_scat;
@@ -451,8 +454,42 @@ classdef createPhantom < handle
                 obj.data_scatt.y_max = y_max;
                 
             else
+                
+%                 slice_spacing = obj.param.slice_spacing;
+%                 iter = obj.param.nb_slices;
+%                 nb_scat = length(obj.data_scatt.x_scatt);
+% 
+%                 % --- copy of scatterers in 2D plan
+%                 x_scatt = obj.data_scatt.x_scatt;
+%                 z_scatt = obj.data_scatt.z_scatt;
+%                 RC_scatt = obj.data_scatt.RC_scatt;
+% 
+%                 for i=1:iter
+%                     % --- compute y-position 
+%                     pos = i * slice_spacing;
+% 
+%                     % --- do it twice for +/- pos
+%                     y_scatt_1 = ones(nb_scat, 1) * pos;                
+%                     y_scatt_2 = -y_scatt_1 ;
+% 
+%                     % --- get new values
+%                     obj.data_scatt.x_scatt =  [obj.data_scatt.x_scatt   ; x_scatt    ; x_scatt  ];
+%                     obj.data_scatt.y_scatt =  [obj.data_scatt.y_scatt   ; y_scatt_1  ; y_scatt_2];
+%                     obj.data_scatt.z_scatt =  [obj.data_scatt.z_scatt   ; z_scatt    ; z_scatt  ];
+%                     obj.data_scatt.RC_scatt = [obj.data_scatt.RC_scatt  ; RC_scatt   ; RC_scatt ];
+% 
+%                 end
+%                 
+%                 % --- phantom dimension
+%                 z_min = min(obj.data_scatt.z_scatt);
+%                 z_max = max(obj.data_scatt.z_scatt);
+%                 x_min = min(obj.data_scatt.x_scatt);
+%                 x_max = max(obj.data_scatt.x_scatt);
+%                 y_min = min(obj.data_scatt.y_scatt);
+%                 y_max = max(obj.data_scatt.y_scatt);
+                
                 nb_scat=length(obj.data_scatt.x_scatt);
-                obj.data_scatt.y_scatt = zeros(nb_scat, 1);
+                obj.data_scatt.y_scatt = zeros(nb_scat, 1); % need 3D to apply motion
             end
             
         end
@@ -666,35 +703,37 @@ classdef createPhantom < handle
         function create_OF_GT(obj, id_img)
             % Add motion to the grid which corresponds to the  original
             % image.
-
-            scatt_ref_moved = obj.scatt_pos_ref{1};
-            
-            % --- offset
-            offset_rot = [obj.x_offset_rot, obj.y_offset_rot, obj.z_offset_rot];
-            offset_shearing = [obj.x_offset_shearing, obj.y_offset_shearing, obj.z_offset_shearing];
-            offset_scaling = [obj.x_offset_scaling, obj.y_offset_scaling, obj.z_offset_scaling];
-            offset_stretch = [obj.x_offset_stretch, obj.y_offset_stretch, obj.z_offset_stretch];
-
-            offset.shearing = offset_shearing;
-            offset.rot = offset_rot;
-            offset.scaling= offset_scaling;
-            offset.stretch = offset_stretch;
-            
-            param_simu.theta_rot = obj.theta_max_rot;
-            param_simu.theta_shearing = obj.theta_max_shear;
-            param_simu.scaling_coef = obj.scaling_coef;
-            param_simu.stretch_coef = obj.stretch_coef;
-            param_simu.f_simu = obj.f_simu;
-            param_simu.id_seq = obj.id_seq;
-            param_simu.time_sample_simu = obj.time_sample_simu;
-             
-            obj.scatt_pos_ref{2} = scatt_ref_moved;
-            scatt_ref_moved = add_movement(scatt_ref_moved, offset, param_simu);
-            obj.scatt_pos_ref{3} = scatt_ref_moved;
             
             % --- compute displacement field
             if id_img > 1
                 
+                scatt_ref_moved = obj.scatt_pos_ref{1};
+
+                % --- offset
+                offset_rot = [obj.x_offset_rot, obj.y_offset_rot, obj.z_offset_rot];
+                offset_shearing = [obj.x_offset_shearing, obj.y_offset_shearing, obj.z_offset_shearing];
+                offset_scaling = [obj.x_offset_scaling, obj.y_offset_scaling, obj.z_offset_scaling];
+                offset_stretch = [obj.x_offset_stretch, obj.y_offset_stretch, obj.z_offset_stretch];
+
+                offset.shearing = offset_shearing;
+                offset.rot = offset_rot;
+                offset.scaling= offset_scaling;
+                offset.stretch = offset_stretch;
+
+                param_simu.theta_rot = obj.theta_max_rot;
+                param_simu.theta_shearing = obj.theta_max_shear;
+                param_simu.scaling_coef = obj.scaling_coef;
+                param_simu.stretch_coef = obj.stretch_coef;
+                param_simu.f_simu = obj.f_simu;
+                param_simu.id_seq = obj.id_seq - 1;
+                param_simu.time_sample_simu = obj.time_sample_simu;
+
+                obj.scatt_pos_ref{2} = add_movement(scatt_ref_moved, offset, param_simu);
+                param_simu.id_seq = obj.id_seq;
+                obj.scatt_pos_ref{3} = add_movement(scatt_ref_moved, offset, param_simu);
+%                 obj.scatt_pos_ref{3} = scatt_ref_moved;
+                
+                % --- compute GT
                 Pos_0 = [obj.scatt_pos_ref{2}.x_scatt obj.scatt_pos_ref{2}.y_scatt obj.scatt_pos_ref{2}.z_scatt];
                 Pos_1 = [obj.scatt_pos_ref{3}.x_scatt obj.scatt_pos_ref{3}.y_scatt obj.scatt_pos_ref{3}.z_scatt];
                 diff = Pos_1-Pos_0;
@@ -704,7 +743,7 @@ classdef createPhantom < handle
                 pixel_size = obj.data_img.CF;
 
                 % --- convert the flow in pixels displacment
-                displacement_field = displacement_field/pixel_size;
+                displacement_field = displacement_field / pixel_size;
 
                 %%%%%%%% can't be used on VIP platform
 %                 fct_save_scatt_ref(obj.scatt_pos_ref{1}, obj.data_img.height, ...
@@ -744,10 +783,10 @@ classdef createPhantom < handle
         % ----------------------------------------------------------------------------------------------------------------------
         function phantom_tmp(obj)
             
-            k=4;
+            k=2;
 
-            z_pos=linspace(obj.data_scatt.z_max*0.1, obj.data_scatt.z_max - obj.data_scatt.z_max * 0.1, k);
-            x_pos=linspace(obj.data_scatt.x_min + obj.data_scatt.x_max*0.1,     obj.data_scatt.x_max - obj.data_scatt.x_max*0.1, k);
+            z_pos=linspace(obj.data_scatt.z_max*0.3, obj.data_scatt.z_max - obj.data_scatt.z_max * 0.3, k);
+            x_pos=linspace(obj.data_scatt.x_min + obj.data_scatt.x_max*0.4,     obj.data_scatt.x_max - obj.data_scatt.x_max*0.4, k);
 %             obj.data_scatt.x_min = obj.data_scatt.x_min * 0.5;
 %             obj.data_scatt.x_max = obj.data_scatt.x_max * 0.5;
 
@@ -756,8 +795,8 @@ classdef createPhantom < handle
             obj.data_scatt.z_scatt=[];
             obj.data_scatt.RC_scatt=[];
 
-            for i=2:1:k-1
-                for j=2:k
+            for i=1:1:k
+                for j=1:k
                     obj.data_scatt.y_scatt = [obj.data_scatt.y_scatt; 0];
                     obj.data_scatt.z_scatt = [obj.data_scatt.z_scatt; z_pos(j)];
                     obj.data_scatt.x_scatt = [obj.data_scatt.x_scatt; x_pos(i)];
