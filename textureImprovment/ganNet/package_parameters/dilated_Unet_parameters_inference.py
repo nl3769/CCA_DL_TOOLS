@@ -2,43 +2,32 @@ import os
 
 import torch.nn                         as nn
 
-from package_parameters.parameters      import Parameters
-from shutil                             import copyfile
-from package_utils.utils                import check_dir
+from package_parameters.parameters_inference      import Parameters
+from shutil                                       import copyfile
+from package_utils.utils                          import check_dir
 
 def setParameters():
 
   p = Parameters(
     MODEL_NAME                 = 'dilatedUnet',
     PDATA                      = '/home/laine/Documents/PROJECTS_IO/DATA/GAN',
-
+    PMODEL                     = '/home/laine/tux/JEAN_ZAY/RESULTS/GAN/GAN/dilatedUnet_L2_255_upconv_00/model',
     DATABASE                   = {
         'training':   '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_00/training.txt',
         'validation': '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_00/validation.txt',
         'testing':    '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_00/testing.txt'
         },
-    VALIDATION                 = True,
-    RESTORE_CHECKPOINT         = True,
-    LOSS                       = 'L2',
-    lambda_GAN                 = 1/1000,
-    lambda_pixel               = 1,
-    LEARNING_RATE              = 0.01,
-    BATCH_SIZE                 = 2,
-    NB_EPOCH                   = 30,
+    NB_SAVE                    = 30,
     IMAGE_NORMALIZATION        = (0, 255),
-    DATA_AUG                   = False,
+    IMG_SIZE                   = (256, 512),
+    PATH_RES                   = '/home/laine/Desktop/GAN_inference',
     KERNEL_SIZE                = (5, 5),
     PADDING                    = (2, 2),
     USE_BIAS                   = True,
     UPCONV                     = True,
     NGF                        = 64,
     NB_LAYERS                  = 4,
-    IMG_SIZE                   = (256, 512),
-    DROPOUT                    = 0,
-    WORKERS                    = 0,
-    EARLY_STOP                 = 100,
-    OUTPUT_ACTIVATION          = nn.ReLU(),
-    PATH_RES                   = '/home/laine/PROJECTS_IO/GAN/dilatedUnet_L2_255_relu'
+    OUTPUT_ACTIVATION          = None
     )
 
   # --- Print all attributes in the console

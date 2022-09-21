@@ -15,6 +15,7 @@ from package_logger.logger                      import loggerClass
 from package_loop                               import training_loop, validation_loop
 from package_utils.get_param_wandb              import get_param_wandb
 from package_cores.run_evaluate_model           import evaluation
+from package_utils.checkpoint                   import save_loss
 
 # Set wandb in silent mode (remove display in consol)
 os.environ["WANDB_SILENT"] = "true"
@@ -45,7 +46,8 @@ def main():
     discriminator = discriminator.to(device)
     generator = generator.to(device)
     discriminator.apply(weights_init)
-    generator.apply(weights_init)
+    if p.RESTORE_CHECKPOINT == False:
+        generator.apply(weights_init)
 
     # --- print model in txt file
     save_print(generator, p.PATH_PRINT_MODEL)
@@ -66,10 +68,19 @@ def main():
     # --- init weight and biases
     config = get_param_wandb(p, {})
     wandb.init(project="realisticUSTextureGAN_V2", entity="nl37", dir=p.PATH_RES, config=config, name=p.PATH_RES.split('/')[-1])
+    
+    # --- get corresponding epoch if restore_checkpoint is true
+    if p.RESTORE_CHECKPOINT:
+        files = os.listdir(p.PATH_MODEL_HISTORY)
+        real_epoch = int(len(files)/10)
+    else:
+        real_epoch = 0
 
+    # --- training loop
     for epoch in range(p.NB_EPOCH):
-        trn_out = training_loop.trn_loop(discriminator, generator, trn_loader, epoch, device, optimizer_generator, optimizer_discriminator, loss, logger, p.PATH_RANDOM_PRED_TRN)
-        val_out = validation_loop.val_loop(discriminator, generator, val_loader, epoch, device, loss, logger, p.PATH_RANDOM_PRED_TRN)
+        epoch_abs = epoch + real_epoch
+        trn_out = training_loop.trn_loop(discriminator, generator, trn_loader, epoch_abs, device, optimizer_generator, optimizer_discriminator, loss, logger, p.PATH_RANDOM_PRED_TRN)
+        val_out = validation_loop.val_loop(discriminator, generator, val_loader, epoch_abs, device, loss, logger, p.PATH_RANDOM_PRED_TRN)
         logger.save_best_model(epoch=epoch, model=generator)
         wandb.log({
             'trn_loss_gen': trn_out[0],
@@ -83,6 +94,18 @@ def main():
             'val_l1':       val_out[3],
             'val_l2':       val_out[4],
         })
+        
+        save_loss('trn', epoch_abs, trn_out[0], p.PATH_MODEL_HISTORY, 'loss_gen')
+        save_loss('trn', epoch_abs, trn_out[1], p.PATH_MODEL_HISTORY, 'loss_GAN')
+        save_loss('trn', epoch_abs, trn_out[2], p.PATH_MODEL_HISTORY, 'loss_pxl')
+        save_loss('trn', epoch_abs, trn_out[3], p.PATH_MODEL_HISTORY, 'l1')
+        save_loss('trn', epoch_abs, trn_out[4], p.PATH_MODEL_HISTORY, 'l2')
+        
+        save_loss('val', epoch_abs, val_out[0], p.PATH_MODEL_HISTORY, 'loss_gen')
+        save_loss('val', epoch_abs, val_out[1], p.PATH_MODEL_HISTORY, 'loss_GAN')
+        save_loss('val', epoch_abs, val_out[2], p.PATH_MODEL_HISTORY, 'loss_pxl')
+        save_loss('val', epoch_abs, val_out[3], p.PATH_MODEL_HISTORY, 'l1')
+        save_loss('val', epoch_abs, val_out[4], p.PATH_MODEL_HISTORY, 'l2')
 
         scheduler_gen.step()
         scheduler_discr.step()

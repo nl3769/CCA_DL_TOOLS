@@ -12,6 +12,7 @@ class Parameters:
         PDATA,
         DATABASE,
         VALIDATION,
+        RESTORE_CHECKPOINT,
         LOSS,
         lambda_GAN,
         lambda_pixel,
@@ -38,6 +39,7 @@ class Parameters:
         self.PDATA                  = PDATA
         self.DATABASE               = DATABASE
         self.VALIDATION             = VALIDATION
+        self.RESTORE_CHECKPOINT     = RESTORE_CHECKPOINT
         self.LOSS                   = LOSS
         self.lambda_GAN             = lambda_GAN
         self.lambda_pixel           = lambda_pixel

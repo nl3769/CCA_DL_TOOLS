@@ -37,6 +37,7 @@ def visualize_images(dataiter):
     plt.title('GT - y')
 
     plt.show()
+
 # ----------------------------------------------------------------------------------------------------------------------
 def save_inputs(in1, in2, flow, path, id, input1_name, input2_name):
 

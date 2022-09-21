@@ -19,6 +19,7 @@ def evaluation_loop(device, data_loader, model, p, set):
 
     # --- evaluation loop
     for i_batch, (org, sim, fname) in enumerate(tqdm(data_loader, ascii=True, desc='EVALUATION (' + set + ')')):
+
         # --- load data
         org, sim = org.to(device), sim.to(device)
         name = fname[0]

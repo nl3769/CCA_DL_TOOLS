@@ -10,20 +10,21 @@ def setParameters():
 
   p = Parameters(
     MODEL_NAME                 = 'dilatedUnet',
-    PDATA                      = '/home/laine/cluster/PROJECTS_IO/DATA/GAN',
+    PDATA                      = '/home/laine/Documents/PROJECTS_IO/DATA/GAN',
 
     DATABASE                   = {
-        'training':   '/home/laine/cluster/PROJECTS_IO/DATA/GAN/split_00/training.txt',
-        'validation': '/home/laine/cluster/PROJECTS_IO/DATA/GAN/split_00/validation.txt',
-        'testing':    '/home/laine/cluster/PROJECTS_IO/DATA/GAN/split_00/testing.txt'
+        'training':   '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_00/training.txt',
+        'validation': '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_00/validation.txt',
+        'testing':    '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_00/testing.txt'
         },
     VALIDATION                 = True,
+    RESTORE_CHECKPOINT         = True,
     LOSS                       = 'L2',
     lambda_GAN                 = 1/1000,
     lambda_pixel               = 1,
-    LEARNING_RATE              = 0.0001,
+    LEARNING_RATE              = 0.01,
     BATCH_SIZE                 = 2,
-    NB_EPOCH                   = 500,
+    NB_EPOCH                   = 30,
     IMAGE_NORMALIZATION        = (0, 255),
     DATA_AUG                   = False,
     KERNEL_SIZE                = (5, 5),
@@ -34,10 +35,10 @@ def setParameters():
     NB_LAYERS                  = 4,
     IMG_SIZE                   = (256, 512),
     DROPOUT                    = 0,
-    WORKERS                    = 4,
+    WORKERS                    = 0,
     EARLY_STOP                 = 100,
     OUTPUT_ACTIVATION          = nn.ReLU(),
-    PATH_RES                   = '/home/laine/cluster/PROJECTS_IO/GAN/dilatedUnet_L2_255_local'
+    PATH_RES                   = '/home/laine/PROJECTS_IO/GAN/dilatedUnet_L2_255_relu'
     )
 
   # --- Print all attributes in the console
