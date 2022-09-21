@@ -1,7 +1,7 @@
 {
   "c": 1540,
   "fc": 7.5e6,
-  "scat_density": 10,
+  "scat_density": 8,
   "probe_name": "L12-3v",
   "range_DB": 0,
   "fnumber": 1.5,

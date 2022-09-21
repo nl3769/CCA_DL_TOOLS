@@ -35,8 +35,8 @@ function fct_run_image_reconstruction(pres)
         data.scan_conversion();
 
     elseif data.param.mode(2) % synthetic aperture
-        
-        data.DAS_synthetic_aperture('DAS', 'SUM');        
+        data.BF_CUDA_STA('DAS', 'SUM');
+%         data.DAS_synthetic_aperture('DAS', 'SUM');        
         data.get_bmode_gamma_correction();
     
     end
@@ -63,3 +63,4 @@ function [path] = get_org_img_name(pres)
         end
     end
 end
+
