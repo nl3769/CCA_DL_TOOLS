@@ -4,12 +4,15 @@
 '''
 
 import os
+import json
 import numpy                                as np
 import package_utils.fold_handler           as fh
 import package_utils.loader                 as ld
 import package_utils.signal_processing      as sp
 import package_utils.reader                 as rd
 import package_utils.saver                  as ps
+import pickle                               as pkl
+import imageio                              as io
 
 from tqdm                                   import tqdm
 from icecream                               import ic
@@ -120,6 +123,19 @@ def load_data(path):
     return I1, I2, OF, LI1, LI2, MA1, MA2, CF, seg_dim, zstart
 
 # ----------------------------------------------------------------------------------------------------------------------
+def load_prepared_data(paths):
+    """ Load data located in path directory. """
+
+    LI = load_pickle(paths['path_LI'])
+    MA = load_pickle(paths['path_MA'])
+    OF = load_pickle(paths['path_field'])
+    seq = load_pickle(paths['path_image'])
+    with open(paths['image_information'], 'r') as f:
+        CF = float(f.read())
+
+    return seq, OF, LI, MA, CF
+
+# ----------------------------------------------------------------------------------------------------------------------
 def load_data_GIF(path):
     """ Load data located in path directory. """
 
@@ -190,6 +206,58 @@ def preprocessing(I1, I2, OF, LI1, LI2,  MA1, MA2, pairs, roi_width, pixel_width
     return I1, I2, OF_, LI1, LI2, MA1, MA2, rCF
 
 # ----------------------------------------------------------------------------------------------------------------------
+def preprocessing_prepared_data(I1, I2, OF, LI1, LI2,  MA1, MA2, roi_width, pixel_width, CF):
+    """ Preprocess data in order to extract the ROI corresponding. """
+
+    # --- get interpolation factor and real pixel size of the interpolated image
+    interp_factor = get_interpolation_factor(CF, roi_width, pixel_width)
+
+    # --- get size of original image
+    Odim = I1.shape
+
+    # --- interpolate image
+    I1 = image_interpoland(I1, interp_factor)
+    I2 = image_interpoland(I2, interp_factor)
+
+    # --- get size of the interpolated image
+    Fdim = I1.shape
+
+    # --- interpolate flow
+    OF_ = np.zeros(Fdim + (3,))
+    OF_[..., 0] = image_interpoland(OF[...,0], interp_factor)
+    OF_[..., 1] = image_interpoland(OF[..., 1], interp_factor)
+    OF_[..., 2] = image_interpoland(OF[..., 2], interp_factor)
+
+    # ---  get the real pixel size after interpolation
+    rCF, zcoef = compute_real_CF(Odim, Fdim, CF)
+    # --- adapt segmentation after interpolation
+    LI1 *= zcoef
+    MA1 *= zcoef
+    LI2 *= zcoef
+    MA2 *= zcoef
+    LI1, MA1 = seg_interpoland(LI1, MA1, Fdim)
+    LI2, MA2 = seg_interpoland(LI2, MA2, Fdim)
+    # --- modify optical flow magnitude
+    OF_[..., 0] *= Fdim[0] / Odim[0]
+    OF_[..., 2] *= Fdim[1] / Odim[1]
+
+    return I1, I2, OF_, LI1, LI2, MA1, MA2, rCF
+# ----------------------------------------------------------------------------------------------------------------------
+def data_preparation_preprocessing(I1, I2, OF, LI1, LI2,  MA1, MA2, pairs, CF, zstart):
+    """ Preprocess data in order to extract the ROI corresponding. """
+
+    Odim = I1.shape
+    # --- check if dimension are consistent
+    rd.check_image_dim(I1, I2, pairs)
+    # --- adapt segmentation to image dimension
+    LI1, MA1 = adapt_segmentation(LI1, MA1, Odim)
+    LI2, MA2 = adapt_segmentation(LI2, MA2, Odim)
+    # --- adapt optical flow dimension
+    OF = adapt_optical_flow(OF, Odim, zstart, CF)
+
+    return I1, I2, OF, LI1, LI2, MA1, MA2
+
+# ----------------------------------------------------------------------------------------------------------------------
 def preprocessing_GIF(I, LI, MA):
     """ Preprocess data in order to extract the ROI corresponding. """
 
@@ -252,11 +320,13 @@ def adapt_segmentation(LI, MA, Odim):
 def adapt_optical_flow(OF, Odim, zstart, CF):
     """ Fit optical flow to the in-silico image dimension. """
 
+    # width, height, _ = OF.shape
     height, width, _ = OF.shape
     height_q, width_q = Odim
 
     x_q = np.linspace(- width_q/2 * CF, width_q/2 * CF, width_q)
-    z_q = np.linspace(zstart, height * CF, height_q)
+    z_q = np.linspace(zstart, zstart + height_q * CF, height_q)
+    # z_q = np.linspace(zstart, height * CF, height_q)
 
     x = np.linspace(- width / 2 * CF, width / 2 * CF, width)
     z = np.linspace(0, height * CF, height)
@@ -307,8 +377,8 @@ def _get_roi_borders(LI1, LI2, MA1, MA2, pairs):
     roi_right.append(MA2.nonzero()[0][-1])
 
     roi = {
-        "left": max(roi_left) + 40,
-        "right": min(roi_right) - 40}
+        "left": max(roi_left),
+        "right": min(roi_right)}
 
     return roi
 
@@ -400,8 +470,16 @@ def get_cropped_coordinates(roi_borders, pos1, pos2, shift_x, shift_z, roi_width
 def get_zstart(fname):
     """ Get zstart. """
 
-    data = ld.loadmat(fname)
-    zstart = data['p']['remove_top_region']
+    # TODO: fname should not be a list
+    extension = fname[0].split('.')[-1]
+    if extension == "mat":
+        data = ld.loadmat(fname)
+        zstart = data['p']['remove_top_region']
+
+    elif extension == "json":
+        with open(fname[0], 'r') as f:
+            data = json.load(f)
+        zstart = data['remove_top_region']
 
     return zstart
 
@@ -495,20 +573,41 @@ def save_data(data, CF, pres, pname):
 
             if "I" in key:
 
-                psave_ = os.path.join(psave, key, data['pname'][id] + ".png")
-                ps.write_image(data[key][id], psave_)
+                psave_ = os.path.join(psave, key, data['pname'][id] + ".pkl")
+                ps.write_pickle(data[key][id], psave_)
 
             if "M" in key:
-                psave_ = os.path.join(psave, key, data['pname'][id] + ".png")
-                ps.write_image(data[key][id], psave_)
+                psave_ = os.path.join(psave, key, data['pname'][id] + ".pkl")
+                ps.write_pickle(data[key][id], psave_)
 
             if "OF" in key:
-                psave_ = os.path.join(psave, key, data['pname'][id] + ".nii")
-                ps.write_nifty(data[key][id], psave_)
+                psave_ = os.path.join(psave, key, data['pname'][id] + ".pkl")
+                ps.write_pickle(data[key][id], psave_)
 
         with open(os.path.join(psave, "CF.txt"), "w") as f:
             for key in CF.keys():
                 f.write(key + " " + str(CF[key]) + '\n')
+
+# ----------------------------------------------------------------------------------------------------------------------
+def save_data_preparation(I_seq, OF_seq, LI_seq, MA_seq, CF, pres, pname):
+    """ Save data: TODO    """
+
+    fh.create_dir(os.path.join(pres, pname))
+
+    with open(os.path.join(pres, pname, "images-" + pname + ".pkl"), 'wb') as f:
+        pkl.dump(I_seq, f)
+
+    with open(os.path.join(pres, pname, "displacement_field-" + pname + ".pkl"), 'wb') as f:
+        pkl.dump(OF_seq, f)
+
+    with open(os.path.join(pres, pname, "LI-" + pname + ".pkl"), 'wb') as f:
+        pkl.dump(LI_seq, f)
+
+    with open(os.path.join(pres, pname, "MA-" + pname + ".pkl"), 'wb') as f:
+        pkl.dump(MA_seq, f)
+
+    with open(os.path.join(pres, pname, "CF-" + pname + ".txt"), 'w') as f:
+        f.write(str(CF))
 
 # ----------------------------------------------------------------------------------------------------------------------
 def add_annotation(I, LI, MA):
@@ -538,4 +637,47 @@ def add_annotation(I, LI, MA):
         I_a.append(I_)
 
     return I_a
+
 # ----------------------------------------------------------------------------------------------------------------------
+def mk_animation(pres, pname):
+
+    with open(os.path.join(pres, pname, "images-" + pname + ".pkl"), 'rb') as f:
+        I_seq = pkl.load(f)
+
+    with open(os.path.join(pres, pname, "displacement_field-" + pname + ".pkl"), 'rb') as f:
+        OF_seq = pkl.load(f)
+
+    with open(os.path.join(pres, pname, "LI-" + pname + ".pkl"), 'rb') as f:
+        LI_seq = pkl.load(f)
+
+    with open(os.path.join(pres, pname, "MA-" + pname + ".pkl"), 'rb') as f:
+        MA_seq = pkl.load(f)
+
+    with open(os.path.join(pres, pname, "displacement_field-" + pname + ".pkl"), 'rb') as f:
+        OF = pkl.load(f)
+
+
+    for id_frame in range(I_seq.shape[-1]):
+        for i in range(I_seq.shape[1]):
+            if int(LI_seq[i, id_frame]) > 0:
+                I_seq[int(LI_seq[i, id_frame]), i, id_frame] = 255
+            if int(MA_seq[i, id_frame]) > 0:
+                I_seq[int(MA_seq[i, id_frame]), i, id_frame] = 255
+
+    images = []
+    for id_seq in range(I_seq.shape[-1]):
+        images.append(I_seq[..., id_seq])
+
+    io.mimsave(os.path.join(pres, pname, "sequence.gif"), images, fps=10)
+
+    flow = []
+    for id_seq in range(OF.shape[-1]):
+        flow.append(OF[..., id_seq])
+    io.mimsave(os.path.join(pres, pname, "OF.gif"), flow, fps=10)
+# ----------------------------------------------------------------------------------------------------------------------
+def load_pickle(path):
+
+    with open(path, 'rb') as f:
+        data = pkl.load(f)
+
+    return data

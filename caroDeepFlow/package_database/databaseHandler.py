@@ -21,72 +21,67 @@ class databaseHandler():
     # ------------------------------------------------------------------------------------------------------------------
 
     def get_patients(self):
-        """ Store path in dictionnary to load patient informations. """
+        """ Store path in dictionary to load data and patient information. """
 
-        # required_keys -> patient_name/seq_id/path_image/path
-        #                -> patient_name/seq_id/path_flow/path
-        #                -> patient_name/seq_id/path_seg_LI/path
-        #                -> patient_name/seq_id/path_seg_LA/path
-        #                -> patient_name/seq_id/path_info/path
-        patients_name = sorted(os.listdir(self.parameters.PDATA))
-
-        for id, patient in enumerate(patients_name):
-
-            self.path_data[patient] = {}
-            p_res = os.path.join(self.parameters.PDATA, patient)
-
-            # --- get path
-            path_image = rd.get_fname(dir=p_res, sub_str='_bmode.png', fold=os.path.join('bmode_result', 'RF'))
-            path_info = rd.get_fname(dir=p_res, sub_str='image_information', fold='phantom')
-            path_LI = rd.get_fname(dir=p_res, sub_str='LI.', fold='phantom')
-            path_MA = rd.get_fname(dir=p_res, sub_str='MA.', fold='phantom')
-            path_parameters = rd.get_fname(dir=p_res, sub_str='parameters.mat', fold='parameters')
-
-            if id > 0:
-                path_flow = rd.get_fname(dir=p_res, sub_str='OF_', fold='phantom')
-                self.path_data[patient]['path_flow'] = path_flow
-            else:
-                self.path_data[patient]['path_flow'] = ''
-
-            self.path_data[patient]['image_information'] = path_info
-            self.path_data[patient]['path_image'] = path_image
-            self.path_data[patient]['path_LI'] = path_LI
-            self.path_data[patient]['path_MA'] = path_MA
-            self.path_data[patient]['path_parameters'] = path_parameters
+        pname = self.parameters.PDATA.split('/')[-1]
+        self.path_data['image_information'] = os.path.join(self.parameters.PDATA, 'CF-' + pname + ".txt")
+        self.path_data['path_image']        = os.path.join(self.parameters.PDATA, 'images-' + pname + ".pkl")
+        self.path_data['path_field']        = os.path.join(self.parameters.PDATA, 'displacement_field-' + pname + ".pkl")
+        self.path_data['path_LI']           = os.path.join(self.parameters.PDATA, 'LI-' + pname + ".pkl")
+        self.path_data['path_MA']           = os.path.join(self.parameters.PDATA, 'MA-' + pname + ".pkl")
 
     # ------------------------------------------------------------------------------------------------------------------
     def create_database(self):
 
         # --- we get pairs of images
         pairs = []
-        keys = list(self.path_data.keys())
-        for id in range(len(keys)-1):
-            p0 = keys[id]
-            p1 = keys[id+1]
+        seq, OF, LI, MA, CF = dbu.load_prepared_data(self.path_data)
+        seq_length = seq.shape[-1]
+        pname = self.parameters.PDATA.split('/')[-1]
+
+        # --- set seq ID to save results
+        for id in range(1, seq_length):
+
+            if id < 10:
+                p0 = pname + "_00" + str(id)
+            elif id < 100:
+                p0 = pname + "_0" + str(id)
+            else:
+                p0 = pname + "_" + str(id)
+
+            if id + 1 < 10:
+                p1 = pname + "_00" + str(id+1)
+            elif id + 1 < 100:
+                p1 = pname + "_0" + str(id + 1)
+            else:
+                p1 = pname + "_" + str(id + 1)
+
             pairs.append([p0, p1])
 
-        for id in tqdm(range(0, len(pairs))):
-            # id=7
-            # --- get path
-            path = dbu.get_path(self.path_data, pairs, id)
-            # --- load data
-            I1, I2, OF, LI1, LI2, MA1, MA2, CF, seg_dim, z_start = dbu.load_data(path)
+        for id in tqdm(range(0, (seq_length-1))):
+
             # --- get size of the original image
+            LI1 = LI[..., id].copy()
+            LI2 = LI[..., id+1].copy()
+            MA1 = MA[..., id].copy()
+            MA2 = MA[..., id + 1].copy()
+            I1 = seq[..., id].copy()
+            I2 = seq[..., id + 1].copy()
+            OF_ = OF[..., id].copy()
+
             args_preprocessing = {
                 'I1'          : I1,
                 'I2'          : I2,
-                'OF'          : OF,
+                'OF'          : OF_,
                 'LI1'         : LI1,
                 'LI2'         : LI2,
                 'MA1'         : MA1,
                 'MA2'         : MA2,
-                'pairs'       : pairs[id],
                 'roi_width'   : self.parameters.ROI_WIDTH,
                 'pixel_width' : self.parameters.PIXEL_WIDTH,
-                'CF'          : CF,
-                'zstart'      : z_start}
+                'CF'          : CF}
 
-            I1, I2, OF, LI1, LI2, MA1, MA2, rCF = dbu.preprocessing(**args_preprocessing)
+            I1, I2, OF12, LI1, LI2, MA1, MA2, rCF = dbu.preprocessing_prepared_data(**args_preprocessing)
             # --- get borders
             roi_borders = dbu._get_roi_borders(LI1, LI2, MA1, MA2, pairs)
             # --- adapt segmentation to borders
@@ -111,11 +106,11 @@ class databaseHandler():
                 "MA2"           : MA2,
                 "I1"            : I1,
                 "I2"            : I2,
-                "OF"            : OF,
+                "OF"            : OF12,
                 "coordinates"   : coordinates,
                 "pixel_width"   : self.parameters.PIXEL_WIDTH,
                 "pixel_height"  : self.parameters.PIXEL_HEIGHT,
-                "pairs_name"    : [p0, p1]
+                "pairs_name"    : pairs[id]
                 }
             data = dbu.data_extraction(**args_data_extraction)
             # --- save data
@@ -125,7 +120,7 @@ class databaseHandler():
                 substr = "0" + str(id + 1)
             else:
                 substr = "00" + str(id + 1)
-            folder = os.path.join(pairs[id][1].split('id')[0][:-1], 'id_' + substr)
+            folder = os.path.join(pname, 'id_' + substr)
             dbu.save_data(data, rCF, self.parameters.PRES, folder)
 
     # ------------------------------------------------------------------------------------------------------------------

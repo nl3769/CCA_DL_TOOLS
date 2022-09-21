@@ -23,16 +23,13 @@ class databaseVisualization():
 
         patient = {}
         files = os.listdir(pdata)
-        if 'parameters' in files:
-            files.remove('parameters')
-
         fparam = [key for key in files if 'param' in key]
         for key in fparam:
             files.remove(key)
         # --- check dim
         if len(files) < nb_val:
             nb_val = len(files)
-
+        files.sort()
         for id in range(nb_val):
 
             pres_ = os.path.join(pdata, files[id])
@@ -40,7 +37,7 @@ class databaseVisualization():
 
             # --- get random patient
             dim_seq = len(pname)
-            seqID = random.randint(0, dim_seq-1)
+            seqID = random.randint(1, dim_seq-1)
             pname = pname[seqID]
 
             # --- get random patch
@@ -55,11 +52,11 @@ class databaseVisualization():
             for key in subfolder:
 
                 if "I" in key:
-                    patient[files[id]][key] = os.path.join(pres_, key, npatch.split('.')[0] + ".png")
+                    patient[files[id]][key] = os.path.join(pres_, key, npatch.split('.')[0] + ".pkl")
                 elif "M" in key:
-                    patient[files[id]][key] = os.path.join(pres_, key, npatch.split('.')[0] + ".png")
+                    patient[files[id]][key] = os.path.join(pres_, key, npatch.split('.')[0] + ".pkl")
                 elif "OF" in key:
-                    patient[files[id]][key] = os.path.join(pres_, key, npatch.split('.')[0] + ".nii")
+                    patient[files[id]][key] = os.path.join(pres_, key, npatch.split('.')[0] + ".pkl")
 
         return patient
 
@@ -71,13 +68,12 @@ class databaseVisualization():
 
             data = {}
             for key in subfolder:
+
                 if "OF" in key:
-                    of = pl.load_nii(patients[patient][key])
-                    of = of.get_fdata()
-                    of = np.array(of)
+                    of = pl.load_pickle(patients[patient][key])
                     data[key] = of
                 else:
-                    data[key] = pl.load_image(patients[patient][key])
+                    data[key] = pl.load_pickle(patients[patient][key])
 
             xof = data["OF"][..., 0]
             zof = data["OF"][..., 2]

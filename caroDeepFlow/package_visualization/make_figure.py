@@ -8,7 +8,7 @@ import numpy                    as np
 
 def make_figure(I1, I2, M1, M2, I2_warpped, xOF, zOF, argOF, normOF, pres):
 
-    ftsize = 4
+    ftsize = 3.5
 
     rec = [32, 32]
     x_mean = int(I1.shape[1]/2)
@@ -52,12 +52,14 @@ def make_figure(I1, I2, M1, M2, I2_warpped, xOF, zOF, argOF, normOF, pres):
     plt.axis('off')
     plt.colorbar()
     plt.title(r'I1', fontsize=ftsize)
+    # plt.title(r'I1')
     # ------------
     plt.subplot2grid((4, 6), (0, 1), colspan=1, rowspan=1)
     plt.imshow(I2_disp, cmap='gray')
     plt.axis('off')
     plt.colorbar()
     plt.title(r'I2', fontsize=ftsize)
+    # plt.title(r'I2')
     # ------------
     plt.subplot2grid((4, 6), (0, 2), colspan=1, rowspan=1)
     diff = I2 - I1
@@ -65,6 +67,7 @@ def make_figure(I1, I2, M1, M2, I2_warpped, xOF, zOF, argOF, normOF, pres):
     plt.axis('off')
     plt.colorbar()
     plt.title(r'I2 - I1', fontsize=ftsize)
+    # plt.title(r'I2 - I1')
 
     # ------ MASK
     plt.subplot2grid((4, 6), (1, 0), colspan=1, rowspan=1)
@@ -72,17 +75,20 @@ def make_figure(I1, I2, M1, M2, I2_warpped, xOF, zOF, argOF, normOF, pres):
     plt.axis('off')
     plt.colorbar()
     plt.title(r'M1', fontsize=ftsize)
+    # plt.title(r'M1')
     # ------------
     plt.subplot2grid((4, 6), (1, 1), colspan=1, rowspan=1)
     plt.imshow(M2, cmap='gray')
     plt.axis('off')
     plt.colorbar()
     plt.title(r'M2', fontsize=ftsize)
+    # plt.title(r'M2')
     # ------------
     plt.subplot2grid((4, 6), (1, 2), colspan=1, rowspan=1)
     plt.imshow(np.abs(M2-M1), cmap='gray')
     plt.axis('off')
     plt.colorbar()
+    # plt.title(r'$|M2 - M1|$')
     plt.title(r'$|M2 - M1|$', fontsize=ftsize)
 
     # ------ OPTICAL FLOW
@@ -91,24 +97,28 @@ def make_figure(I1, I2, M1, M2, I2_warpped, xOF, zOF, argOF, normOF, pres):
     plt.axis('off')
     plt.colorbar()
     plt.title(r'$\sqrt{x_{OF_{1\rightarrow 2}}^2 + z_{OF_{1\rightarrow 2}}^2}$', fontsize=ftsize)
+    # plt.title(r'$\sqrt{x_{OF_{1\rightarrow 2}}^2 + z_{OF_{1\rightarrow 2}}^2}$')
     # ------------
     plt.subplot2grid((4, 6), (2, 1), colspan=1, rowspan=1)
     plt.imshow(xOF, cmap='jet')
     plt.axis('off')
     plt.colorbar()
     plt.title(r'$X displacement$', fontsize=ftsize)
+    # plt.title(r'$X displacement$')
     # ------------
     plt.subplot2grid((4, 6), (2, 2), colspan=1, rowspan=1)
     plt.imshow(zOF, cmap='jet')
     plt.axis('off')
     plt.colorbar()
     plt.title(r'$Z displacement$', fontsize=ftsize)
+    # plt.title(r'$Z displacement$')
     # ------------
     plt.subplot2grid((4, 6), (3, 0), colspan=1, rowspan=1)
     plt.imshow(argOF, cmap='twilight_shifted')
     plt.axis('off')
     plt.colorbar()
     plt.title(r'$arg(OF_x, OF_z)$', fontsize=ftsize)
+    # plt.title(r'$arg(OF_x, OF_z)$')
     plt.tight_layout()
 
     # ------ I2 WARPPED
@@ -117,12 +127,14 @@ def make_figure(I1, I2, M1, M2, I2_warpped, xOF, zOF, argOF, normOF, pres):
     plt.axis('off')
     plt.colorbar()
     plt.title(r'$I2_{warp.}$', fontsize=ftsize)
+    # plt.title(r'$I2_{warp.}$')
     # ------------
     plt.subplot2grid((4, 6), (3, 1), colspan=1, rowspan=1)
     plt.imshow(I2_disp, cmap='gray')
     plt.axis('off')
     plt.colorbar()
     plt.title(r'$I2$', fontsize=ftsize)
+    # plt.title(r'$I2$')
     # ------------
     plt.subplot2grid((4, 6), (3, 2), colspan=1, rowspan=1)
     diff = I2_warpped-I2
@@ -130,6 +142,7 @@ def make_figure(I1, I2, M1, M2, I2_warpped, xOF, zOF, argOF, normOF, pres):
     plt.axis('off')
     plt.colorbar()
     plt.title(r'$I2_{warp.} - I2$', fontsize=ftsize)
+    # plt.title(r'$I2_{warp.} - I2$')
 
     # --- save fig and close
     plt.savefig(pres, bbox_inches='tight', dpi=1000)
