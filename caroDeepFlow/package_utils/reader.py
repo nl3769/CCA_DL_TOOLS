@@ -54,7 +54,16 @@ def get_fname(dir: str, sub_str: str, fold = None) -> str:
 
     folder = '' if fold is None else fold
     folder = os.path.join(dir, folder)
-    files = glob.glob(os.path.join(folder, '*' + sub_str + '*'))
+
+
+    if type(sub_str) == list:
+        files = []
+        for fname in sub_str:
+            file = glob.glob(os.path.join(folder, '*' + fname + '*'))
+            if len(file)==1:
+                files.append(file)
+    else:
+        files = glob.glob(os.path.join(folder, '*' + sub_str + '*'))
 
     if len(files) != 1:
         ic(folder)
