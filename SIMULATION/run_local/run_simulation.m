@@ -8,10 +8,11 @@ if ~isdeployed
     addpath(fullfile('..', 'mtl_cores'))
 end
  
-%%%%%%% RUM SIMULATION FOR ONE PHANTOM AND ONE SET OF PARAMETERS %%%%%%% 
+%%%%%%% RUN SIMULATION %%%%%%% 
 
 % --- path to data
-path_data='/home/laine/cluster/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER/tech_054/tech_054_id_003_FIELD_3D';
+path_data='/home/laine/Desktop/displacment_test/CAMO01_image1';
+
 
 % --- get phantom name
 phantom_folder = fct_list_ext_files(path_data, 'mat', 'phantom');
@@ -32,9 +33,8 @@ elseif PARAM.mode(2)
     tx = nb_tx;
 end
 
-parfor id_tx=1:1:tx
-% for id_tx=10:1:10
-    
+%parfor id_tx=1:1:tx
+for id_tx=1:1:tx
     % --- run simulation
     fct_run_wave_propagation(fullfile(path_data, 'parameters', parameters_folder{1}), fullfile(path_data, 'phantom', phantom_names{1}), id_tx);
 

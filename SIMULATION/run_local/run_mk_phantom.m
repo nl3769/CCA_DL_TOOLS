@@ -3,13 +3,14 @@ clearvars;
 
 run(fullfile('..', 'mtl_utils', 'add_path.m'));
 addpath(fullfile('..', 'mtl_cores'))
-% --- generate several sets of parameters according to the desired parameters.
-pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images';
-fnames = load_fnames(pdatabase);
 
+% --- generate several sets of parameters according to the desired parameters.
+pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/MCMASTER/CROPPED/CAMO_study_cropped/images';
+% pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images';
 pres = '/home/laine/Desktop/NEW_TEST';
-pparam = '/home/laine/Desktop/NEW_PARAM_TEST/set_parameters_toy.json';
+pparam = '/home/laine/Desktop/set_parameters_template.json';
 info = '';
+fnames = load_fnames(pdatabase);
 
 for i=3:1:3
     fct_run_mk_phantom(pdatabase, fnames{i}, pres, pparam, info)
