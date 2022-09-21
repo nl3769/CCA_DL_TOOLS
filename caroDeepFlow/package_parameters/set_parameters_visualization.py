@@ -23,8 +23,8 @@ import os
 def setParameters():
 
   p = Parameters(
-                PDATA='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET_6',                # PATH TO LOAD DATA
-                PRES='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET/VISUALIZATION',             # PATH TO SAVE DATABASE
+                PDATA='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATABASE',                # PATH TO LOAD DATA
+                PRES='/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATASET/VISUALIZATION_TEST',             # PATH TO SAVE DATABASE
   )
 
   pparam = os.path.join(p.PRES, 'parameters')

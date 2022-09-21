@@ -22,25 +22,28 @@ class loggerClass():
         self.loss_full = {'training': [],
                           'validation': []}
 
-        self.loss_seg = {'training': [],
-                         'validation': []}
+        if keys_metrics_seg is not None:
+            self.loss_seg = {
+                'training': [],
+                'validation': []}
+            self.metrics_seg = {
+                'training': {},
+                'validation': {}}
+            for key in self.metrics_seg.keys():
+                for key_metrics in keys_metrics_seg:
+                    self.metrics_seg[key][key_metrics] = []
 
-        self.loss_flow = {'training': [],
-                          'validation': []}
+        if keys_metrics_flow is not None:
+            self.loss_flow = {
+                'training': [],
+                'validation': []}
+            self.metrics_flow = {
+                'training': {},
+                'validation': {}}
+            for key in self.metrics_flow.keys():
+                for key_metrics in keys_metrics_flow:
+                    self.metrics_flow[key][key_metrics] = []
 
-        self.metrics_seg = {'training': {},
-                            'validation': {}}
-
-        self.metrics_flow = {'training': {},
-                             'validation': {}}
-
-        for key in self.metrics_seg.keys():
-            for key_metrics in keys_metrics_seg:
-                self.metrics_seg[key][key_metrics] = []
-
-        for key in self.metrics_flow.keys():
-            for key_metrics in keys_metrics_flow:
-                self.metrics_flow[key][key_metrics] = []
 
         self.validation_loss = {}
         self.history_model = {'training_based': [],
@@ -370,6 +373,55 @@ class loggerClass():
 
         # -- OF PRED
         plt.subplot2grid((4, 4), (2, 2), colspan=2)
+        plt.imshow(OF_pred_norm, cmap='hot')
+        plt.axis('off')
+        plt.colorbar()
+        plt.clim(vmin, vmax)
+        plt.title(r'OF PRED', fontsize=ftsize)
+
+        plt.tight_layout()
+
+        fname = fname.replace('/', '_')
+        fname = fname.replace('.png', '')
+        fname = set + "_epoch_" + str(epoch_id) + "_" + fname + '.png'
+
+        # --- save fig and close
+        plt.savefig(os.path.join(psave, fname), bbox_inches='tight', dpi=1000)
+        plt.close()
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def plot_pred_flow(self, I1, I2, OF_gt, OF_pred, epoch_id, psave, set, fname):
+        ftsize = 6
+        plt.rcParams['text.usetex'] = True
+        plt.figure()
+
+        # ------ IMAGE
+        # -- I1
+        plt.subplot2grid((2, 2), (0, 0), colspan=1)
+        plt.imshow(I1, cmap='gray')
+        plt.axis('off')
+        plt.title(r'I1', fontsize=ftsize)
+        # -- I1
+        plt.subplot2grid((2, 2), (0, 1), colspan=1)
+        plt.imshow(I2, cmap='gray')
+        plt.axis('off')
+        plt.title(r'I2', fontsize=ftsize)
+
+        # ------ FLOW
+        OF_gt_norm = np.sqrt(np.power(OF_gt[0,], 2) + np.power(OF_gt[1,], 2))
+        OF_pred_norm = np.sqrt(np.power(OF_pred[0,], 2) + np.power(OF_pred[1,], 2))
+        vmin = min([np.min(OF_gt_norm), np.min(OF_pred_norm)])
+        vmax = min([np.max(OF_gt_norm), np.max(OF_pred_norm)])
+        # -- OF GT
+        plt.subplot2grid((2, 2), (1, 0), colspan=1, )
+        plt.imshow(OF_gt_norm, cmap='hot')
+        plt.axis('off')
+        plt.colorbar()
+        plt.clim(vmin, vmax)
+        plt.title(r'OF GT', fontsize=ftsize)
+
+        # -- OF PRED
+        plt.subplot2grid((2, 2), (1, 1), colspan=1)
         plt.imshow(OF_pred_norm, cmap='hot')
         plt.axis('off')
         plt.colorbar()

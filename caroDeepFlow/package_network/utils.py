@@ -46,6 +46,41 @@ def get_path_models(pres, keys):
 
     return models_name
 
+
+# ----------------------------------------------------------------------------------------------------------------------
+def load_model_flow(param):
+    """ Load models with associated weights. """
+
+    # ---------------------
+    # ---- LOAD MODELS ----
+    # ---------------------
+
+    netEncoder = NetEncoder(param)
+    if param.MODEL_NAME == 'raft':
+        netFlow = RAFT_NetFlow(param)
+    elif param.MODEL_NAME == 'gma':
+        netFlow = GMA_NetFlow(param)
+
+    # -----------------------
+    # ---- ADAPT WEIGHTS ----
+    # -----------------------
+
+    keys = ['netEncoder', 'netFlow']
+    models_name = get_path_models(param.PRES, keys)
+
+    if param.RESTORE_CHECKPOINT:
+        if models_name is not None:
+            for model_name in models_name.keys():
+                if model_name == keys[0]:
+                    netEncoder.load_state_dict(torch.load(models_name[model_name]))
+                elif model_name == keys[2]:
+                    netFlow.load_state_dict(torch.load(models_name[model_name]))
+    else:
+        netEncoder.apply(initialize_weights)
+        netFlow.apply(initialize_weights)
+
+    return netEncoder, netFlow
+
 # ----------------------------------------------------------------------------------------------------------------------
 def load_model(param):
     """ Load models with associated weights. """

@@ -1,8 +1,36 @@
 from torch.utils.data                       import DataLoader
 from package_dataloader.dataHandler         import dataHandler
+from package_dataloader.dataHandlerFlow     import dataHandlerFlowFlyingChair
 from package_dataloader.dataHandlerSeg      import dataHandlerSeg
 import package_utils.loader                 as pul
 import numpy                                as np
+
+def fetch_dataloader_flow(param):
+    # TODO: specify database if we want to train in more than flyingchairs
+    training_dataloader = dataHandlerFlowFlyingChair(param, "training")
+    validation_dataloader = dataHandlerFlowFlyingChair(param, "validation")
+
+    args_training = {
+        "dataset":      training_dataloader,
+        "batch_size":   param.BATCH_SIZE,
+        "pin_memory":   False,
+        "shuffle":      True,
+        "num_workers":  param.WORKERS,
+        "drop_last":    True
+        }
+    args_validation = {
+        "dataset":      validation_dataloader,
+        "batch_size":   param.BATCH_SIZE,
+        "pin_memory":   False,
+        "shuffle":      True,
+        "num_workers":  1,
+        "drop_last":    True
+        }
+
+    loader_training     = DataLoader(**args_training)
+    loader_validation   = DataLoader(**args_validation)
+
+    return loader_training, loader_validation
 
 # ----------------------------------------------------------------------------------------------------------------------
 def fetch_dataloader(param):
