@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "package_cores/run_train_evaluate_model.py", line 163, in <module>
-    main()
-  File "package_cores/run_train_evaluate_model.py", line 35, in main
-    p = param.setParameters()
-  File "/home/laine/REPOSITORIES/CCA_DL_TOOLS/textureImprovment/ganNet/package_parameters/Unet_parameters_cluster_L1_upconv.py", line 38, in setParameters
-    OUTPUT_ACTIVATION          = nn.ReLu(),
-AttributeError: module 'torch.nn' has no attribute 'ReLu'
