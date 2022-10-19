@@ -1,7 +1,7 @@
-'''
+"""
 @Author  :   <Nolann Lainé>
 @Contact :   <nolann.laine@outlook.fr>
-'''
+"""
 
 import argparse
 import importlib

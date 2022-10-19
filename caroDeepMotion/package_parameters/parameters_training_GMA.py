@@ -31,7 +31,7 @@ class Parameters:
         EXPNAME,
         DEVICE,
         RESTORE_CHECKPOINT,
-        FEATURES,
+        SYNTHETIC_DATASET,
         KERNEL_SIZE,
         PADDING,
         USE_BIAS,
@@ -65,7 +65,7 @@ class Parameters:
         self.EXPNAME                            = EXPNAME
         self.DEVICE                             = DEVICE
         self.RESTORE_CHECKPOINT                 = RESTORE_CHECKPOINT
-        self.FEATURES                           = FEATURES
+        self.SYNTHETIC_DATASET                  = SYNTHETIC_DATASET
         self.KERNEL_SIZE                        = KERNEL_SIZE
         self.PADDING                            = PADDING
         self.USE_BIAS                           = USE_BIAS

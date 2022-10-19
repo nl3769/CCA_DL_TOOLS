@@ -599,7 +599,6 @@ classdef imageReconstruction < handle
             addpath('../')
             obj.IQ=rf2iq(obj.RF_final, obj.probe);
 
-            
         end
         
         % ------------------------------------------------------------------
@@ -635,49 +634,37 @@ classdef imageReconstruction < handle
         end
         
         % ------------------------------------------------------------------
-        function BF_CUDA_STA(obj, name_algo, compounding)
+        function BF_CUDA_STA(obj, compounding)
             % Apply simple DAS/DMAS/DMAS+CF beamforming algorithm.
              
             % --- analytic signal
-%             coef = max(obj.RF_aperture(:));
-%             obj.RF_aperture =  obj.RF_aperture / coef
-            obj.RF_aperture = RF_normalization(obj.RF_aperture)
+            time_offset = fct_get_time_offset(obj.RF_aperture);
+            obj.RF_aperture = RF_normalization(obj.RF_aperture);
             analytic_signals = fct_get_analytic_signals(obj.RF_aperture);
             % --- add zeros padding
             analytic_signals = fct_zero_padding_RF_signals(analytic_signals);
-            
-
             % --- define the CUDA module and kernel
             cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bf_low_res_image.ptx');
             cuda_kernel_name = 'das_low_res';
-            
             % --- get the CUDA kernel from the CUDA module
             cuda_kernel = parallel.gpu.CUDAKernel(cuda_module_path_and_file_name, ...
-            'double*, double*, const double*, const double*, const int, const int, const int, const int, const double, const double, const double*, const int, const int, const int, const double*',...
+            'double*, double*, const double*, const double*, const int, const int, const int, const int, const double, const double, const double*, const int, const int, const int, const double*, const double',...
             cuda_kernel_name);
-            
             % --- signal information
             [time_sample, n_rcv] = size(analytic_signals{1}); 
             dz = obj.probe.c/(2*obj.probe.fs);
             addpath(fullfile('..', 'mtl_synthetic_aperture'))
-
             % --- get image information
             [X_img, Z_img, X_RF, Z_RF, obj.x_display, obj.z_display] = fct_get_grid_2D(obj.param, obj.phantom, obj.image, obj.probe, [time_sample, n_rcv], dz);
             [n_points_z, n_points_x] = size(X_img);
             obj.low_res_image = zeros([n_points_z n_points_x obj.probe.Nelements]);
-            
             % --- get probe position element
             probe_width = (obj.probe.Nelements-1) * obj.probe.pitch;
             probe_pos_x = linspace(-probe_width/2, probe_width/2, obj.probe.Nelements);
-            
-            % --- first id_rx
-            offset = floor(obj.param.Nactive/2)+1;
-            
             % --- number of active elements
             Nactive_tx = obj.param.Nactive;
             Nactive_rx = obj.param.Nactive;
-            
-%             --- apodization window
+            % --- apodization window
             apodization = fct_get_apodization([time_sample, n_rcv], Nactive_tx, obj.probe.pitch, 'hanning_adaptative', obj.param.fnumber, dz);
 %             apodization = fct_get_apodization([time_sample, n_rcv], Nactive_tx, obj.probe.pitch, 'hanning_full', obj.param.fnumber, dz);
             
@@ -711,7 +698,7 @@ classdef imageReconstruction < handle
             tof          = double(tof);
             
 %             for id_tx=offset:obj.probe.Nelements-offset+1
-            for id_tx=1:1:192
+            for id_tx=33:1:160
                 
                 I_r          = double(zeros([n_points_z n_points_x]));
                 I_i          = double(zeros([n_points_z n_points_x]));
@@ -721,7 +708,7 @@ classdef imageReconstruction < handle
                 Zr           = real(AL);
                 
                 % --- call the kernel
-                [I_i, I_r] = feval(cuda_kernel, I_r, I_i, Zi, Zr, nb_rx, time_sample, imageW, imageH, c, fs, apodization, id_tx-1, col_s, col_e, tof);
+                [I_i, I_r] = feval(cuda_kernel, I_r, I_i, Zi, Zr, nb_rx, time_sample, imageW, imageH, c, fs, apodization, id_tx-1, col_s, col_e, tof, -time_offset(id_tx));
                 
                 % --- gather the output back from GPU to CPU
                 I_i = gather(I_i);
@@ -735,10 +722,11 @@ classdef imageReconstruction < handle
             
             % --- compounding
             switch compounding
-                case 'SUM'
+                case 'DAS'
                     obj.IQ = sum(abs(obj.low_res_image), 3);
-                case 'MULTIPLY'
-                    low_res_image_ = abs(obj.low_res_image);
+                case 'DMAS'
+%                     low_res_image_ = abs(obj.low_res_image);
+                    low_res_image_ = sqrt(abs(obj.low_res_image)); 
                     for id_col = 1:size(low_res_image_, 2)
                         
                         % --- preserve dimensionality
@@ -782,7 +770,6 @@ end
 function [RF_aperture, probe, sub_probe, param, phantom]=get_data(path_data, rf_data_name, param_name, probe_name, sub_probe_name, phantom_name)
     % Load data required for image reconstruction.
     
-
     % --- PARAMETERS
     param=fct_load_param(fullfile(path_data, 'parameters', param_name));
     disp('Parameters are loaded');
@@ -800,7 +787,7 @@ function [RF_aperture, probe, sub_probe, param, phantom]=get_data(path_data, rf_
     phantom=fct_load_phantom(fullfile(path_data, 'phantom', phantom_name));
     disp('Phantom is loaded');
     
-        % --- RF DATA 
+    % --- RF DATA 
     RF_aperture=load_data(fullfile(path_data, 'raw_data', rf_data_name));
     RF_aperture=RF_aperture.raw_data;
     disp('Raw data is loaded');

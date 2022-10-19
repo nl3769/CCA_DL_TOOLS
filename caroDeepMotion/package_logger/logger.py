@@ -13,7 +13,7 @@ import package_utils.fold_handler   as pufh
 class loggerClass():
 
     # ------------------------------------------------------------------------------------------------------------------
-    def __init__(self, p, keys_metrics_seg, keys_metrics_flow):
+    def __init__(self, p, keys_metrics_flow):
 
         self.p = p
 
@@ -21,17 +21,6 @@ class loggerClass():
 
         self.loss_full = {'training': [],
                           'validation': []}
-
-        if keys_metrics_seg is not None:
-            self.loss_seg = {
-                'training': [],
-                'validation': []}
-            self.metrics_seg = {
-                'training': {},
-                'validation': {}}
-            for key in self.metrics_seg.keys():
-                for key_metrics in keys_metrics_seg:
-                    self.metrics_seg[key][key_metrics] = []
 
         if keys_metrics_flow is not None:
             self.loss_flow = {
@@ -93,40 +82,6 @@ class loggerClass():
     # ------------------------------------------------------------------------------------------------------------------
     def plot_loss(self):
         """ Plot the loss for training and evaluation during training. """
-
-        #############################
-        # --- LOSS SEGMENTATION --- #
-        #############################
-
-        # --- validation
-        if len(self.loss_seg['validation']) != 0:
-            epoch = list(range(0, len(self.loss_seg['validation'])))
-            plt.figure()
-            fig = plt.gcf()
-            fig.set_size_inches(8, 6)
-            plt.plot(epoch, self.loss_seg['validation'], color='b')
-            plt.title('Validation loss')
-            plt.xlabel('Epoch')
-            plt.ylabel('Loss')
-            plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'loss_validation_BCEDice_seg.png'), dpi=150)
-            plt.close()
-
-        # --- training
-        if len(self.loss_seg['training']) != 0:
-            epoch = list(range(0, len(self.loss_seg['training'])))
-            plt.figure()
-            fig = plt.gcf()
-            fig.set_size_inches(8, 6)
-            plt.plot(epoch, self.loss_seg['training'], color='r')
-            plt.title('Training loss')
-            plt.xlabel('Epoch')
-            plt.ylabel('Loss')
-            plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'loss_training_BCEDice_seg.png'), dpi=150)
-            plt.close()
-
-        #####################
-        # --- LOSS FLOW --- #
-        #####################
 
         # --- validation
         if len(self.loss_flow['validation']) != 0:
@@ -222,47 +177,6 @@ class loggerClass():
             plt.ylabel('Metrics')
             plt.legend(self.metrics_flow['training'].keys())
             plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'metrics_training_flow.png'), dpi=150)
-            plt.close()
-
-        #######################
-        # --- SEG METRICS --- #
-        #######################
-
-        # --- validation
-        if len(self.loss_seg['validation']) != 0:
-            epoch = list(range(0, len(self.loss_seg['validation'])))
-            plt.figure()
-            fig = plt.gcf()
-            fig.set_size_inches(8, 6)
-            for key in self.metrics_seg['validation'].keys():
-                plt.plot(epoch, self.metrics_seg['validation'][key])
-
-            plt.title('Metrics during training (evaluation)')
-            plt.xlabel('Epoch')
-            plt.ylabel('Metrics')
-            legend_ = self.metrics_seg['validation'].keys()
-            legend_ = [key.replace('_', '') for key in legend_]
-            plt.legend(legend_)
-            plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'metrics_validation_seg.png'), dpi=150)
-            plt.close()
-
-        # --- training
-        if len(self.loss_seg['training']) != 0:
-            epoch = list(range(0, len(self.loss_flow['training'])))
-            plt.figure()
-            fig = plt.gcf()
-            fig.set_size_inches(8, 6)
-            for key in self.metrics_seg['training'].keys():
-                plt.plot(epoch, self.metrics_seg['training'][key])
-
-            plt.title('Metrics during training (training)')
-            plt.xlabel('Epoch')
-            plt.ylabel('Metrics')
-            legend_ = self.metrics_seg['training'].keys()
-            legend_ = [key.replace('_', '') for key in legend_]
-            plt.legend(legend_)
-            plt.legend(legend_)
-            plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'metrics_training_seg.png'), dpi=150)
             plt.close()
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -437,5 +351,33 @@ class loggerClass():
         fname = set + "_epoch_" + str(epoch_id) + "_" + fname + '.png'
 
         # --- save fig and close
+        plt.savefig(os.path.join(psave, fname), bbox_inches='tight', dpi=1000)
+        plt.close()
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def plot_pred_flow_error(self, OF_gt, OF_pred, epoch_id, psave, set, fname):
+
+        ftsize = 5
+
+        fname = fname.replace('/', '_')
+        fname = fname.replace('.png', '')
+        fname = 'error_' + set + "_epoch_" + str(epoch_id) + "_" + fname + '.png'
+
+        err = OF_pred - OF_gt
+
+        plt.figure()
+
+        plt.subplot2grid((2, 1), (0, 0), colspan=1)
+        plt.imshow(err[0, ], cmap='hot')
+        plt.title('pred - GT (x)', fontsize=ftsize)
+        plt.colorbar()
+        plt.axis('off')
+
+        plt.subplot2grid((2, 1), (1, 0), colspan=1)
+        plt.imshow(err[1, ], cmap='hot')
+        plt.title('pred - GT (Z)', fontsize=ftsize)
+        plt.colorbar()
+        plt.axis('off')
+
         plt.savefig(os.path.join(psave, fname), bbox_inches='tight', dpi=1000)
         plt.close()

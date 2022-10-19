@@ -64,7 +64,9 @@ classdef wavePropagation < handle
                                   delay_probe, ...
                                   obj.probe, ...
                                   opt);  
-%             end
+
+            time_offset = zeros(size(obj.RF_aperture, 2), 1)'; % since there is not delay using simus
+            obj.RF_aperture=[time_offset; obj.RF_aperture];
             obj.exec_time = toc(now1);
         end
         
@@ -96,7 +98,7 @@ classdef wavePropagation < handle
                                   obj.probe,...
                                   opt);  
 
-            obj.exec_time = toc(now1);
+            obj.exec_time = toc(now1)
 
         end
         
@@ -163,8 +165,8 @@ classdef wavePropagation < handle
             field_init(-1)
             [emit_aperture, receive_aperture, time_compensation]=obj.init_field(50);
             
-            % --- adapt tx id
-            id_tx_active = id_tx + floor(obj.param.Nactive/2);
+%             % --- adapt tx id
+%             id_tx_active = id_tx + floor(obj.param.Nactive/2);
 
             % --- adapt phantom in order to fit field
             positions=[obj.phantom.x_scatt, obj.phantom.y_scatt, obj.phantom.z_scatt];
@@ -182,13 +184,17 @@ classdef wavePropagation < handle
             %delay=xdc_get(emit_aperture, 'focus');
             %delay = delay(id_tx:id_tx+obj.sub_probe.Nelements-1);
             
-            % --- we run the simulation
-            [obj.RF_aperture, tstart] = calc_scat_multi(emit_aperture, receive_aperture, positions, obj.phantom.RC_scatt);  
-            obj.exec_time = toc(now1);
-            
-            % --- add zero padding to RF signal
-            obj.RF_aperture=[zeros(size(obj.RF_aperture, 2), round((tstart - time_compensation)*obj.sub_probe.fs))'; obj.RF_aperture];
-            
+            if id_tx > floor(obj.param.Nactive/2) & id_tx < (obj.param.Nelements - floor(obj.param.Nactive/2) + 1)
+                % --- we run the simulation
+                [obj.RF_aperture, tstart] = calc_scat_multi(emit_aperture, receive_aperture, positions, obj.phantom.RC_scatt);  
+                obj.exec_time = toc(now1);
+
+                % --- add zero padding to RF signal
+                time_offset = ones(size(obj.RF_aperture, 2), 1)' * (tstart - time_compensation);
+                obj.RF_aperture=[time_offset; obj.RF_aperture];
+            else
+                obj.RF_aperture = zeros(obj.param.Nelements, obj.param.Nelements);
+            end
         end
         
         % ------------------------------------------------------------------
@@ -304,15 +310,10 @@ classdef wavePropagation < handle
         % ------------------------------------------------------------------
         function save_raw_data(obj, name_phantom, id_tx)
             
-            raw_data=obj.RF_aperture;            
-%             if obj.param.sequence
-                name_=split(name_phantom, '.');
-                name_=name_{1};
-                path_raw_data=fullfile(obj.param.path_res, 'raw_data', 'raw_', [name_ '_raw_data_id_tx_' num2str(id_tx) '.mat']);
-%             else
-%                 path_raw_data=fullfile(obj.path_res, 'raw_data', [name_phantom '_raw_data.mat']);
-%             end
-            
+            raw_data=obj.RF_aperture;
+            name_=split(name_phantom, '.');
+            name_=name_{1};
+            path_raw_data=fullfile(obj.param.path_res, 'raw_data', 'raw_', [name_ '_raw_data_id_tx_' num2str(id_tx) '.mat']);
             save(path_raw_data, 'raw_data', '-v7.3'); % flag '-v7.3' to store data larger than 2Go
 
         end

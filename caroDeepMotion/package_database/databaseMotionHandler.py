@@ -79,7 +79,8 @@ class databaseHandler():
                 'MA2'         : MA2,
                 'roi_width'   : self.parameters.ROI_WIDTH,
                 'pixel_width' : self.parameters.PIXEL_WIDTH,
-                'CF'          : CF}
+                'CF'          : CF
+            }
 
             I1, I2, OF12, LI1, LI2, MA1, MA2, rCF = dbu.preprocessing_prepared_data(**args_preprocessing)
 

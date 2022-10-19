@@ -4,7 +4,7 @@ extern "C" { // ---> [kernel]
 /* --------------------------------------- DAS LOW RESOLUTION  -------------------------------------------------------- */
 /* -------------------------------------------------------------------------------------------------------------------- */
 
-  __global__ void das_low_res(double* Ii, double *Ir,const double* Zi, const double* Zr, const int nb_rx, const int time_sample, const int W, const int H, const double c, const double fs, const double* apod, const int id_tx, const int col_s, const int col_e, const double* tof)
+  __global__ void das_low_res(double* Ii, double *Ir,const double* Zi, const double* Zr, const int nb_rx, const int time_sample, const int W, const int H, const double c, const double fs, const double* apod, const int id_tx, const int col_s, const int col_e, const double* tof, const double time_offset)
   {
     /*
     I              -> array that will contains the beamformed images (W * H * nb_tx_elements)
@@ -37,19 +37,16 @@ extern "C" { // ---> [kernel]
         idx = col * H + row;
         id_apod_tx = H * W * id_tx + idx;
 
-        // --- loop over rx elements
+        // loop over rx elements
         for (int id_rx = 0; id_rx < nb_rx; id_rx++){
             id_apod_rx = H * W * id_rx + idx;
             tof_ = tof[id_apod_tx] + tof[id_apod_rx];
-            delay = tof_ * fs + 1;
+            delay = (tof_+ time_offset) * fs  + 1;
             if(delay >= 1 && delay <= (time_sample-1))
             {
               is1 = (int)floor(delay);
               Ii[idx] += apod[id_apod_rx] * apod[id_apod_tx] * ( Zi[time_sample * id_rx + is1] * (is1 + 1 - delay) + Zi[time_sample * id_rx + is1 + 1] * (delay - is1) );
               Ir[idx] += apod[id_apod_rx] * apod[id_apod_tx] * ( Zr[time_sample * id_rx + is1] * (is1 + 1 - delay) + Zr[time_sample * id_rx + is1 + 1] * (delay - is1) );
-              
-              //Ii[idx] += Zi[time_sample * id_rx + is1] * (is1 + 1 - delay) + Zi[time_sample * id_rx + is1 + 1] * (delay - is1);
-              //Ir[idx] += apod[id_apod_rx] * apod[id_apod_tx] * ( Zr[time_sample * id_rx + is1] * (is1 + 1 - delay) + Zr[time_sample * id_rx + is1 + 1] * (delay - is1) );
             }
         }
     }

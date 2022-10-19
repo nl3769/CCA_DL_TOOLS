@@ -7,7 +7,7 @@ addpath(fullfile('..', 'mtl_cores'))
 % --- generate several sets of parameters according to the desired parameters.
 pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/MCMASTER/CROPPED/CAMO_study_cropped/images';
 % pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images';
-pres = '/home/laine/Desktop/NEW_TEST';
+pres = '/home/laine/Desktop/SIMUS_TEST';
 pparam = '/home/laine/Desktop/set_parameters_template.json';
 info = '';
 fnames = load_fnames(pdatabase);
@@ -27,5 +27,4 @@ end
              incr=incr+1;
      end
  end
- 
 % -------------------------------------------------------------------------

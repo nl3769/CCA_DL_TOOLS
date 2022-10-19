@@ -1,6 +1,6 @@
 import os
 import sys
-from package_dataloader.segFlowLoader import segFlowDataloader
+from package_dataloader.segFlowLoader import motionDataloader
 
 # ----------------------------------------------------------------------------------------------------------------------
 def check_dim(res, patient):
@@ -17,7 +17,7 @@ def check_dim(res, patient):
             sys.exit('Error in check_dim in dataHandler: ' + patient)
 
 # ----------------------------------------------------------------------------------------------------------------------
-class dataHandler(segFlowDataloader):
+class dataHandler(motionDataloader):
 
 
     def __init__(self, param, set):
@@ -52,14 +52,14 @@ class dataHandler(segFlowDataloader):
                     pI2 = os.path.join(patient, id_seq, 'I2', fpath)
                     pM1 = os.path.join(patient, id_seq, 'M1', fpath)
                     pM2 = os.path.join(patient, id_seq, 'M2', fpath)
-                    pOF = os.path.join(patient, id_seq, 'OF', fpath.replace('png', 'nii'))
+                    pOF = os.path.join(patient, id_seq, 'OF', fpath)
 
                     self.image_list.append([pI1, pI2])
                     self.mask_list.append([pM1, pM2])
                     self.flow_list.append([pOF])
                     self.CF_list.append([pCF])
 
-        # self.image_list = self.image_list[:10]
-        # self.mask_list = self.mask_list[:10]
-        # self.flow_list = self.flow_list[:10]
-        # self.CF_list = self.CF_list[:10]
+        self.image_list = self.image_list[:1000]
+        self.mask_list = self.mask_list[:1000]
+        self.flow_list = self.flow_list[:1000]
+        self.CF_list = self.CF_list[:1000]

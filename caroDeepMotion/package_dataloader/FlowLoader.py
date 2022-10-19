@@ -8,10 +8,9 @@ import package_utils.loader     as      pul
 # ----------------------------------------------------------------------------------------------------------------------
 class FlowDataloader(Dataset):
 
-    def __init__(self, param):
+    def __init__(self):
 
         self.is_test = False
-        self.flow_list = []
         self.image_list = []
         self.mask_list = []
         self.CF_list = []
@@ -25,7 +24,7 @@ class FlowDataloader(Dataset):
         index = index % len(self.image_list)
 
         # --- read data
-        OF = self.read_OF(self.flow_list[index])
+        OF = self.read_OF(self.flow_list[index][0])
         I1, I2 = self.read_img(self.image_list[index][0], self.image_list[index][1])
 
         # --- get the name of the sequence

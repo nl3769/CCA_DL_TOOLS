@@ -12,8 +12,8 @@ import os
 def setParameters():
 
   p = Parameters(
-                PDATA = '/home/laine/Desktop/CAROSEGDEEP_TEST/DATA_TEST/',                # PATH TO LOAD DATA
-                PRES  = '/home/laine/Desktop/CAROSEGDEEP_TEST/DATABASE_VISUALIZATION',             # PATH TO SAVE DATABASE
+                PDATA = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATABASEMOTION',                # PATH TO LOAD DATA
+                PRES  = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/DATAVISUALIZATION',             # PATH TO SAVE DATABASE
   )
 
   pparam = os.path.join(p.PRES, 'parameters')

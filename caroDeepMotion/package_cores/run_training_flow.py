@@ -18,7 +18,6 @@ import package_loop.trn_loop               as prtl
 import package_loop.val_loop             as prvl
 import package_debug.visualisation              as pdv
 
-
 ################################
 # --- RUN TRAINING ROUTINE --- #
 ################################
@@ -73,12 +72,18 @@ def main():
     }
 
     # --- logger
-    logger = plog.loggerClass(p, None, flowLoss.metrics.keys())
+    logger = plog.loggerClass(p, flowLoss.metrics.keys())
 
     # --- loop
     for epoch in range(p.NB_EPOCH):
-        prtl.training_loop_flow(p, networks, flowLoss, optimizers, schedulers, logger, training_dataloader, epoch, device)
-        prvl.validation_loop_flow(p, networks, flowLoss, logger, validation_dataloader, epoch, device)
+        
+        if p.SYNTHETIC_DATASET:
+            prtl.trn_loop_synth(p, networks, flowLoss, optimizers, schedulers, logger, training_dataloader, epoch, device)
+            prvl.val_loop_synth(p, networks, flowLoss, logger, validation_dataloader, epoch, device)
+        
+        else:
+            prtl.trn_loop_flow(p, networks, flowLoss, optimizers, schedulers, logger, training_dataloader, epoch, device)
+            prvl.val_loop_flow(p, networks, flowLoss, logger, validation_dataloader, epoch, device)
         logger.save_best_model(epoch, networks)
 
     logger.plot_loss()

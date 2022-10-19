@@ -12,6 +12,7 @@ from icecream                               import ic
 # -----------------------------------------------------------------------------------------------------------------------
 def create_dataset(p, PDATA, simulation):
     for simu in simulation:
+        # simu = simulation[5]
         ic(simu)
         p.PDATA = os.path.join(PDATA, simu)
         dataHandler = databaseHandler(p)
@@ -33,7 +34,8 @@ def main():
 
     # --- launch process
     simulation = os.listdir(p.PDATA)
-    simulation.remove('backup_parameters')
+    if 'backup_parameters' in simulation:
+        simulation.remove('backup_parameters')
     simulation.sort()
 
     PDATA = p.PDATA

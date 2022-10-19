@@ -29,7 +29,7 @@ class Parameters:
         EXPNAME,
         DEVICE,
         RESTORE_CHECKPOINT,
-        FEATURES,
+        SYNTHETIC_DATASET,
         KERNEL_SIZE,
         PADDING,
         USE_BIAS,

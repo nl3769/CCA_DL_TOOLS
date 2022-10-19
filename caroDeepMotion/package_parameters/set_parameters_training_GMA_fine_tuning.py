@@ -3,7 +3,7 @@
 @Contact :   <nolann.laine@outlook.fr>
 '''
 
-from package_parameters.parameters_training_raft import Parameters
+from package_parameters.parameters_training_GMA import Parameters
 import package_utils.fold_handler as fh
 import os
 from shutil import copyfile
@@ -11,13 +11,13 @@ from shutil import copyfile
 def setParameters():
 
     p = Parameters(
-        MODEL_NAME                  = 'raft',                                                                           # chose gma or raft
-        PDATA                       = '/home/laine/PROJECTS_IO/DATA/OPTICAL_FLOW/FlyingChairs/data',            # PATH TO LOAD DATA
-        PRES                        = '/home/laine/PROJECTS_IO/CARODEEPFLOW/RAFT_flyingChairs_pretraining_01',        # PATH TO SAVE TRAINING RESULTS
-        PSPLIT                      = '/home/laine/PROJECTS_IO/DATA/OPTICAL_FLOW/FlyingChairs/data',
+        MODEL_NAME                  = 'gma',                                                                           # chose gma or raft
+        PDATA                       = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/DATABASEMOTION',            # PATH TO LOAD DATA
+        PRES                        = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/NETMOTION/GMA_pretraining_00',          # PATH TO SAVE TRAINING RESULTS
+        PSPLIT                      = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/SPLITDATA',
         LEARNING_RATE               = 0.0001,
-        BATCH_SIZE                  = 8,                                                                        # size of a batch
-        NB_EPOCH                    = 500,
+        BATCH_SIZE                  = 1,                                                                        # size of a batch
+        NB_EPOCH                    = 5,
         VALIDATION                  = True,
         DROPOUT                     = 0.0,                                                                      # dropout during training
         GAMMA                       = 0.8,                                                                      # see later what it is
@@ -29,13 +29,15 @@ def setParameters():
         WORKERS                     = 0,
         POSITION_ONLY               = False,
         POSITION_AND_CONTENT        = False,
-        NUM_HEAD                    = 4,
+        NUM_HEAD                    = 8,
+        CONTEXT_DIM                 = 128,
+        HIDDEN_DIM                  = 128,
         ADVENTICIA_DIM              = 1,                                                                        # part of adventitia in mm
         USER                        = 'LAINE',
-        EXPNAME                     = 'RAFT_PRETRAINED_FLYINGCHAIR',
+        EXPNAME                     = 'GMA_PRETRAINED_FLYINGCHAIR',
         DEVICE                      = 'cuda',                                                                   # cuda/cpu
-        RESTORE_CHECKPOINT          = True,
-        FEATURES                    = 'split',                                                                 # shared or split
+        RESTORE_CHECKPOINT          = True,                                                      # shared or split
+        SYNTHETIC_DATASET           = True,
         # --- If feature is split, then chose parameters for Unet
         KERNEL_SIZE                 = (3, 3),
         PADDING                     = (1, 1),

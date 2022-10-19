@@ -11,10 +11,10 @@ end
 %%%%%%% RUM SIMULATION FOR ONE PHANTOM AND ONE SET OF PARAMETERS %%%%%%% 
 
 % --- path to data
-path = '/home/laine/Desktop/displacment_test/CAMO01_image1';
+path = '/home/laine/cluster/PROJECTS_IO/SIMULATION/SOFTWARE_TEST/tech_104/';
 frame = list_files(path);
 
-for idp=3:1:length(frame)
+for idp=1:1:length(frame)
     path_data = fullfile(path, frame{idp});
 
     % --- get phantom name

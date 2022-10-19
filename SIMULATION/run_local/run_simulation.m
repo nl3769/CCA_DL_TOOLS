@@ -11,7 +11,7 @@ end
 %%%%%%% RUN SIMULATION %%%%%%% 
 
 % --- path to data
-path_data='/home/laine/Desktop/displacment_test/CAMO01_image1';
+path_data='/home/laine/Desktop/SIMUS_TEST/CAMO01_image1/CAMO01_image1_id_001_FIELD_STA';
 
 
 % --- get phantom name

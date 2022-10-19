@@ -5,8 +5,6 @@ from torch                                          import nn
 from package_network.network_RAFTFlow               import RAFT_NetFlow
 from package_network.network_GMAFlow                import GMA_NetFlow
 from package_network.network_encoder                import NetEncoder
-from package_network.network_segDecoder             import NetSegDecoder
-from package_network.network_dilatedUnet            import dilatedUnet
 
 # ----------------------------------------------------------------------------------------------------------------------
 def initialize_weights(m):
@@ -79,14 +77,14 @@ def load_model_flow(param):
     # -----------------------
 
     keys = ['netEncoder', 'netFlow']
-    models_name = get_path_models(param.PRES, keys)
+    models_name = get_path_models(os.path.join(param.PRES, 'model'), keys)
 
     if param.RESTORE_CHECKPOINT:
         if models_name is not None:
             for model_name in models_name.keys():
                 if model_name == keys[0]:
                     netEncoder.load_state_dict(torch.load(models_name[model_name]))
-                elif model_name == keys[2]:
+                elif model_name == keys[1]:
                     netFlow.load_state_dict(torch.load(models_name[model_name]))
     else:
         netEncoder.apply(initialize_weights)

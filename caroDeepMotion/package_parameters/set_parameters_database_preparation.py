@@ -15,9 +15,9 @@ def setParameters():
 
     p = Parameters(
         # PDATA           = '/run/media/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER',                       # PATH TO LOAD DATA
-        PDATA           = '/run/media/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER_V0',                       # PATH TO LOAD DATA
+        PDATA           = '/home/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER_V1',                       # PATH TO LOAD DATA
         # PRES            = '/run/media/laine/HDD/PROJECTS_IO/SIMULATION/DATA_PREPARATION',          # PATH TO SAVE DATABASEPDATA           = '/run/media/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER',                       # PATH TO LOAD DATA
-        PRES            = '/home/laine/Desktop/CARODEEPFLOWSEG/DATA_PREPARATION',          # PATH TO SAVE DATABASE
+        PRES            = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/PREPAREDDATA/V_00',          # PATH TO SAVE DATABASE
         )
 
     pparam = os.path.join(p.PRES, 'backup_parameters')

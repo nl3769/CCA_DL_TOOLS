@@ -11,7 +11,7 @@ from icecream                               import ic
 
 # -----------------------------------------------------------------------------------------------------------------------
 def prepare_dataset(p, PDATA, simulation):
-    for simu in simulation:
+    for simu in simulation[80:]:
         ic(simu)
         p.PDATA = os.path.join(PDATA, simu)
         dataPreparation = databasePreparation(p)
