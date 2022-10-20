@@ -495,7 +495,7 @@ classdef createPhantom < handle
         end
         
         % ----------------------------------------------------------------------------------------------------------------------
-        function init_position(obj)
+        function init_position(obj, nb_images)
             % Initialisation of the following parameters:
             % offset_rot -> x, y and z position
             % x_offset_scaling -> x, y and z position
@@ -565,7 +565,7 @@ classdef createPhantom < handle
             T=1/obj.f_simu;
             dt=T/obj.fps;
             obj.time_sample_simu = 0:dt:4*T; 
-            obj.id_seq = 1;
+            obj.id_seq = round( (size(obj.time_sample_simu, 2) - nb_images) * rand(1));
         end
 
         % ----------------------------------------------------------------------------------------------------------------------

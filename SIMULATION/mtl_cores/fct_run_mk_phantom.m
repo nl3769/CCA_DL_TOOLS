@@ -14,6 +14,7 @@ function fct_run_mk_phantom(varargin)
         error('Problem with parameters (fct_run_mk_phantom)')
     
     end
+    
     if ~isdeployed
         run(fullfile('..', 'mtl_utils', 'add_path.m'));
     end
@@ -38,7 +39,7 @@ function fct_run_mk_phantom(varargin)
 %     phantom.phantom_tmp();
     phantom.extrusion(true);    
     phantom.remove_top_region(parameters.param.remove_top_region);
-    phantom.init_position();
+    phantom.init_position(parameters.param.nb_images);
     substr  = fct_get_substr_id_seq(phantom.id_seq);
     pname   = strcat('dicom_', ndname, '_phantom_' , 'id_', substr , '_', parameters.param.soft, info);
     pres_   = fullfile(pres, strcat(ndname, '_' , 'id_', substr , '_', parameters.param.soft, info));
@@ -49,7 +50,6 @@ function fct_run_mk_phantom(varargin)
     parameters.set_phantom_name(pname);
     parameters.create_directory()
     parameters.save()
-    
     % --- get path to segmentation
     str_          = fct_build_path(split(pfolder, '/'), 1);
     str_          = fullfile(str_, "SEG/");
@@ -58,7 +58,8 @@ function fct_run_mk_phantom(varargin)
     pLI           = fullfile(str_, strcat(patient_name, "_IFC3_A1.txt"));
     pMA           = fullfile(str_, strcat(patient_name, "_IFC4_A1.txt"));
     phantom.get_seg(pLI, pMA)
-        
+    % --- generate scatteres
+    inc = 1;
     for id_img = 1:1:parameters.param.nb_images
         
         phantom.update_parameters(pres_);                    
