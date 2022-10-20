@@ -1,10 +1,37 @@
 #!/bin/bash
 
-parameters=("set_parameters_training_flyingChairs_raft.py"
-            "set_parameters_training_flyingChairs_gma.py")
+parameters=(
+            "set_parameters_training_GMA_fine_tuning.py"
+            "set_parameters_training_GMA_fine_tuning.py"
+            "set_parameters_training_GMA_fine_tuning.py"
+            "set_parameters_training_GMA_fine_tuning.py"
+            "set_parameters_training_GMA_fine_tuning.py"
+            "set_parameters_training_GMA_fine_tuning.py"
+            "set_parameters_training_GMA_fine_tuning.py"
+            "set_parameters_training_GMA_fine_tuning.py"
+            "set_parameters_training_GMA_fine_tuning.py"
+            "set_parameters_training_GMA_fine_tuning.py"
+            "set_parameters_training_GMA_fine_tuning.py"
+            "set_parameters_training_GMA_fine_tuning.py"
+            "set_parameters_training_GMA_fine_tuning.py"
+            )
 
-exp=("decod_GRU"
-     "decod_transformer")
+exp=(
+     "FT_GMA"
+     "FT_GMA"
+     "FT_GMA"
+     "FT_GMA"
+     "FT_GMA"
+     "FT_GMA"
+     "FT_GMA"
+     "FT_GMA"
+     "FT_GMA"
+     "FT_GMA"
+     "FT_GMA"
+     "FT_GMA"
+     "FT_GMA"
+     "FT_GMA"
+     )
 
 
 
