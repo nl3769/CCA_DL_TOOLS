@@ -5,9 +5,6 @@ import package_utils.loader                 as pul
 import numpy                                as np
 
 def fetch_dataloader_flow(p):
-    """
-    TODO: specify database if we want to train in more than flyingchairs
-    """
 
     if p.SYNTHETIC_DATASET:
         trn_dataloader = dataHandler(p, "training")

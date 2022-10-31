@@ -4,10 +4,10 @@ function warpped_image()
     clearvars;
     clc;
 
-    pI0 = "/home/laine/cluster/PROJECTS_IO/SIMULATION/test_motion/CAMO01_image1/CAMO01_image1_id_005_FIELD/bmode_result/RF/dicom_CAMO01_image1_phantom_id_005_FIELD_bmode.png";
-    pI1 = "/home/laine/cluster/PROJECTS_IO/SIMULATION/test_motion/CAMO01_image1/CAMO01_image1_id_006_FIELD/bmode_result/RF/dicom_CAMO01_image1_phantom_id_006_FIELD_bmode.png";
-    pOF = "/home/laine/cluster/PROJECTS_IO/SIMULATION/test_motion/CAMO01_image1/CAMO01_image1_id_006_FIELD/phantom/OF_5_6.nii";
-    pparam = "/home/laine/cluster/PROJECTS_IO/SIMULATION/test_motion/CAMO01_image1/CAMO01_image1_id_002_FIELD/phantom/image_information.mat";
+    pI0 = "/home/laine/cluster/PROJECTS_IO/SIMULATION/MOTION_TEST/V1/tech_001/tech_001_id_003_FIELD/bmode_result/RF/dicom_tech_001_phantom_id_003_FIELD_bmode.png";
+    pI1 = "/home/laine/cluster/PROJECTS_IO/SIMULATION/MOTION_TEST/V1/tech_001/tech_001_id_004_FIELD/bmode_result/RF/dicom_tech_001_phantom_id_004_FIELD_bmode.png";
+    pOF = "/home/laine/cluster/PROJECTS_IO/SIMULATION/MOTION_TEST/V1/tech_001/tech_001_id_004_FIELD/phantom/OF_3_4.nii";
+    pparam = "/home/laine/cluster/PROJECTS_IO/SIMULATION/MOTION_TEST/tech_001/tech_001_id_003_FIELD/phantom/image_information.mat";
     
     x_start = 30;
     x_end   = 30;

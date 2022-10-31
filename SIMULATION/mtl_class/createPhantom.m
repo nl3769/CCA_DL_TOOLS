@@ -23,14 +23,15 @@ classdef createPhantom < handle
         y_offset_stretch;   % (double) random offset for stretching
         z_offset_stretch;   % (double) random offset for stretching
         
-        f_simu;             % (double) central frequency of the probe
+        f_simu;             % (double) cardiac frequency
         theta_max_rot;      % (double) maximal rotation 
         theta_max_shear;    % (double) maximal shearing
         scaling_coef;       % (double) maximal scaling
         stretch_coef;       % (double) maximal stretching
         time_sample_simu;   % (double) total number of time samples for simulation
-        fps;
+        fps;                % (double) number of frame per second
         
+        fc;                 % central frequency of the probe
     end
     
     properties
@@ -47,13 +48,15 @@ classdef createPhantom < handle
         seg_LI;             % (struct) moved LI segmentation
         seg_MA;             % (struct) moved MA segmentation
         
+        gaussian2D;         % (class) control motion from gaussian noise
+        elasticDeformation  % (class) control motion from elastic deformation
     end
     
     methods
         
         % ------------------------------------------------------------------
         function obj = createPhantom(varargin)
-            % Constructor %
+            % Constructor
             
             switch nargin
                 case 3
@@ -83,7 +86,7 @@ classdef createPhantom < handle
                 case 'TIFF'
                     obj.data_img=load_tiff(obj.param.path_data, obj.roi);
                 case 'JPEG'
-                    obj.data_img=load_JPEG(obj.param.path_data, obj.roi);
+                    obj.data_img=load_JPEG(obj.param.path_data, obj.param);
                 case 'DICOM'
                     obj.data_img=load_dicom(obj.param.path_data, obj.param.sequence);
                                               
@@ -110,6 +113,7 @@ classdef createPhantom < handle
             z_min=0;
             z_max=height_meter;
             probe=getparam(obj.param.probe_name);
+            probe.fc = obj.param.fc;
             lambda=obj.param.c/probe.fc;
             nb_scatteres_speckle=round(obj.param.scat_density*height_meter*width_meter/(lambda^2));
             % --- create cartezian grid for interpolation
@@ -222,9 +226,9 @@ classdef createPhantom < handle
                                obj.data_img.width, ...
                                obj.data_img.width)' * obj.data_img.CF;
             org_dim = org_dim - max(org_dim)/2;
-
+            
             LI_val.seg = interp1(seg_LI_.x_scatt, seg_LI_.z_scatt, org_dim, "linear", 0) / obj.data_img.CF + 1;
-            MA_val.seg = interp1(seg_MA_.x_scatt, seg_MA_.z_scatt, org_dim) / obj.data_img.CF + 1; 
+            MA_val.seg = interp1(seg_MA_.x_scatt, seg_MA_.z_scatt, org_dim, "linear", 0) / obj.data_img.CF + 1; 
             
             I = obj.data_img.image;
             
@@ -238,8 +242,8 @@ classdef createPhantom < handle
             end                                                                                                          
 
             
-            LI_val.seg = LI_val.seg - obj.param.remove_top_region/obj.data_img.CF;  
-            MA_val.seg = MA_val.seg - obj.param.remove_top_region/obj.data_img.CF;
+            LI_val.seg = LI_val.seg - obj.param.remove_top_region / obj.data_img.CF;  
+            MA_val.seg = MA_val.seg - obj.param.remove_top_region / obj.data_img.CF;
 
             if isempty(volume)
                 addpath(fullfile('..', 'mtl_utils'));
@@ -521,19 +525,19 @@ classdef createPhantom < handle
             % --- offset for rotation
             obj.x_offset_rot = x_min + (x_max - x_min) * rand(1,1);
             obj.z_offset_rot = z_min + (z_max - z_min) * rand(1,1);
-            obj.y_offset_rot = y_min + (y_max - y_min) * rand(1,1);
+            obj.y_offset_rot = 0;
             % --- offset for scaling
             obj.x_offset_scaling = x_min + (x_max - x_min) * rand(1,1);
             obj.z_offset_scaling = z_min + (z_max - z_min) * rand(1,1);
-            obj.y_offset_scaling = y_min + (y_max - y_min) * rand(1,1);
+            obj.y_offset_scaling = 0;
             % --- offset for shearing
             obj.x_offset_shearing = x_min + (x_max - x_min) * rand(1,1);
             obj.z_offset_shearing = z_min + (z_max - z_min) * rand(1,1);
-            obj.y_offset_shearing = y_min + (y_max - y_min) * rand(1,1);
+            obj.y_offset_shearing = 0;
             % --- offset for stretch
             obj.x_offset_stretch = x_min + (x_max - x_min) * rand(1,1);
             obj.z_offset_stretch = z_min + (z_max - z_min) * rand(1,1);
-            obj.y_offset_stretch = y_min + (y_max - y_min) * rand(1,1);
+            obj.y_offset_stretch = 0;
             
             % --- get random coefficient 
             % -- CARDIAC CYCLE
@@ -560,12 +564,24 @@ classdef createPhantom < handle
             a = obj.param.fps(1);
             b = obj.param.fps(2);
             obj.fps = a + (b - a) * rand(1,1);
-
+            
             % --- get index to initialize the first sequence
             T=1/obj.f_simu;
             dt=T/obj.fps;
             obj.time_sample_simu = 0:dt:4*T; 
-            obj.id_seq = round( (size(obj.time_sample_simu, 2) - nb_images) * rand(1));
+            if obj.param.random_first_id
+                obj.id_seq = round((size(obj.time_sample_simu,2)-nb_images)*rand(1));
+            else
+                obj.id_seq = 1;
+            end
+                % --- Generate random map for 2D-gaussian motion
+            nb_gaussian_min = 100;
+            nb_gaussian_max = 200;
+            nb_gaussian = round(nb_gaussian_min + (nb_gaussian_max - nb_gaussian_min) * rand(1,1));
+            obj.gaussian2D = gaussian2DHandler(nb_gaussian, x_min, x_max, z_min, z_max, obj.time_sample_simu);
+            obj.elasticDeformation = elasticDeformationHandler(x_min, x_max, z_min, z_max, obj.time_sample_simu, obj.data_img.CF);
+%             obj.gaussian2D.display_df(1)
+%             obj.elasticDeformation.display_df(1)
         end
 
         % ----------------------------------------------------------------------------------------------------------------------
@@ -600,12 +616,17 @@ classdef createPhantom < handle
             param_simu.f_simu = obj.f_simu;
             param_simu.id_seq = obj.id_seq;
             param_simu.time_sample_simu = obj.time_sample_simu;
+            param_simu.affine = obj.param.affine;
+            param_simu.gaussian = obj.param.gaussian;
+            param_simu.elastic = obj.param.elastic;
+            % --- compute current gaussian
+%             obj.gaussian2D.get_current_gauss2D(param_simu.id_seq, param_simu.f_simu);
 
-             
-            obj.data_scatt_moved = add_movement(obj.data_scatt_moved,offset, param_simu); % scatteres map
-            obj.seg_LI = add_movement(obj.seg_LI_ref, offset, param_simu);                % segmentation (LI)
-            obj.seg_MA = add_movement(obj.seg_MA_ref, offset, param_simu);                % segmentation (MA)
-            
+            obj.data_scatt_moved = add_movement(obj.data_scatt_moved,offset, param_simu, obj.gaussian2D, obj.elasticDeformation, obj.data_img.CF); % scatteres map
+            if obj.param.segmentation_mask
+                obj.seg_LI = add_movement(obj.seg_LI_ref, offset, param_simu, obj.gaussian2D, obj.elasticDeformation, obj.data_img.CF); % segmentation (LI)
+                obj.seg_MA = add_movement(obj.seg_MA_ref, offset, param_simu, obj.gaussian2D, obj.elasticDeformation, obj.data_img.CF); % segmentation (MA)
+            end
         end
         
          % ----------------------------------------------------------------------------------------------------------------------
@@ -666,7 +687,9 @@ classdef createPhantom < handle
         function init_scatt_reference(obj)
             % Get the map of the scatterers that correspond to 
             % the original image (each scatterer is located in 
-            % the center of each pixel).
+            % the center of each pixel). We also define a grid twice time
+            % bigger in order to avoid edge issue to extract the GT
+            % displacement.
 
             % --- get dimension of the image
             width_img = obj.data_img.width;
@@ -675,25 +698,42 @@ classdef createPhantom < handle
             x = width_img * obj.data_img.CF;
             z = height_img * obj.data_img.CF;
             x_real = linspace(-x/2, x/2, width_img);
-            z_real = linspace(0, z, height_img)';
+            z_real = linspace(0, z, height_img);
+            x_real_twice = linspace(-x, x, width_img * 2);
+            z_real_twice = linspace(0 - z/2, z + z/2, height_img * 2);
             
-            % --- generate scattereres
+            
+            % --- generate scatterers for real position of pixels
             [X, Z] = meshgrid(x_real, z_real);
-            x_scatt_ref = X(:);
-            z_scatt_ref = Z(:);
-            y_scatt_ref = 0 * X(:);    
+            x_scatt = X(:);
+            z_scatt = Z(:);
+            y_scatt = 0 * X(:);
             
-            obj.scatt_pos_ref{1}.x_scatt = x_scatt_ref;
-            obj.scatt_pos_ref{1}.z_scatt = z_scatt_ref;
-            obj.scatt_pos_ref{1}.y_scatt = y_scatt_ref;
-
-            obj.scatt_pos_ref{1}.x_min = min(x_scatt_ref);
-            obj.scatt_pos_ref{1}.y_min = min(y_scatt_ref);
-            obj.scatt_pos_ref{1}.z_min = min(z_scatt_ref);
-
-            obj.scatt_pos_ref{1}.x_max = max(x_scatt_ref);
-            obj.scatt_pos_ref{1}.y_max = max(y_scatt_ref);
-            obj.scatt_pos_ref{1}.z_max = max(z_scatt_ref);
+            obj.scatt_pos_ref{1}.x_scatt = x_scatt;
+            obj.scatt_pos_ref{1}.z_scatt = z_scatt;
+            obj.scatt_pos_ref{1}.y_scatt = y_scatt;
+            obj.scatt_pos_ref{1}.x_min = min(x_scatt);
+            obj.scatt_pos_ref{1}.y_min = min(y_scatt);
+            obj.scatt_pos_ref{1}.z_min = min(z_scatt);
+            obj.scatt_pos_ref{1}.x_max = max(x_scatt);
+            obj.scatt_pos_ref{1}.y_max = max(y_scatt);
+            obj.scatt_pos_ref{1}.z_max = max(z_scatt);
+            
+            % --- generate scatterers on bigger grid
+            [X, Z] = meshgrid(x_real_twice, z_real_twice);
+            x_scatt = X(:);
+            z_scatt = Z(:);
+            y_scatt = 0 * X(:);
+            
+            obj.scatt_pos_ref{2}.x_scatt = x_scatt;
+            obj.scatt_pos_ref{2}.z_scatt = z_scatt;
+            obj.scatt_pos_ref{2}.y_scatt = y_scatt;
+            obj.scatt_pos_ref{2}.x_min = min(x_scatt);
+            obj.scatt_pos_ref{2}.y_min = min(y_scatt);
+            obj.scatt_pos_ref{2}.z_min = min(z_scatt);
+            obj.scatt_pos_ref{2}.x_max = max(x_scatt);
+            obj.scatt_pos_ref{2}.y_max = max(y_scatt);
+            obj.scatt_pos_ref{2}.z_max = max(z_scatt);
 
 %             fct_save_scatt_ref(obj.scatt_pos_ref{1}, obj.data_img.height, fullfile(obj.param.path_res, 'phantom', 'scatt_ref_org'));
 
@@ -707,8 +747,23 @@ classdef createPhantom < handle
             % --- compute displacement field
             if id_img > 1
                 
-                scatt_ref_moved = obj.scatt_pos_ref{1};
-
+                scatt_ref_real = obj.scatt_pos_ref{1}; % get the position of the original grid (reference for motion)
+                scatt_ref_moved = obj.scatt_pos_ref{2}; % we apply motion on a bigger grid to avoid edge issues
+%                 nb_scatt = size(scatt_ref_moved.x_scatt, 1);
+%                 x_scatt = scatt_ref_moved.x_scatt;
+%                 z_scatt = scatt_ref_moved.z_scatt;
+%                 for i=1:obj.param.nb_slices
+%                     % --- compute y-position 
+%                     pos = i * obj.param.slice_spacing;
+%                     % --- do it twice for +/- pos
+%                     y_scatt_1 = ones(nb_scatt, 1) * pos;                
+%                     y_scatt_2 = -y_scatt_1 ;
+%                     % --- get new values
+%                     scatt_ref_moved.x_scatt = [scatt_ref_moved.x_scatt; x_scatt; x_scatt];
+%                     scatt_ref_moved.y_scatt = [scatt_ref_moved.y_scatt; y_scatt_1; y_scatt_2];
+%                     scatt_ref_moved.z_scatt = [scatt_ref_moved.z_scatt; z_scatt; z_scatt];
+%                 end
+                
                 % --- offset
                 offset_rot = [obj.x_offset_rot, obj.y_offset_rot, obj.z_offset_rot];
                 offset_shearing = [obj.x_offset_shearing, obj.y_offset_shearing, obj.z_offset_shearing];
@@ -717,7 +772,7 @@ classdef createPhantom < handle
 
                 offset.shearing = offset_shearing;
                 offset.rot = offset_rot;
-                offset.scaling= offset_scaling;
+                offset.scaling = offset_scaling;
                 offset.stretch = offset_stretch;
 
                 param_simu.theta_rot = obj.theta_max_rot;
@@ -727,38 +782,85 @@ classdef createPhantom < handle
                 param_simu.f_simu = obj.f_simu;
                 param_simu.id_seq = obj.id_seq - 1;
                 param_simu.time_sample_simu = obj.time_sample_simu;
-
-                obj.scatt_pos_ref{2} = add_movement(scatt_ref_moved, offset, param_simu);
-                param_simu.id_seq = obj.id_seq;
-                obj.scatt_pos_ref{3} = add_movement(scatt_ref_moved, offset, param_simu);
-%                 obj.scatt_pos_ref{3} = scatt_ref_moved;
+                param_simu.gaussian = obj.param.gaussian;
+                param_simu.elastic= obj.param.elastic;
+                param_simu.affine= obj.param.affine;
                 
-                % --- compute GT
-                Pos_0 = [obj.scatt_pos_ref{2}.x_scatt obj.scatt_pos_ref{2}.y_scatt obj.scatt_pos_ref{2}.z_scatt];
-                Pos_1 = [obj.scatt_pos_ref{3}.x_scatt obj.scatt_pos_ref{3}.y_scatt obj.scatt_pos_ref{3}.z_scatt];
+                obj.scatt_pos_ref{3} = add_movement(scatt_ref_moved, offset, param_simu, obj.gaussian2D, obj.elasticDeformation, obj.data_img.CF); % compute motion at time t-1
+                param_simu.id_seq = obj.id_seq;
+                obj.scatt_pos_ref{4} = add_movement(scatt_ref_moved, offset, param_simu, obj.gaussian2D, obj.elasticDeformation, obj.data_img.CF); % compute motion at time t
+                
+                % --- compute GT (displacement field between pair of images)
+                Pos_0 = [obj.scatt_pos_ref{3}.x_scatt obj.scatt_pos_ref{3}.y_scatt obj.scatt_pos_ref{3}.z_scatt];
+                Pos_1 = [obj.scatt_pos_ref{4}.x_scatt obj.scatt_pos_ref{4}.y_scatt obj.scatt_pos_ref{4}.z_scatt];
                 diff = Pos_1-Pos_0;
-
+                
                 % --- displacement displacement field in meter
-                displacement_field = reshape(diff,[obj.data_img.height obj.data_img.width 3]); 
+                % -- compute grid to get the displacement field in the
+                
+                % - scatterers position
+%                 x_org = linspace(min(obj.scatt_pos_ref{2}.x_scatt), max(obj.scatt_pos_ref{2}.x_scatt), size(obj.scatt_pos_ref{2}.x_scatt, 1));
+%                 z_org = linspace(min(obj.scatt_pos_ref{2}.z_scatt), max(obj.scatt_pos_ref{2}.z_scatt), size(obj.scatt_pos_ref{2}.z_scatt, 1));
+                x_q = scatt_ref_real.x_scatt';
+%                 y_q = scatt_ref_real.y_scatt';
+                z_q = scatt_ref_real.z_scatt';
+
+%                 diff = reshape(diff,[obj.data_img.height * 2 obj.data_img.width *2  3]); % because the gruid is twice bigger in x and z
+                displacement_field = zeros([obj.data_img.height obj.data_img.width 3]);
+                val = diff(:,1);
+                interpolant_x=scatteredInterpolant(scatt_ref_moved.x_scatt, scatt_ref_moved.z_scatt, val(:), 'linear');
+                val = diff(:,2);
+                interpolant_y=scatteredInterpolant(scatt_ref_moved.x_scatt, scatt_ref_moved.z_scatt, val(:), 'linear');
+                val = diff(:,3);
+                interpolant_z=scatteredInterpolant(scatt_ref_moved.x_scatt, scatt_ref_moved.z_scatt, val(:), 'linear');
+                
+                x_val = interpolant_x(x_q, z_q);
+                y_val = interpolant_y(x_q, z_q);
+                z_val = interpolant_z(x_q, z_q);
+                
+                displacement_field(:,:,1) = reshape(x_val, [obj.data_img.height obj.data_img.width]);
+                displacement_field(:,:,2) = reshape(y_val, [obj.data_img.height obj.data_img.width]);
+                displacement_field(:,:,3) = reshape(z_val, [obj.data_img.height obj.data_img.width]);               
+                 
+                % DEBUG
+                debug = false;
+                if debug                    
+                    dif = diff(:, :, 1);
+                    dif = interp2(scatt_ref_moved.x_scatt, scatt_ref_moved.z_scatt,dif(:), x_q, z_q);
+                    gt = displacement_field(:,:,1);
+                    err = dif-gt;
+                    figure(1)
+                    imagesc(dif)
+                    title('diff')
+                    colorbar()
+                    figure(2)
+                    imagesc(gt)
+                    title('gt')
+                    colorbar()
+                    figure(3)
+                    imagesc(err)
+                    title('err')
+                    colorbar()
+                end
+                
+                % --- convert the flow in pixels displacement
                 pixel_size = obj.data_img.CF;
-
-                % --- convert the flow in pixels displacment
                 displacement_field = displacement_field / pixel_size;
-
+                
                 %%%%%%%% can't be used on VIP platform
-%                 fct_save_scatt_ref(obj.scatt_pos_ref{1}, obj.data_img.height, ...
-%                                    fullfile(obj.param.path_res, 'phantom', ['scatt_pos_org' num2str(obj.id_seq-1)]));
-%                 
-%                 fct_save_scatt_ref(obj.scatt_pos_ref{2}, obj.data_img.height, ...
-%                                    fullfile(obj.param.path_res, 'phantom', ['scatt_pos_id_' num2str(obj.id_seq-1)]));
-%                 
-%                 fct_save_scatt_ref(obj.scatt_pos_ref{3}, obj.data_img.height, ...
-%                                    fullfile(obj.param.path_res, 'phantom', ['scatt_pos_id_' num2str(obj.id_seq)]));
+                fct_save_scatt_ref(obj.scatt_pos_ref{1}, obj.data_img.height, ...
+                                   fullfile(obj.param.path_res, 'phantom', ['scatt_pos_org' num2str(obj.id_seq-1)]));
+                
+                fct_save_scatt_ref(obj.scatt_pos_ref{2}, obj.data_img.height, ...
+                                   fullfile(obj.param.path_res, 'phantom', ['scatt_pos_id_' num2str(obj.id_seq-1)]));
+                
+                fct_save_scatt_ref(obj.scatt_pos_ref{3}, obj.data_img.height, ...
+                                   fullfile(obj.param.path_res, 'phantom', ['scatt_pos_id_' num2str(obj.id_seq)]));
 
                 fct_save_OF_GT(displacement_field, fullfile(obj.param.path_res, 'phantom', ['OF_' num2str(obj.id_seq-1) '_' num2str(obj.id_seq)]));
 
-                %                 % can't bu used on VIP platform
-%                 fct_save_flow(displacement_field, fullfile(obj.param.path_res, 'phantom', ['optical_pos_id_', num2str(obj.id_seq)]));
+                % can't bu used on VIP platform
+                fct_save_flow(displacement_field, fullfile(obj.param.path_res, 'phantom', ['optical_pos_id_', num2str(obj.id_seq)]));
             
             else
 %                 % can't be used on VIP platform
@@ -783,10 +885,10 @@ classdef createPhantom < handle
         % ----------------------------------------------------------------------------------------------------------------------
         function phantom_tmp(obj)
             
-            k=2;
+            k=4;
 
-            z_pos=linspace(obj.data_scatt.z_max*0.3, obj.data_scatt.z_max - obj.data_scatt.z_max * 0.3, k);
-            x_pos=linspace(obj.data_scatt.x_min + obj.data_scatt.x_max*0.4,     obj.data_scatt.x_max - obj.data_scatt.x_max*0.4, k);
+            z_pos=linspace(obj.data_scatt.z_max*0.2, obj.data_scatt.z_max - obj.data_scatt.z_max * 0.2, k);
+            x_pos=linspace(obj.data_scatt.x_min- obj.data_scatt.x_min*0.2,     obj.data_scatt.x_max - obj.data_scatt.x_max*0.2, k);
 %             obj.data_scatt.x_min = obj.data_scatt.x_min * 0.5;
 %             obj.data_scatt.x_max = obj.data_scatt.x_max * 0.5;
 
@@ -821,7 +923,7 @@ end
 % ------------------------------------------------------------------------------------------------------------------------------
 % ------------------------------------------------------------------------------------------------------------------------------
 % ------------------------------------------------------------------------------------------------------------------------------
-function [struct_image]=load_JPEG(path_img)   
+function [struct_image]=load_JPEG(path_img, param)   
     % Loads tiff image
 
     % --- read the image
@@ -833,11 +935,10 @@ function [struct_image]=load_JPEG(path_img)
     % --- we define the size of the pixels in a random way according to the average size of the pixels of US 
     % probe around 7MHz
     rng('shuffle')
-    CF_max = 100e-6;
-    CF_min = 30e-6;
+    probe = getparam(param.probe_name);
+    width_probe = (param.Nelements - param.Nactive)* probe.pitch;
+    CF = width_probe/size(image, 2);
     
-    CF = CF_min + (CF_max - CF_min) * rand(1,1);
-
     % --- fill obj
     struct_image.CF = CF;
     struct_image.width = size(image, 2);
@@ -902,7 +1003,7 @@ function [struct_image]=load_dicom(path_img, sequence)
     if sequence
         image_ = dicomread(path_img);
         for i=1:1:size(image_, 4)
-            image(:,:,i) = rgb2gray(imcrop(image_(:,:,:,i), rect));
+            image(:, :, i) = rgb2gray(imcrop(image_(:,:,:,i), rect));
         end
     else
         image = dicomread(path_img, 'frame', 1); % we load the first frame of the sequence
@@ -980,7 +1081,7 @@ function [phantom_out] = add_scaling(phantom_in, coef_scaling, id, time, f)
     motion_scale=@(t) coef_scaling/100 * sin(2 * pi * f * t);
 
     % --- AFFINE TRANSFORMATION
-    % -- rotation transformation
+    % -- scaling transformation
     scale_transf=@(x) [1, 0, 0, 0; 
                        0, 1+x, 0, 0; 
                        0, 0, 1+x, 0; 
@@ -1042,29 +1143,45 @@ function [phantom] = move_origin(phantom, x_off, y_off, z_off)
     phantom.z_scatt = phantom.z_scatt - z_off;
     
 end
+% ------------------------------------------------------------------------------------------------------------------------------
+
+function [scatt] = add_movement(scatt, offset, param, gaussian, elastic, CF)
+    % Add motion: rotation, shearing, scaling, stretching
+    
+    % --- AFFINE MOTION
+    if param.affine
+        % --- ROTATION
+        scatt = move_origin(scatt, offset.rot(1), offset.rot(2), offset.rot(3));
+        scatt = add_rotation(scatt, param.theta_rot, param.id_seq, param.time_sample_simu, param.f_simu);
+        scatt = move_origin(scatt, -offset.rot(1), -offset.rot(2), -offset.rot(3));
+
+        % --- SHEARING
+        scatt = move_origin(scatt, offset.shearing(1), offset.shearing(2), offset.shearing(3));
+        scatt = add_shearing(scatt, param.theta_shearing, param.id_seq, param.time_sample_simu, param.f_simu);
+        scatt = move_origin(scatt, -offset.shearing(1), -offset.shearing(2), -offset.shearing(3));
+
+        % --- SCALING
+        scatt = move_origin(scatt, offset.scaling(1), offset.scaling(2), offset.scaling(3));
+        scatt = add_scaling(scatt, param.scaling_coef, param.id_seq, param.time_sample_simu, param.f_simu);
+        scatt = move_origin(scatt, -offset.scaling(1), -offset.scaling(2), -offset.scaling(3));
+
+        % --- STRETCHING
+        scatt = move_origin(scatt, offset.stretch(1), offset.stretch(2), offset.stretch(3));
+        scatt = add_stretch(scatt, param.stretch_coef, param.id_seq, param.time_sample_simu, param.f_simu);
+        scatt = move_origin(scatt, -offset.stretch(1), -offset.stretch(2), -offset.stretch(3));
+    end
+    
+    % --- GAUSSIAN MOTION
+    if param.gaussian
+        gaussian.get_current_gauss2D(param.id_seq, 5*param.f_simu);
+        scatt = gaussian.add_gaussian_motion(scatt, CF);
+    end
+    
+    % --- ELASTIC MOTION
+    if param.elastic && param.id_seq > 1
+        scatt = elastic.add_elastic_motion(scatt);
+    end
+        
+end
 
 % ------------------------------------------------------------------------------------------------------------------------------
-function [scatt] = add_movement(scatt, offset, param)
-    % Add motion: rotation, shearing, scaling, stretching
-
-    % --- ROTATION
-    scatt = move_origin(scatt, offset.rot(1), offset.rot(2), offset.rot(3));
-    scatt = add_rotation(scatt, param.theta_rot, param.id_seq, param.time_sample_simu, param.f_simu);
-    scatt = move_origin(scatt, -offset.rot(1), -offset.rot(2), -offset.rot(3));
-    
-    % --- SHEARING
-    scatt = move_origin(scatt, offset.shearing(1), offset.shearing(2), offset.shearing(3));
-    scatt = add_shearing(scatt, param.theta_shearing, param.id_seq, param.time_sample_simu, param.f_simu);
-    scatt = move_origin(scatt, -offset.shearing(1), -offset.shearing(2), -offset.shearing(3));
-     
-    % --- SCALING
-    scatt = move_origin(scatt, offset.scaling(1), offset.scaling(2), offset.scaling(3));
-    scatt = add_scaling(scatt, param.scaling_coef, param.id_seq, param.time_sample_simu, param.f_simu);
-    scatt = move_origin(scatt, -offset.scaling(1), -offset.scaling(2), -offset.scaling(3));
-
-    % --- STRETCHING
-    scatt = move_origin(scatt, offset.stretch(1), offset.stretch(2), offset.stretch(3));
-    scatt = add_stretch(scatt, param.stretch_coef, param.id_seq, param.time_sample_simu, param.f_simu);
-    scatt = move_origin(scatt, -offset.stretch(1), -offset.stretch(2), -offset.stretch(3));
-    
-end

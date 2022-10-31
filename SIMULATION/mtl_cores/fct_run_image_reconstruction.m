@@ -44,9 +44,9 @@ function fct_run_image_reconstruction(pres)
     end
     
     [pres_in_vivio, x_disp, z_disp] = data.adapt_in_vivo();
-    data.save_beamformed_data(rf_data_name);
-    [psave, pres_sim] = data.save_bmode(rf_data_name, true);    
-    fct_analysis(psave, pres_in_vivio, pres_sim, x_disp, z_disp);
+    data.save_beamformed_data();
+    [psave, pres_sim] = data.save_bmode(true);    
+%     fct_analysis(psave, pres_in_vivio, pres_sim, x_disp, z_disp);
     
 end
 

@@ -12,9 +12,9 @@ def setParameters():
 
     p = Parameters(
         MODEL_NAME                  = 'gma',                                                                           # chose gma or raft
-        PDATA                       = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/DATABASEMOTION',            # PATH TO LOAD DATA
-        PRES                        = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/NETMOTION/GMA_pretraining_00',          # PATH TO SAVE TRAINING RESULTS
-        PSPLIT                      = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/SPLITDATA',
+        PDATA                       = '/home/laine/cluster/PROJECTS_IO/CARODEEPMOTION/DATABASEMOTION',            # PATH TO LOAD DATA
+        PRES                        = '/home/laine/cluster/PROJECTS_IO/CARODEEPMOTION/NETMOTION/GMA_pretraining_00',          # PATH TO SAVE TRAINING RESULTS
+        PSPLIT                      = '/home/laine/cluster/PROJECTS_IO/CARODEEPMOTION/SPLITDATA',
         LEARNING_RATE               = 0.0001,
         BATCH_SIZE                  = 1,                                                                        # size of a batch
         NB_EPOCH                    = 5,

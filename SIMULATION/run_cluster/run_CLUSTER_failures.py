@@ -73,13 +73,13 @@ if __name__ == '__main__':
     """ Execute le code sur le cluster pour un plusieurs fantomes contenu dans un même répertoire. """
 
     path_shell    = '/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/run_cluster/shell/cluster_failures.sh'
-    pname         = '/home/laine/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER'
-    nb_tx         = 128
+    pname         = '/home/laine/cluster/PROJECTS_IO/SIMULATION/RU_2022_10_21/'
+    nb_tx         = 192
 
     patients = os.listdir(pname)
     patients.sort()
 
-    for patient in patients[:5]:
+    for patient in patients[2:]:
         fname = os.path.join(pname, patient)
         folders = os.listdir(fname)
         folders.sort()

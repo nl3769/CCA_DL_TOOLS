@@ -99,6 +99,12 @@ classdef parametersHandler < handle
         function set_compensation_time(obj, compensation_time)
             obj.param.compensation_time = compensation_time;
         end
+        % ------------------------------------------------------------------
+        
+        function set_fc(obj)
+               % get random param and change it in .json file
+            obj.param.fc = round(obj.param.fc(1) + (obj.param.fc(2) - obj.param.fc(1)) * rand(1,1), 1); 
+        end
         
         % ------------------------------------------------------------------
         % ------------------------- UTILS ----------------------------------

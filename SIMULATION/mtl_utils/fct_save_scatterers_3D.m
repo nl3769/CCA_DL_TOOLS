@@ -1,8 +1,8 @@
 function fct_save_scatterers_3D(data_scatt, param, substr)
         
     % --- save figure -> remove if it is used on VIP platform
-    %addpath('../mtl_display')
-    %make_figure_3D_scatt(data_scatt, param, substr)
+    addpath('../mtl_display')
+    make_figure_3D_scatt(data_scatt, param, substr)
     
     % --- save the numeric phantom in .mat file
     if strcmp(substr, '')

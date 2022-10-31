@@ -11,16 +11,12 @@ end
 %%%%%%% RUN SIMULATION %%%%%%% 
 
 % --- path to data
-path_data='/home/laine/Desktop/SIMUS_TEST/CAMO01_image1/CAMO01_image1_id_001_FIELD_STA';
-
-
+path_data='/home/laine/Desktop/MOTION_TEST/V1/tech_001/tech_001_id_002_FIELD';
 % --- get phantom name
 phantom_folder = fct_list_ext_files(path_data, 'mat', 'phantom');
 phantom_names = fct_detect_sub_str(phantom_folder, 'dicom');
-
 % --- get parameters name
 parameters_folder=fct_list_ext_files(path_data, 'json', 'parameters');
-
 % --- loop over transducer
 PARAM = fct_load_param(fullfile(path_data, 'parameters', parameters_folder{1}));
 nb_tx = PARAM.Nelements;
@@ -40,4 +36,4 @@ for id_tx=1:1:tx
 
 end
 
-fct_cluster_RF(fullfile(path_data, 'raw_data'))
+fct_run_cluster_RF(fullfile(path_data, 'raw_data'))

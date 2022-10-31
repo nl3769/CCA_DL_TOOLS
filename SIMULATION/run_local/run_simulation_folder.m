@@ -11,7 +11,7 @@ end
 %%%%%%% RUM SIMULATION FOR ONE PHANTOM AND ONE SET OF PARAMETERS %%%%%%% 
 
 % --- path to data
-path = '/home/laine/cluster/PROJECTS_IO/SIMULATION/SOFTWARE_TEST/tech_104/';
+path = '/home/laine/Desktop/SIMUS_TEST/CAMO01_image1_simus';
 frame = list_files(path);
 
 for idp=1:1:length(frame)

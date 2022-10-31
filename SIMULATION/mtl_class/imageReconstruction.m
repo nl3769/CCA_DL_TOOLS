@@ -46,7 +46,8 @@ classdef imageReconstruction < handle
                     path_image_information=fullfile(obj.param.path_res, 'phantom', 'image_information.mat');
                     image=load(path_image_information);
                     obj.image=image.image;
-                    if ~obj.param.sequence, obj.path_res=fct_create_directory(varargin{1}, varargin{2}); end
+                    obj.path_res=fct_create_directory(varargin{1}, varargin{2});
+%                     if ~obj.param.sequence, obj.path_res=fct_create_directory(varargin{1}, varargin{2}); end
                 otherwise
                     disp('Problem with parameters (imageReconstruction constructor)');
             end
@@ -410,7 +411,7 @@ classdef imageReconstruction < handle
             
             % --- RF to IQ
             if obj.param.mode(1)
-                obj.IQ=rf2iq(obj.RF_final, obj.probe);
+              obj.IQ=rf2iq(obj.RF_final, obj.probe);
             end
 
             % --- apply TGC
@@ -449,19 +450,11 @@ classdef imageReconstruction < handle
         end
         
         % ------------------------------------------------------------------
-        function save_beamformed_data(obj, rf_data_name)
+        function save_beamformed_data(obj)
             % Save bmode image image with the dimension of the phantom
 
-            % --- we save the image
-            if obj.param.sequence
-                name_=split(rf_data_name, '.');
-                name_=name_{1};
-                rpath=fullfile(obj.path_res, 'bmode_result', [name_ '_BF.png']);
-                rpath_RF=fullfile(obj.path_res, 'bmode_result', [name_ '_BF.mat']);
-            else
-                rpath=fullfile(obj.path_res, [obj.param.phantom_name '_BF.png']);
-                rpath_RF=fullfile(obj.path_res, [obj.param.phantom_name '_BF.mat']);
-            end
+            % --- path to save the IQ signal
+            rpath=fullfile(obj.path_res, [obj.param.phantom_name '_BF.png']);                                        
 
             % --- compute the dimension of the image
             dim=size(obj.bmode);
@@ -489,22 +482,15 @@ classdef imageReconstruction < handle
             IQ = obj.IQ;
             niftiwrite(IQ, fullfile(obj.path_res, 'IQ_data.nii'));
             
-
-
         end
         
         % ------------------------------------------------------------------
-        function [psave, pres_sim] = save_bmode(obj, rf_data_name, scatt)
+        function [psave, pres_sim] = save_bmode(obj, scatt)
             % Save bmode image image with the dimension of the phantom
 
             % --- we save the image
-            if obj.param.sequence
-                name_=split(rf_data_name, '.');
-                name_=name_{1};
-                pres_=fullfile(obj.path_res, 'bmode_result', [name_ '_bmode_result_physical_dimension.png']);
-            else
-                pres_=fullfile(obj.path_res, [obj.param.phantom_name '_bmode_result_physical_dimension.png']);
-            end
+            pres_=fullfile(obj.path_res, [obj.param.phantom_name '_bmode_result_physical_dimension.png']);
+
             
             obj.bmode = fct_expand_histogram(obj.bmode, 0, 255);
 
@@ -534,13 +520,8 @@ classdef imageReconstruction < handle
             saveas(f, pres_);
             
             % --- we save the image
-            if obj.param.sequence
-                name_=split(rf_data_name, '.');
-                name_=name_{1};
-                pres_sim=fullfile(obj.path_res, 'bmode_result', [name_ '_bmode.png']);
-            else
-                pres_sim=fullfile(obj.path_res, [obj.param.phantom_name '_bmode.png']);
-            end
+            pres_sim=fullfile(obj.path_res, [obj.param.phantom_name '_bmode.png']);
+
             imwrite(uint8(obj.bmode), pres_sim);
             psave = obj.path_res;
 
@@ -636,14 +617,15 @@ classdef imageReconstruction < handle
         % ------------------------------------------------------------------
         function BF_CUDA_STA(obj, compounding)
             % Apply simple DAS/DMAS/DMAS+CF beamforming algorithm.
-             
+                          
             % --- analytic signal
             time_offset = fct_get_time_offset(obj.RF_aperture);
-            obj.RF_aperture = RF_normalization(obj.RF_aperture);
-            analytic_signals = fct_get_analytic_signals(obj.RF_aperture);
+            analytic_signals = RF_normalization(obj.RF_aperture);
+%             RF_signals = fct_get_analytic_signals(obj.RF_aperture);
             % --- add zeros padding
             analytic_signals = fct_zero_padding_RF_signals(analytic_signals);
             % --- define the CUDA module and kernel
+%             cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bf_low_res_image.ptx');
             cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bf_low_res_image.ptx');
             cuda_kernel_name = 'das_low_res';
             % --- get the CUDA kernel from the CUDA module
@@ -698,26 +680,20 @@ classdef imageReconstruction < handle
             tof          = double(tof);
             
 %             for id_tx=offset:obj.probe.Nelements-offset+1
-            for id_tx=33:1:160
-                
-                I_r          = double(zeros([n_points_z n_points_x]));
-                I_i          = double(zeros([n_points_z n_points_x]));
-%                 AL           = analytic_signals{id_tx-offset+1};
-                AL           = analytic_signals{id_tx};
-                Zi           = imag(AL);
-                Zr           = real(AL);
-                
+            for id_tx=1:1:obj.probe.Nelements
+                I_r = double(zeros([n_points_z n_points_x]));
+                I_i = double(zeros([n_points_z n_points_x]));
+                AL = analytic_signals{id_tx};
+                Zi = imag(AL);
+                Zr = real(AL);
+                toffset = double(-time_offset(id_tx));
                 % --- call the kernel
-                [I_i, I_r] = feval(cuda_kernel, I_r, I_i, Zi, Zr, nb_rx, time_sample, imageW, imageH, c, fs, apodization, id_tx-1, col_s, col_e, tof, -time_offset(id_tx));
-                
+                [I_i, I_r] = feval(cuda_kernel, I_r, I_i, Zi, Zr, nb_rx, time_sample, imageW, imageH, c, fs, apodization, id_tx-1, col_s, col_e, tof, toffset);
                 % --- gather the output back from GPU to CPU
                 I_i = gather(I_i);
                 I_r = gather(I_r);
-
                 % --- store low res image
                 obj.low_res_image(:,:,id_tx) = I_r + I_i*1i;
-
-
             end
             
             % --- compounding

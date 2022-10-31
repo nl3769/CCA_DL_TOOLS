@@ -76,7 +76,7 @@ classdef wavePropagation < handle
             
             % --- option for simus
             opt.WaitBar = false;
-            opt.ParPool = true;
+            opt.ParPool = false;
                         
             % --- synthetic aperture acquisition
             now1 = tic();
@@ -90,15 +90,21 @@ classdef wavePropagation < handle
             apod_probe(id_tx)=1;
             obj.probe.TXapodization=apod_probe;
             % --- we run simus
-            obj.RF_aperture=simus([obj.phantom.x_scatt; obj.phantom.x_max; obj.phantom.x_min],... % MUST function
-                                  [obj.phantom.y_scatt; 0; 0],...
-                                  [obj.phantom.z_scatt; obj.phantom.z_max; obj.phantom.z_min],...
-                                  [obj.phantom.RC_scatt; 0; 0],...
-                                  delay_probe,...
-                                  obj.probe,...
-                                  opt);  
-
-            obj.exec_time = toc(now1)
+            if id_tx > floor(obj.param.Nactive/2) & id_tx < (obj.param.Nelements - floor(obj.param.Nactive/2) + 1)
+                obj.RF_aperture=simus([obj.phantom.x_scatt; obj.phantom.x_max; obj.phantom.x_min],... % MUST function
+                                      [obj.phantom.y_scatt; 0; 0],...
+                                      [obj.phantom.z_scatt; obj.phantom.z_max; obj.phantom.z_min],...
+                                      [obj.phantom.RC_scatt; 0; 0],...
+                                      delay_probe,...
+                                      obj.probe,...
+                                      opt);  
+                time_offset = zeros(size(obj.RF_aperture, 2), 1)';      % since there is not delay with simus
+                obj.RF_aperture=[time_offset; obj.RF_aperture];
+            else
+                obj.RF_aperture = zeros(obj.param.Nelements, obj.param.Nelements);
+            end
+            
+            obj.exec_time = toc(now1);
 
         end
         
@@ -292,8 +298,8 @@ classdef wavePropagation < handle
             tx_apod = hanning_adaptative(dim, obj.sub_probe.Nelements, obj.sub_probe.pitch, obj.param.fnumber, dz, id_tx_active);
             rx_apod = hanning_adaptative(dim, obj.sub_probe.Nelements, obj.sub_probe.pitch, obj.param.fnumber, dz, id_tx_active);
             tsamples = (1:1:z_samples)'*1/(obj.param.fc*obj.param.fsCoef);
-            xdc_apodization(emit_aperture, tsamples, tx_apod);
-            xdc_apodization(receive_aperture, tsamples, rx_apod);
+%             xdc_apodization(emit_aperture, tsamples, tx_apod);
+%             xdc_apodization(receive_aperture, tsamples, rx_apod);
             % --- create the dynamic focus time line for emission and reception   
             xdc_dynamic_focus(emit_aperture, 0, 0, 0);
             xdc_dynamic_focus(receive_aperture, 0, 0, 0);
