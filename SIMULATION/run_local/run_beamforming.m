@@ -10,7 +10,7 @@ addpath(fullfile('..', 'mtl_utils'));
 
 
 % --- path to results
-path_res='/home/laine/Documents/SIMULATION/DEBUG/DYNAMIC_FOCALISATION/FIELD_DYNAMIC_ACQUISITION/ILSVRC2012_test_00000013/';
+path_res='/home/laine/Documents/SIMULATION/DEBUG/DYNAMIC_FOCALISATION/FIELD_STA/ILSVRC2012_test_00000013/';
 % path_res='/home/laine/Desktop/NEW_TEST/tech_001/tech_001_id_001_FIELD';
 files = list_files(path_res);
 
@@ -25,7 +25,7 @@ function [files] = list_files(path)
 
     listing = dir(path);
     incr=1;
-    
+
     for id=1:1:length(listing)
         if listing(id).name ~= '.'
             files{incr} = listing(id).name;

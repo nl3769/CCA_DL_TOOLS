@@ -29,11 +29,10 @@ elseif PARAM.mode(2)
     tx = nb_tx;
 end
 
-parfor (id_tx=1:128, 3)
+parfor (id_tx=1:128, 4)
 % for id_tx=1:1:128
     % --- run simulation
     fct_run_wave_propagation(fullfile(path_data, 'parameters', parameters_folder{1}), fullfile(path_data, 'phantom', phantom_names{1}), id_tx);
-
 end
 
 fct_run_cluster_RF(fullfile(path_data, 'raw_data'))
