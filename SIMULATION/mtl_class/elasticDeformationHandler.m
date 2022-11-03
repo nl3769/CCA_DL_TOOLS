@@ -50,7 +50,7 @@ classdef elasticDeformationHandler < handle
             obj.z_max = z_max + z_max/2;
             
             obj.nb_init = 8;
-            obj.nb_pts = 50;
+            obj.nb_pts = 1000;
             obj.x_pts_init = linspace(obj.x_min, obj.x_max, obj.nb_init);
             obj.z_pts_init = linspace(obj.z_min, obj.z_max, obj.nb_init);
             
