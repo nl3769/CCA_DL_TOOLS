@@ -61,7 +61,7 @@ function fct_run_wave_propagation(varargin)
                   simulation_obj.scanline_based_field(i);
               elseif simulation_obj.param.mode(2) && simulation_obj.param.dynamic_focusing == 0     % run synthetic-aperture acquisition
                   simulation_obj.synthetic_aperture_field(i);
-              elseif simulation_obj.param.mode(2) && simulation_obj.param.dynamic_focusing == 1     % run synthetic-aperture acquisition
+              elseif simulation_obj.param.mode(2) && simulation_obj.param.dynamic_focusing == 1     % run dynamic focalisation
                   simulation_obj.dynamic_acquisition_field(i);
               end
       end

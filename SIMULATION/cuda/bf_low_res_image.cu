@@ -28,7 +28,7 @@ extern "C" { // ---> [kernel]
     int idx;            // index of the image
     double delay;       // starting time for beamforming
     int is1;            // coefficient for interpolation
-    int id_apod_rx;     // id to get apodization in id_rxception
+    int id_apod_rx;     // id to get apodization in reception
     int id_apod_tx;     // id to get apodization in emission
     double tof_;        // time of flight
 

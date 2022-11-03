@@ -126,13 +126,13 @@ classdef wavePropagation < handle
             % --- scanline-based acquisition
             now1 = tic();
             % --- get xcurrent
-            xcurent = xstart + (id_tx-1 + (obj.sub_probe.Nelements-1)/2 - 1 ) * dx;
+            xcurrent = xstart + (id_tx-1 + (obj.sub_probe.Nelements-1)/2 - 1 ) * dx;
             % --- display
             disp(['FIELD aperture ID (scanline-based): ' num2str(id_tx)]);
             % --- focuse depth
-            focus_point_emit = [xcurent 0 obj.phantom.depth_of_focus];
+            focus_point_emit = [xcurrent 0 obj.phantom.depth_of_focus];
             % --- set the origin for emission and reception
-            xdc_center_focus(emit_aperture, [xcurent 0 0]);         
+            xdc_center_focus(emit_aperture, [xcurrent 0 0]);         
             % --- create the focus time line for emission and reception   
             xdc_focus(emit_aperture, 0, focus_point_emit);
             % --- apodization window for emission and reception
@@ -271,9 +271,10 @@ classdef wavePropagation < handle
                         
             field_init(-1)
             set_field('show_times', 30)
-            [emit_aperture, receive_aperture, time_compensation]=obj.init_field(obj.phantom.depth_of_focus);
+            [emit_aperture, receive_aperture, time_compensation]=obj.init_field(10);
             % --- adapt id_tx
             id_tx_active = id_tx + floor(obj.param.Nactive/2);
+%             id_tx_active = id_tx;
             % --- set scatterers position
             positions=[obj.phantom.x_scatt, obj.phantom.y_scatt, obj.phantom.z_scatt];
             % --- probe dimension
@@ -281,12 +282,12 @@ classdef wavePropagation < handle
             dx = obj.probe.pitch;
             xstart = -image_width/2;
             % --- compute xcurrent
-            xcurent = xstart + (id_tx-1+(obj.sub_probe.Nelements-1)/2) * dx;
+            xcurrent = xstart + (id_tx-1+(obj.sub_probe.Nelements-1)/2) * dx;
             % --- display
             disp(['FIELD aperture ID (Dynamic Focusing): ' num2str(id_tx_active)]);
             % --- set the origin for emission and reception
-            xdc_center_focus(emit_aperture, [xcurent 0 0]);    
-            xdc_center_focus(receive_aperture, [xcurent 0 0]);
+            xdc_center_focus(emit_aperture, [xcurrent 0 0]);    
+            xdc_center_focus(receive_aperture, [xcurrent 0 0]);
             % --- apodization window for emission and reception
             if ~isdeployed
                 addpath(fullfile('..', 'mtl_synthetic_aperture'))
@@ -295,11 +296,16 @@ classdef wavePropagation < handle
             dz = obj.probe.c/(2*obj.probe.fs);
             z_samples=round(max(obj.phantom.z_scatt)/dz);
             dim=[z_samples, obj.probe.Nelements];
-            tx_apod = hanning_adaptative(dim, obj.sub_probe.Nelements, obj.sub_probe.pitch, obj.param.fnumber, dz, id_tx_active);
-            rx_apod = hanning_adaptative(dim, obj.sub_probe.Nelements, obj.sub_probe.pitch, obj.param.fnumber, dz, id_tx_active);
+            apodization = fct_get_apodization(dim, obj.sub_probe.Nelements, obj.sub_probe.pitch, 'hanning_adaptative', obj.param.fnumber, dz);
+            tx_apod = apodization(:,:,id_tx_active);
+            rx_apod = zeros(size(tx_apod));
+            for id_rx=1:size(rx_apod, 2)
+                rx_apod(:,id_rx) = apodization(:, id_tx_active, id_rx);
+            end
+            
             tsamples = (1:1:z_samples)'*1/(obj.param.fc*obj.param.fsCoef);
-%             xdc_apodization(emit_aperture, tsamples, tx_apod);
-%             xdc_apodization(receive_aperture, tsamples, rx_apod);
+            xdc_apodization(emit_aperture, tsamples, tx_apod);
+            xdc_apodization(receive_aperture, tsamples, rx_apod);
             % --- create the dynamic focus time line for emission and reception   
             xdc_dynamic_focus(emit_aperture, 0, 0, 0);
             xdc_dynamic_focus(receive_aperture, 0, 0, 0);

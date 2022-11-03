@@ -10,7 +10,7 @@ classdef imageReconstruction < handle
         sub_probe;
         phantom;
         tx_delay;
-        tsart;
+        tstart;
         tcompensation;
         apod;
         low_res_image;
@@ -40,7 +40,7 @@ classdef imageReconstruction < handle
                     % varargin{6} -> phantom_name
                     
                     [obj.RF_aperture, obj.probe, obj.sub_probe, obj.param, obj.phantom]=get_data(varargin{1}, varargin{2}, varargin{3}, varargin{4}, varargin{5}, varargin{6});
-                    obj.tsart = zeros(size(obj.RF_aperture, 1), 1);
+                    obj.tstart = zeros(size(obj.RF_aperture, 1), 65);
                     obj.tcompensation = 0;
                     %obj.param.path_res = '/home/laine/Desktop/STA_TEST_CUDA/tech_001/tech_001_id_001_FIELD_3D/';
                     path_image_information=fullfile(obj.param.path_res, 'phantom', 'image_information.mat');
@@ -343,7 +343,7 @@ classdef imageReconstruction < handle
             % Convert the pixel size to the original one
             
             % --- vertical grid
-            n_pixels_start = ceil(min(obj.param.remove_top_region)/obj.image.CF);
+            n_pixels_start = ceil(obj.param.remove_top_region/obj.image.CF);
             
             z_start = n_pixels_start * obj.image.CF;                        % mm
             z_end = obj.image.height*obj.image.CF;                          % mm
@@ -382,12 +382,17 @@ classdef imageReconstruction < handle
 
             % --- adapt signal (time compensation and negative tstart in
             % case of dynamic acquisition)
-            t_compensation = ones(1, size(obj.tsart, 2)) * obj.tcompensation;
-            Z_org=bsxfun(@plus, Z_org, (obj.tsart - t_compensation)/2*obj.param.c);
+            t_compensation = ones(1, size(obj.tstart, 2)) * obj.tcompensation;
+            Z_org=bsxfun(@plus, Z_org, (obj.tstart - t_compensation)/2*obj.param.c);
 
             F = scatteredInterpolant(X_org(:), Z_org(:), double(obj.bmode(:)));
             fimg = F(Xq(:), Zq(:));
             obj.bmode = reshape(fimg, size(Xq)); 
+            % --- perform a low pass filtering
+            obj.bmode=imgaussfilt(obj.bmode, 1, 'FilterSize', 3, 'Padding', 'symmetric');
+            % --- perform a median filtering
+            obj.bmode = medfilt2(obj.bmode);
+            
             obj.bmode = fct_expand_histogram(obj.bmode, 0, 255);
             obj.x_display=[x_start, x_end];
             obj.z_display=[z_start, z_end]; 
@@ -415,19 +420,15 @@ classdef imageReconstruction < handle
             end
 
             % --- apply TGC
-            if obj.param.TGC==true
-                obj.IQ=tgc(obj.IQ);
-            end
+%             if obj.param.TGC==true
+%                 obj.IQ=tgc(obj.IQ);
+%             end
             
             % --- compute envelope
             obj.bmode = abs(obj.IQ); % real envelope
-            % --- perform a low pass filtering
-            obj.bmode=imgaussfilt(obj.bmode, 1, 'FilterSize', 3, 'Padding', 'symmetric');
             % --- apply gamma correction
             obj.bmode = obj.bmode.^(obj.param.gamma);
 %             obj.bmode = bmode(obj.IQ, 50);
-            % --- perform a median filtering
-            obj.bmode = medfilt2(obj.bmode);
             % --- apply image adjustement
             obj.bmode = obj.bmode/max(obj.bmode(:));
             obj.bmode=imadjust(obj.bmode, [obj.param.imadjust_vals(1) obj.param.imadjust_vals(2)], []);
@@ -568,7 +569,8 @@ classdef imageReconstruction < handle
         % ------------------------------------------------------------------
         function init_using_DA(obj)
             
-            [obj.RF_aperture, obj.tsart, obj.tcompensation] = fct_zero_padding_RF_signals_DA(obj.RF_aperture);
+%             dz = obj.probe.c/(2*obj.probe.fs);
+            [obj.RF_aperture, obj.tstart, obj.tcompensation] = fct_zero_padding_RF_signals_DA(obj.RF_aperture);
             width = length(obj.RF_aperture);
             height = size(obj.RF_aperture{1}, 1);
 
@@ -579,7 +581,13 @@ classdef imageReconstruction < handle
             end
             addpath('../')
             obj.IQ=rf2iq(obj.RF_final, obj.probe);
-
+            
+            % --- adapt signal (time compensation and negative tstart in
+            % case of dynamic acquisition)
+%             t_compensation = ones(1, size(obj.tstart, 2)) * obj.tcompensation;
+%             
+%             Z_org=bsxfun(@plus, Z_org, (obj.tstart - t_compensation)/2*obj.param.c);
+            
         end
         
         % ------------------------------------------------------------------
@@ -640,7 +648,7 @@ classdef imageReconstruction < handle
             [X_img, Z_img, X_RF, Z_RF, obj.x_display, obj.z_display] = fct_get_grid_2D(obj.param, obj.phantom, obj.image, obj.probe, [time_sample, n_rcv], dz);
             [n_points_z, n_points_x] = size(X_img);
             obj.low_res_image = zeros([n_points_z n_points_x obj.probe.Nelements]);
-            % --- get probe position element
+            % --- get probe position elements
             probe_width = (obj.probe.Nelements-1) * obj.probe.pitch;
             probe_pos_x = linspace(-probe_width/2, probe_width/2, obj.probe.Nelements);
             % --- number of active elements

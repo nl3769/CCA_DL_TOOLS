@@ -7,7 +7,7 @@ addpath(fullfile('..', 'mtl_cores'))
 % --- generate several sets of parameters according to the desired parameters.
 % pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/MCMASTER/CROPPED/CAMO_study_cropped/images';
 pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/IMAGENET/sample_00';
-pres = '/home/laine/Desktop/MOTION_TEST/V1';
+pres = '/home/laine/Documents/SIMULATION/DEBUG/DYNAMIC_FOCALISATION/IMAGENET_DYNAMIC_ACQUISITION';
 pparam = '/home/laine/Desktop/set_parameters_template.json';
 info = '';
 fnames = load_fnames(pdatabase);
@@ -29,4 +29,5 @@ end
              incr=incr+1;
      end
  end
+ 
 % -------------------------------------------------------------------------

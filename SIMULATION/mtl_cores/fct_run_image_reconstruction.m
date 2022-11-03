@@ -36,7 +36,7 @@ function fct_run_image_reconstruction(pres)
 
     elseif data.param.mode(2) % synthetic aperture
 %         data.BF_CUDA_STA('DAS');
-        data.BF_CUDA_STA('DMAS');
+        data.BF_CUDA_STA('DAS');
         
 %         data.DAS_synthetic_aperture('DAS', 'SUM');        
         data.get_bmode_gamma_correction();
