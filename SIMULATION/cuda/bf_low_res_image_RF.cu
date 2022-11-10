@@ -31,6 +31,8 @@ extern "C" { // ---> [kernel]
     int id_apod_rx;     // id to get apodization in id_rxception
     int id_apod_tx;     // id to get apodization in emission
     double tof_;        // time of flight
+    double apod_tx;
+    double apod_rx;
 
     // if (col < W  && row < H){
     if (col < W && col >= col_s && col <= col_e  && row < H){
@@ -45,7 +47,11 @@ extern "C" { // ---> [kernel]
             if(delay >= 1 && delay <= (time_sample-1))
             {
               is1 = (int)floor(delay);
-              I[idx] += apod[id_apod_rx] * apod[id_apod_tx] * ( RF[time_sample * id_rx + is1] * (is1 + 1 - delay) + RF[time_sample * id_rx + is1 + 1] * (delay - is1) );
+              //I[idx] += apod[id_apod_rx] * apod[id_apod_tx] * ( RF[time_sample * id_rx + is1] * (is1 + 1 - delay) + RF[time_sample * id_rx + is1 + 1] * (delay - is1) );
+              apod_rx = apod[time_sample * id_rx + is1] * (is1 + 1 - delay) + apod[time_sample * id_rx + is1 + 1] * (delay - is1); 
+              apod_tx = apod[time_sample * id_rx + is1] * (is1 + 1 - delay) + apod[time_sample * id_rx + is1 + 1] * (delay - is1); 
+;
+              I[idx] += apod_tx * apod_rx * ( RF[time_sample * id_rx + is1] * (is1 + 1 - delay) + RF[time_sample * id_rx + is1 + 1] * (delay - is1) );
             }
         }
     }
