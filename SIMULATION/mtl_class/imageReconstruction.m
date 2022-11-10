@@ -241,9 +241,9 @@ classdef imageReconstruction < handle
             % --- RF to IQ
             obj.IQ=rf2iq(obj.RF_final, obj.probe);
             % --- apply TGC
-            if obj.param.TGC==true
-                obj.IQ=tgc(obj.IQ);
-            end
+%             if obj.param.TGC==true
+%                 obj.IQ=tgc(obj.IQ);
+%             end
             % --- compute envelope
             obj.bmode = abs(obj.IQ); % real envelope
             % --- apply gamma correction
@@ -452,33 +452,36 @@ classdef imageReconstruction < handle
             dz = obj.probe.c/(2*obj.probe.fs);
             addpath(fullfile('..', 'mtl_synthetic_aperture'))
             % --- get image information
-            [X_img, Z_img, obj.x_display, obj.z_display] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
+            [X_img, Z_img, X_RF, Z_RF, obj.x_display, obj.z_display] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
             [n_points_z, n_points_x] = size(X_img);
             obj.low_res_image = zeros([n_points_z n_points_x obj.probe.Nelements]);
             % --- get probe position elements
             probe_width = (obj.probe.Nelements-1) * obj.probe.pitch;
             probe_pos_x = linspace(-probe_width/2, probe_width/2, obj.probe.Nelements);
+            probe_pos_z = zeros(1, obj.probe.Nelements);
             % --- number of active elements
             Nactive_tx = obj.param.Nactive;
             % --- apodization window
             apodization = fct_get_apodization([nb_sample, n_rcv], Nactive_tx, obj.probe.pitch, 'hanning_adaptative', 2, dz);
-%             apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img, Z_img);
+            apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img, Z_img);
 %             apodization = ones(size(apodization));
-            % --- time of flight matrix
-            tof = fct_get_time_of_flight(X_img, Z_img, probe_pos_x, obj.probe.c);
             % --- define the CUDA module and kernel
-            cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bin', 'bfLowResRF.ptx');
+            cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bin', 'bfLowResRF_new.ptx');
             cuda_kernel_name = 'das_low_res';
-            % --- get the CUDA kernel from the CUDA module
             cuda_kernel = parallel.gpu.CUDAKernel(cuda_module_path_and_file_name,...
-            'double*, const double*, const int, const int, const int, const int, const double, const double, const double*, const int, const double*, const double',...
+            'double*, double*, double*, double*, int, int, int, int, double, double, double*, int, double*, double*, double',...
             cuda_kernel_name);
             % --- define grid and block size
             BLOCK_DIM_X = 32;
             BLOCK_DIM_Y = 32;
             cuda_kernel.GridSize = [round( ((n_points_x-1)/BLOCK_DIM_X) + 1), round( ((n_points_z-1)/BLOCK_DIM_Y) + 1), 1];
+%             cuda_kernel.GridSize = [100, 100, 1];
+%             cuda_kernel.GridSize = [n_points_x, n_points_z, 1];
             cuda_kernel.ThreadBlockSize = [BLOCK_DIM_X, BLOCK_DIM_Y, 1];
+            
             % --- initialization for kernel
+            pos_x_img    = X_img(1,:);
+            pos_z_img    = Z_img(:,1);
             nb_rx        = int32(obj.probe.Nelements);
             nb_sample    = int32(nb_sample);
             imageW       = int32(n_points_x);
@@ -486,27 +489,31 @@ classdef imageReconstruction < handle
             c            = obj.param.c;
             fs           = double(obj.probe.fs);
             apodization  = double(apodization);
-            tof          = double(tof);
-
+            tic
             for id_tx=1:1:obj.probe.Nelements
                 I = double(zeros([n_points_z n_points_x]));
                 RF = RF_signals{id_tx};
-%                 t_offset = double(time_offset(id_tx));
                 t_offset = double(-time_offset(id_tx));
+%                 apod_ = apodization(:, :, id_tx);
                 % --- call the kernel
-                I = feval(cuda_kernel, I, RF, nb_rx, nb_sample, imageW, imageH, c, fs, apodization, id_tx-1, tof, t_offset);
+                I = feval(cuda_kernel, I, RF, probe_pos_x, probe_pos_z, nb_rx, nb_sample, imageW, imageH, c, fs, apodization, id_tx-1, pos_x_img, pos_z_img, t_offset);
                 % --- gather the output back from GPU to CPU
                 I = gather(I);
 %                 if id_tx == 35
-                    figure(1)
-                    imagesc(abs(I))
-                    title(num2str(id_tx))
-                    colorbar()
-%                     a=1
+                figure(1)
+                subplot(1,2, 1)
+                imagesc(abs(I))
+                colorbar()
+                subplot(1,2, 2)
+                imagesc(apodization(:,:,id_tx))
+                title(num2str(id_tx))
+                colorbar()
+                a=1;
 %                 end
                 % --- store low res image
                 obj.low_res_image(:,:,id_tx) = I;
             end
+            toc
             % --- compounding
             switch compounding
                 case 'DAS'

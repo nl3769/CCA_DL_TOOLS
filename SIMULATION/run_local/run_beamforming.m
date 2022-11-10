@@ -9,7 +9,10 @@ addpath(fullfile('..', 'mtl_cores/'));
 addpath(fullfile('..', 'mtl_utils'));
 
 % --- path to resultsQ
-path_res='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/POINT_SCATTERES/sta_field/';
+% path_res = '/home/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER_V1/tech_001/';
+% path_res = '/home/laine/HDD/PROJECTS_IO/SIMULATION/MEIBURGER_1_FRAME/tech_008';
+path_res = '/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/STA/POOR_DENSITY/n01496331_electric_ray';
+% path_res='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/POINT_SCATTERES/sta_field/';
 % path_res='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/STA/POOR_DENSITY/n01496331_electric_ray/';
 
 % path_res='/home/laine/Desktop/NEW_TEST/tech_001/tech_001_id_001_FIELD';

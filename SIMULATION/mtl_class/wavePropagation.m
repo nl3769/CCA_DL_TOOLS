@@ -340,7 +340,7 @@ classdef wavePropagation < handle
 %                 rx_apod(:,id_rx) = apodization(:, id_rx, id_tx_active);
 %             end
             tx_apod = ones(size(tx_apod ));
-            rx_apod = ones(size(tx_apod ));
+            rx_apod = ones(size(rx_apod ));
             tsamples = (1:1:max_dist)'*1/(obj.param.fc*obj.param.fsCoef);
             xdc_apodization(emit_aperture, tsamples, tx_apod);
             xdc_apodization(receive_aperture, tsamples, rx_apod);

@@ -7,7 +7,7 @@ addpath(fullfile('..', 'mtl_cores/'));
 addpath(fullfile('..', 'mtl_utils'));
 
 
-pres = '/home/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER';
+pres = '/home/laine/HDD/PROJECTS_IO/SIMULATION/MEIBURGER_1_FRAME/';
 seq = list_files(pres);
 
 for pid=1:1:length(seq)
@@ -19,11 +19,11 @@ for pid=1:1:length(seq)
         pres_ = fullfile(pseq, id_seq{idi}, 'parameters');
         
         fname_mat = fct_list_ext_files(pres_, 'mat', '');
-        fname_json_ = fct_list_ext_files(pres_, 'json', '');
+%         fname_json_ = fct_list_ext_files(pres_, 'json', '');
         
         pres_mat = fullfile(pseq, id_seq{idi}, 'parameters', fname_mat{1});
-        pres_json = fullfile(pseq, id_seq{idi}, 'parameters', fname_json_{1});
-        
+%         pres_json = fullfile(pseq, id_seq{idi}, 'parameters', fname_json_{1});
+        pres_json = fullfile(pseq, id_seq{idi}, 'parameters', 'parameters.json');
         param = load(pres_mat);
         param = param .p;
         
