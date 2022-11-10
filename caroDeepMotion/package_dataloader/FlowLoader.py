@@ -10,9 +10,8 @@ class FlowDataloader(Dataset):
 
     def __init__(self):
 
-        self.is_test = False
         self.image_list = []
-        self.mask_list = []
+        self.flow_list = []
         self.CF_list = []
         self.extra_info = []
 
@@ -28,7 +27,7 @@ class FlowDataloader(Dataset):
         I1, I2 = self.read_img(self.image_list[index][0], self.image_list[index][1])
 
         # --- get the name of the sequence
-        name = self.image_list[index][0].split('/')[-1]
+        name = self.image_list[index][0].split('/')[-1].split('.')[0]
 
         return I1, I2, OF, name
 
@@ -43,8 +42,8 @@ class FlowDataloader(Dataset):
         I1 = cv2.resize(I1, (128, 256), interpolation=cv2.INTER_LINEAR)
         I2 = cv2.resize(I2, (128, 256), interpolation=cv2.INTER_LINEAR)
 
-        I1 = np.expand_dims(I1, axis = 0)
-        I2 = np.expand_dims(I2, axis = 0)
+        I1 = np.expand_dims(I1, axis=0)
+        I2 = np.expand_dims(I2, axis=0)
 
         return I1, I2
 

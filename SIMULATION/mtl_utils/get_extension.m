@@ -8,7 +8,7 @@ function [type] = get_extension(dname)
     elseif contains(dname, '.JPEG')
         type = 'JPEG';
     elseif contains(dname, '.jpg')
-        type = 'JPG';
+        type = 'JPEG';
     elseif contains(dname, '.mat')
         type = 'MAT';
     else

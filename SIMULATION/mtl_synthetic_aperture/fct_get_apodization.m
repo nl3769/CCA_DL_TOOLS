@@ -82,7 +82,7 @@ function [apod_window] = apod_hanning_adaptative(dim, Nactive, pitch, f_number, 
     % --- window offset according to the element
     for id_tx=1:1:width
 
-        if id_tx >= Nactive/2 && id_tx < (width - Nactive/2 +1)
+        if id_tx > Nactive/2 && id_tx < (width - Nactive/2 +1)
             id = floor(id_tx - Nactive/2 +1);
             apod_window(:, id:id+Nactive-1, id_tx) = apod_window_;
         end

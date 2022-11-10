@@ -1,7 +1,6 @@
 function [id_start, id_end] = fct_get_se(Nelement, pitch, Nactive, x_img)
     
-    x = 0:pitch:(Nelement-1)*pitch;
-    x = x - mean(x);
+    x = -(Nelement-1)*pitch/2:pitch:(Nelement-1)*pitch/2;
     
     x_start = min(x) + (Nactive-1)/2 * pitch;
     x_end = max(x) - (Nactive-1)/2 * pitch;

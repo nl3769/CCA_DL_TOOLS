@@ -30,8 +30,8 @@ def fetch_dataloader_flow(p):
         "drop_last":    True
         }
 
-    loader_training     = DataLoader(**args_training)
-    loader_validation   = DataLoader(**args_validation)
+    loader_training = DataLoader(**args_training)
+    loader_validation = DataLoader(**args_validation)
 
     return loader_training, loader_validation
 

@@ -93,6 +93,8 @@ class loggerClass():
             plt.title('Validation loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
+            plt.grid(True)
+            plt.ylim((0, np.max(self.loss_flow['validation'])))
             plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'loss_validation_EPE_flow.png'), dpi=150)
             plt.close()
 
@@ -106,6 +108,7 @@ class loggerClass():
             plt.title('Training loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
+            plt.ylim((0, np.max(self.loss_flow['training'])))
             plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'loss_training_EPE_flow.png'), dpi=150)
             plt.close()
 
@@ -123,6 +126,7 @@ class loggerClass():
             plt.title('Validation loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
+            plt.ylim((0, np.max(self.loss_full['validation'])))
             plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'loss_validation_full.png'), dpi=150)
             plt.close()
 
@@ -136,6 +140,7 @@ class loggerClass():
             plt.title('Training loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
+            plt.ylim((0, np.max(self.loss_full['training'])))
             plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'loss_training_full.png'), dpi=150)
             plt.close()
 

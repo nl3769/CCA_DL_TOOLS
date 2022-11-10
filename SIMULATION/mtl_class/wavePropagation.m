@@ -90,7 +90,7 @@ classdef wavePropagation < handle
             apod_probe(id_tx)=1;
             obj.probe.TXapodization=apod_probe;
             % --- we run simus
-            if id_tx > floor(obj.param.Nactive/2) & id_tx < (obj.param.Nelements - floor(obj.param.Nactive/2) + 1)
+%             if id_tx > floor(obj.param.Nactive/2) && id_tx < (obj.param.Nelements - floor(obj.param.Nactive/2) + 1)
                 obj.RF_aperture=simus([obj.phantom.x_scatt; obj.phantom.x_max; obj.phantom.x_min],... % MUST function
                                       [obj.phantom.y_scatt; 0; 0],...
                                       [obj.phantom.z_scatt; obj.phantom.z_max; obj.phantom.z_min],...
@@ -100,9 +100,9 @@ classdef wavePropagation < handle
                                       opt);  
                 time_offset = zeros(size(obj.RF_aperture, 2), 1)';      % since there is not delay with simus
                 obj.RF_aperture=[time_offset; obj.RF_aperture];
-            else
-                obj.RF_aperture = zeros(obj.param.Nelements, obj.param.Nelements);
-            end
+%             else
+%                 obj.RF_aperture = zeros(obj.param.Nelements, obj.param.Nelements);
+%             end
             
             obj.exec_time = toc(now1);
 
@@ -183,14 +183,13 @@ classdef wavePropagation < handle
             disp(['FIELD aperture ID (Synthetic aperture): ' num2str(id_tx)]);
             
             % --- apodization
-            apo = zeros(1, obj.probe.Nelements);
-            apo(id_tx) = 1;
-            xdc_apodization(emit_aperture, 0, apo);
+            apo_tx = zeros(1, obj.probe.Nelements);
+            apo_tx(id_tx) = 1;
+            apo_rx = ones(1, obj.probe.Nelements);
+            xdc_apodization(emit_aperture, 0, apo_tx);
+            xdc_apodization(receive_aperture, 0, apo_rx);
             
-            %delay=xdc_get(emit_aperture, 'focus');
-            %delay = delay(id_tx:id_tx+obj.sub_probe.Nelements-1);
-            
-            if id_tx > floor(obj.param.Nactive/2) & id_tx < (obj.param.Nelements - floor(obj.param.Nactive/2) + 1)
+%             if id_tx > floor(obj.param.Nactive/2) && id_tx < (obj.param.Nelements - floor(obj.param.Nactive/2) + 1)
                 % --- we run the simulation
                 [obj.RF_aperture, tstart] = calc_scat_multi(emit_aperture, receive_aperture, positions, obj.phantom.RC_scatt);  
                 obj.exec_time = toc(now1);
@@ -198,9 +197,9 @@ classdef wavePropagation < handle
                 % --- add zero padding to RF signal
                 time_offset = ones(size(obj.RF_aperture, 2), 1)' * (tstart - time_compensation);
                 obj.RF_aperture=[time_offset; obj.RF_aperture];
-            else
-                obj.RF_aperture = zeros(obj.param.Nelements, obj.param.Nelements);
-            end
+%             else
+%                 obj.RF_aperture = zeros(obj.param.Nelements, obj.param.Nelements);
+%             end
         end
         
         % ------------------------------------------------------------------
@@ -267,22 +266,59 @@ classdef wavePropagation < handle
         end
         
         % ------------------------------------------------------------------
-        function dynamic_acquisition_field(obj, id_tx)
+        function calc_scatt_all_field(obj)
+                        
+            field_init(-1)
+            set_field('show_times', 30)
+            [emit_aperture, receive_aperture, time_compensation]=obj.init_field(10);
+            % --- set scatterers position
+            positions=[obj.phantom.x_scatt, obj.phantom.y_scatt, obj.phantom.z_scatt];
+            % --- apodization window for emission and reception
+            if ~isdeployed
+                addpath(fullfile('..', 'mtl_synthetic_aperture'))
+            end
+
+            tx_apod = ones([1 192]);
+            rx_apod = ones([1 192]);
+            xdc_apodization(emit_aperture, 0, tx_apod);
+            xdc_apodization(receive_aperture, 0, rx_apod);
+            xdc_times_focus(receive_aperture, 0, zeros([1 192]));
+            xdc_times_focus(emit_aperture, 0, zeros([1 192]));
+            % --- we run the simulation
+            now1 = tic();
+            [obj.RF_aperture, tstart] = calc_scat_all(emit_aperture, receive_aperture, positions, obj.phantom.RC_scatt, 1);  
+            % --- add zero padding to RF signal 
+%             obj.RF_aperture=[tstart; time_compensation; obj.RF_aperture];
+            dim = size(obj.RF_aperture, 1);
+            obj.RF_aperture = reshape(obj.RF_aperture, [dim, 192, 192]);
+            
+%             obj.RF_aperture = vertcat(zeros([1 192, 192]), obj.RF_aperture);
+            obj.RF_aperture = vertcat((tstart - time_compensation)*ones([1 192, 192]), obj.RF_aperture);
+            
+            % --- simulation time
+            obj.exec_time = toc(now1);        
+            
+        end
+        
+        % ------------------------------------------------------------------
+        function dynamic_focus_field(obj, id_tx)
                         
             field_init(-1)
             set_field('show_times', 30)
             [emit_aperture, receive_aperture, time_compensation]=obj.init_field(10);
             % --- adapt id_tx
-            id_tx_active = id_tx + floor(obj.param.Nactive/2);
+%             id_tx_active = id_tx + floor(obj.param.Nactive/2);
+            id_tx_active = id_tx;
 %             id_tx_active = id_tx;
             % --- set scatterers position
             positions=[obj.phantom.x_scatt, obj.phantom.y_scatt, obj.phantom.z_scatt];
             % --- probe dimension
-            image_width = (obj.probe.Nelements-1) * (obj.probe.pitch);
+            probe_width = (obj.probe.Nelements-1) * (obj.probe.pitch);
             dx = obj.probe.pitch;
-            xstart = -image_width/2;
+            xstart = -probe_width/2;
             % --- compute xcurrent
-            xcurrent = xstart + (id_tx-1+(obj.sub_probe.Nelements-1)/2) * dx;
+%             xcurrent = xstart + (id_tx-1+(obj.sub_probe.Nelements-1)/2) * dx;
+            xcurrent = xstart + (id_tx-1) * dx;
             % --- display
             disp(['FIELD aperture ID (Dynamic Focusing): ' num2str(id_tx_active)]);
             % --- set the origin for emission and reception
@@ -294,16 +330,18 @@ classdef wavePropagation < handle
             end
             % --- set apodization
             dz = obj.probe.c/(2*obj.probe.fs);
-            z_samples=round(max(obj.phantom.z_scatt)/dz);
-            dim=[z_samples, obj.probe.Nelements];
+            max_dist=round((sqrt(max(obj.phantom.z_max)^2 + (obj.phantom.x_max - obj.phantom.x_min)^2))/dz);
+            dim=[max_dist, obj.probe.Nelements];
             apodization = fct_get_apodization(dim, obj.sub_probe.Nelements, obj.sub_probe.pitch, 'hanning_adaptative', obj.param.fnumber, dz);
-            tx_apod = apodization(:,:,id_tx_active);
-            rx_apod = zeros(size(tx_apod));
-            for id_rx=1:size(rx_apod, 2)
-                rx_apod(:,id_rx) = apodization(:, id_tx_active, id_rx);
-            end
-            
-            tsamples = (1:1:z_samples)'*1/(obj.param.fc*obj.param.fsCoef);
+            tx_apod = squeeze(apodization(:,:,id_tx_active));
+            rx_apod = squeeze(apodization(:,id_tx_active,:));
+%             rx_apod = zeros(size(tx_apod));
+%             for id_rx=1:size(rx_apod, 2)
+%                 rx_apod(:,id_rx) = apodization(:, id_rx, id_tx_active);
+%             end
+            tx_apod = ones(size(tx_apod ));
+            rx_apod = ones(size(tx_apod ));
+            tsamples = (1:1:max_dist)'*1/(obj.param.fc*obj.param.fsCoef);
             xdc_apodization(emit_aperture, tsamples, tx_apod);
             xdc_apodization(receive_aperture, tsamples, rx_apod);
             % --- create the dynamic focus time line for emission and reception   
@@ -393,10 +431,10 @@ function [apod_window] = hanning_adaptative(dim, Nactive, pitch, f_number, dz, i
 
     end          
 
-    % --- window offset according to the element
-    if id_tx >= Nactive/2 && id_tx < (width - Nactive/2 +1)
-        id = floor(id_tx - Nactive/2 +1);
-        apod_window(:, id:id+Nactive-1) = apod_window_;
-    end
+%     % --- window offset according to the element
+%     if id_tx >= Nactive/2 && id_tx < (width - Nactive/2 +1)
+%         id = floor(id_tx - Nactive/2 +1);
+%         apod_window(:, id:id+Nactive-1) = apod_window_;
+%     end
     
 end

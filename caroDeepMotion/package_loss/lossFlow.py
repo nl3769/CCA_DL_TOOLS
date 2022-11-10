@@ -13,7 +13,6 @@ class lossFlow():
     # ------------------------------------------------------------------------------------------------------------------
 
     def sequence_loss(self, flow_preds: torch.Tensor, flow_gt: torch.Tensor, gamma: float):
-
         """ Loss function defined over sequence of flow predictions. """
 
         n_predictions = len(flow_preds)

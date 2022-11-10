@@ -37,7 +37,7 @@ def main():
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     else:
         device = 'cpu'
-    # device = 'cpu'
+    device = 'cpu'
     # --- load models
     netEncoder, netFlow = pnu.load_model_flow(p)
     netEncoder = netEncoder.to(device)
@@ -84,6 +84,7 @@ def main():
         else:
             prtl.trn_loop_flow(p, networks, flowLoss, optimizers, schedulers, logger, training_dataloader, epoch, device)
             prvl.val_loop_flow(p, networks, flowLoss, logger, validation_dataloader, epoch, device)
+
         logger.save_best_model(epoch, networks)
 
     logger.plot_loss()

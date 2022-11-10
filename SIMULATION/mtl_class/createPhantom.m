@@ -176,6 +176,7 @@ classdef createPhantom < handle
             obj.data_scatt.z_scatt = z_scat+obj.param.shift;
             obj.data_scatt.y_scatt = zeros(size(x_scat, 1), 1);
             obj.data_scatt.RC_scatt = RC_scat;
+            obj.data_scatt.RC_scatt = obj.data_scatt.RC_scatt/max(obj.data_scatt.RC_scatt);
             obj.data_scatt.depth_of_focus = 3/4*(z_max)+obj.param.shift;
 
             obj.data_scatt_moved = obj.data_scatt;
@@ -823,24 +824,35 @@ classdef createPhantom < handle
                 displacement_field(:,:,3) = reshape(z_val, [obj.data_img.height obj.data_img.width]);               
                  
                 % DEBUG
-                debug = false;
+                debug = true;
+                
+                
                 if debug                    
-                    dif = diff(:, :, 1);
-                    dif = interp2(scatt_ref_moved.x_scatt, scatt_ref_moved.z_scatt,dif(:), x_q, z_q);
-                    gt = displacement_field(:,:,1);
-                    err = dif-gt;
                     figure(1)
-                    imagesc(dif)
-                    title('diff')
-                    colorbar()
+                    
+                    X = reshape(x_q, [obj.data_img.height obj.data_img.width]);
+                    Z = reshape(z_q, [obj.data_img.height obj.data_img.width]);
+                    Dx = displacement_field(:,:,1) / obj.data_img.CF;
+                    Dz = displacement_field(:,:,3) / obj.data_img.CF;
+                    Dx = Dx(1:15:end, 1:15:end);
+                    Dz = Dz(1:15:end, 1:15:end);
+                    X = X(1:15:end, 1:15:end);
+                    Z = Z(1:15:end, 1:15:end);
+%                     quiver(X,Z,Dx,Dz, 'AutoScale','on');
+                    quiver(X,-Z,Dx,Dz);
                     figure(2)
-                    imagesc(gt)
-                    title('gt')
-                    colorbar()
+                    title('Norm')
+                    imagesc(X(1,:), Z(:,1), sqrt((displacement_field(:,:,1)/obj.data_img.CF).^2+(displacement_field(:,:,2)/obj.data_img.CF).^2));
+                    colorbar
                     figure(3)
-                    imagesc(err)
-                    title('err')
-                    colorbar()
+                    title('X motion')
+                    imagesc(X(1,:), Z(:,1), displacement_field(:,:,1));
+                    colorbar
+                    figure(4)
+                    title('Z motion')
+                    imagesc(X(1,:), Z(:,1), displacement_field(:,:,3));
+                    colorbar
+                    
                 end
                 
                 % --- convert the flow in pixels displacement
@@ -885,10 +897,10 @@ classdef createPhantom < handle
         % ----------------------------------------------------------------------------------------------------------------------
         function phantom_tmp(obj)
             
-            k=4;
+            k=5;
 
-            z_pos=linspace(obj.data_scatt.z_max*0.2, obj.data_scatt.z_max - obj.data_scatt.z_max * 0.2, k);
-            x_pos=linspace(obj.data_scatt.x_min- obj.data_scatt.x_min*0.2,     obj.data_scatt.x_max - obj.data_scatt.x_max*0.2, k);
+            z_pos=linspace(obj.data_scatt.z_max * 0.5, obj.data_scatt.z_max, k);
+            x_pos=linspace(obj.data_scatt.x_min*0.3, obj.data_scatt.x_max*0.3, k);
 %             obj.data_scatt.x_min = obj.data_scatt.x_min * 0.5;
 %             obj.data_scatt.x_max = obj.data_scatt.x_max * 0.5;
 
@@ -896,16 +908,41 @@ classdef createPhantom < handle
             obj.data_scatt.x_scatt=[];
             obj.data_scatt.z_scatt=[];
             obj.data_scatt.RC_scatt=[];
-
+            
+%             obj.data_scatt.y_scatt = [0;0;0;0;0;0;0;0];
+%             obj.data_scatt.x_scatt = [0;0;0;0;0;0;0;0];
+%             obj.data_scatt.z_scatt = [obj.data_scatt.z_max*0.1;...
+%                                       obj.data_scatt.z_max*0.2;...
+%                                       obj.data_scatt.z_max*0.3;...
+%                                       obj.data_scatt.z_max*0.4;...
+%                                       obj.data_scatt.z_max*0.5;...
+%                                       obj.data_scatt.z_max*0.6;...
+%                                       obj.data_scatt.z_max*0.7;...
+%                                       obj.data_scatt.z_max*0.8];
+%             obj.data_scatt.RC_scatt = [1;1;1;1;1;1;1;1];
             for i=1:1:k
                 for j=1:k
                     obj.data_scatt.y_scatt = [obj.data_scatt.y_scatt; 0];
                     obj.data_scatt.z_scatt = [obj.data_scatt.z_scatt; z_pos(j)];
                     obj.data_scatt.x_scatt = [obj.data_scatt.x_scatt; x_pos(i)];
-                    obj.data_scatt.RC_scatt = [obj.data_scatt.RC_scatt; 1];
+                    if j==1 || j==k || j==1+1 || j==k-1 || i==1 || i==k || i==1+1 || i==k-1
+                        obj.data_scatt.RC_scatt = [obj.data_scatt.RC_scatt; 0];
+                    else
+                        obj.data_scatt.RC_scatt = [obj.data_scatt.RC_scatt; 1];
+                    end
                 end
             end
-
+            
+%             obj.data_scatt.y_scatt = [0; 0; 0];
+%             obj.data_scatt.z_scatt = [obj.data_scatt.z_max*0.5; obj.data_scatt.z_min; obj.data_scatt.z_max];
+%             obj.data_scatt.x_scatt = [0; obj.data_scatt.x_min; obj.data_scatt.x_max];
+%             obj.data_scatt.RC_scatt = [1; 0; 0];
+            
+            obj.data_scatt.y_scatt = [obj.data_scatt.y_scatt; 0; 0];
+            obj.data_scatt.z_scatt = [obj.data_scatt.z_scatt; obj.data_scatt.z_min; obj.data_scatt.z_max];
+            obj.data_scatt.x_scatt = [obj.data_scatt.x_scatt; obj.data_scatt.x_min; obj.data_scatt.x_max];
+            obj.data_scatt.RC_scatt = [obj.data_scatt.RC_scatt; 0; 0];
+            
 %             obj.data_scatt.y_scatt= [0];
 %             obj.data_scatt.z_scatt= [obj.data_scatt.z_max/2];
 %             obj.data_scatt.x_scatt= [0];

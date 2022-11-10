@@ -25,15 +25,11 @@ class dataHandler(motionDataloader):
 
         fsplit = os.listdir(param.PSPLIT)
         fsplit = [key for key in fsplit if set in key]
-
         with open(os.path.join(param.PSPLIT, fsplit[0]), 'r') as f:
             path = f.readlines()
-
         path = [os.path.join(param.PDATA, key.split('\n')[0]) for key in path]
-
         # --- subfolders
         subfolds = ['I1', 'I2', 'M1', 'M2', 'OF']
-
         # --- get path
         for patient in path:
             seq = os.listdir(patient)
@@ -59,7 +55,7 @@ class dataHandler(motionDataloader):
                     self.flow_list.append([pOF])
                     self.CF_list.append([pCF])
 
-        #self.image_list = self.image_list[:1000]
-        #self.mask_list = self.mask_list[:1000]
-        #self.flow_list = self.flow_list[:1000]
-        #self.CF_list = self.CF_list[:1000]
+        self.image_list = self.image_list[:10]
+        self.mask_list = self.mask_list[:10]
+        self.flow_list = self.flow_list[:10]
+        self.CF_list = self.CF_list[:10]

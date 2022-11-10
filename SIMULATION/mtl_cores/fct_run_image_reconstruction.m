@@ -9,21 +9,16 @@ function fct_run_image_reconstruction(pres)
     raw_data_folder   = fct_list_ext_files(pres, 'mat', 'raw_data');
     parameters_folder = fct_list_ext_files(pres, 'json','parameters');
     phantom_folder    = fct_list_ext_files(pres, 'mat', 'phantom');
-
     % --- get data in raw_data folder
     rf_data_name    = fct_get_raw_from_folder(raw_data_folder);
     probe_name      = fct_detect_sub_str(raw_data_folder, 'probe.mat');
     sub_probe_name  = fct_detect_sub_str(raw_data_folder, 'subProbe.mat');    
-
     % --- get data in phantom folder
     phantom_name = fct_detect_sub_str(phantom_folder, 'dicom');
-
     % ---  create object 
     data = imageReconstruction(pres,  rf_data_name{1}, parameters_folder{1}, probe_name{1}, sub_probe_name{1}, phantom_name{1});
-    
     % --- beamforming
     if data.param.mode(1) % scanline based
-        
         data.DAS_scanline_based('DAS');
         data.get_bmode_gamma_correction();
         data.scan_conversion();

@@ -1,4 +1,4 @@
-function fct_run_wave_propagation(varargin)
+function [stop] = fct_run_wave_propagation(varargin)
     fclose all;
 
     switch nargin
@@ -45,7 +45,9 @@ function fct_run_wave_propagation(varargin)
     name_phantom=split(path_phantom, '/');
     name_phantom=name_phantom{end};
 
+
     % --- launch simulation
+    stop = false;
     for i=id_tx:1:id_tx_end
 
       switch simulation_obj.param.soft
@@ -59,10 +61,14 @@ function fct_run_wave_propagation(varargin)
           case 'FIELD'
               if simulation_obj.param.mode(1)                                                       % run scanline based acquisition
                   simulation_obj.scanline_based_field(i);
-              elseif simulation_obj.param.mode(2) && simulation_obj.param.dynamic_focusing == 0     % run synthetic-aperture acquisition
+              elseif simulation_obj.param.mode(2) && simulation_obj.param.dynamic_focusing == 0 && simulation_obj.param.calc_scatt_all_field == 0    % run synthetic-aperture acquisition
                   simulation_obj.synthetic_aperture_field(i);
-              elseif simulation_obj.param.mode(2) && simulation_obj.param.dynamic_focusing == 1     % run dynamic focalisation
-                  simulation_obj.dynamic_acquisition_field(i);
+              elseif simulation_obj.param.mode(2) && simulation_obj.param.dynamic_focusing == 1 && simulation_obj.param.calc_scatt_all_field == 0% run dynamic focalisation
+                  simulation_obj.dynamic_focus_field(i);
+              elseif simulation_obj.param.mode(2) && simulation_obj.param.dynamic_focusing == 0 && simulation_obj.param.calc_scatt_all_field == 1 % run calc scatt all field
+                simulation_obj.calc_scatt_all_field();
+                fct_run_cluster_RF_calc_scatt_all(fullfile(simulation_obj.param.path_res, 'raw_data'))
+                stop = true;
               end
       end
 

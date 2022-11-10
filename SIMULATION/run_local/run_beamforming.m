@@ -8,9 +8,10 @@ set(0, 'DefaultFigureWindowStyle', 'docked');
 addpath(fullfile('..', 'mtl_cores/'));
 addpath(fullfile('..', 'mtl_utils'));
 
+% --- path to resultsQ
+path_res='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/POINT_SCATTERES/sta_field/';
+% path_res='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/STA/POOR_DENSITY/n01496331_electric_ray/';
 
-% --- path to results
-path_res='/home/laine/Documents/SIMULATION/DEBUG/DYNAMIC_FOCALISATION/FIELD_STA/ILSVRC2012_test_00000013/';
 % path_res='/home/laine/Desktop/NEW_TEST/tech_001/tech_001_id_001_FIELD';
 files = list_files(path_res);
 

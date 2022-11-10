@@ -11,7 +11,7 @@ end
 %%%%%%% RUN SIMULATION %%%%%%% 
 
 % --- path to data
-path_data='/home/laine/Documents/SIMULATION/DEBUG/DYNAMIC_FOCALISATION/IMAGENET_DYNAMIC_ACQUISITION/ILSVRC2012_test_00000013/ILSVRC2012_test_00000013_id_001_FIELD';
+path_data='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/POINT_SCATTERES/df_field/small_grid';
 % --- get phantom name
 phantom_folder = fct_list_ext_files(path_data, 'mat', 'phantom');
 phantom_names = fct_detect_sub_str(phantom_folder, 'dicom');
@@ -29,10 +29,16 @@ elseif PARAM.mode(2)
     tx = nb_tx;
 end
 
-parfor (id_tx=1:128, 4)
-% for id_tx=1:1:128
+stop = false;
+% parfor (id_tx=1:192, 6)
+for id_tx=1:1:192
     % --- run simulation
-    fct_run_wave_propagation(fullfile(path_data, 'parameters', parameters_folder{1}), fullfile(path_data, 'phantom', phantom_names{1}), id_tx);
+    stop = fct_run_wave_propagation(fullfile(path_data, 'parameters', parameters_folder{1}), fullfile(path_data, 'phantom', phantom_names{1}), id_tx);
+%     if stop
+%         break;
+%     end
 end
 
-fct_run_cluster_RF(fullfile(path_data, 'raw_data'))
+if ~stop
+    fct_run_cluster_RF(fullfile(path_data, 'raw_data'))
+end
