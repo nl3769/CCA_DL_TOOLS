@@ -75,7 +75,7 @@ function [apod_window] = apod_hanning_adaptative(dim, Nactive, pitch, f_number, 
         % --- sum has to equal equal to zero
         sum_ = sum(apod);
         
-        apod_window_(id_z, :) = apod/sum_;
+        apod_window_(id_z, :) = apod; %/sum_;
 
     end          
 

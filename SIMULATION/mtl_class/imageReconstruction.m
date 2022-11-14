@@ -252,12 +252,12 @@ classdef imageReconstruction < handle
             obj.bmode = obj.bmode/max(obj.bmode(:));
             
             if ~obj.param.dynamic_focusing
-                % --- perform a low pass filtering
-                obj.bmode=imgaussfilt(obj.bmode, 1, 'FilterSize', 3, 'Padding', 'symmetric');
-                % --- perform a median filtering
-                obj.bmode = medfilt2(obj.bmode);
-                % --- apply treshold
-                obj.bmode=imadjust(obj.bmode, [obj.param.imadjust_vals(1) obj.param.imadjust_vals(2)], []);
+%                 % --- perform a low pass filtering
+%                 obj.bmode=imgaussfilt(obj.bmode, 1, 'FilterSize', 3, 'Padding', 'symmetric');
+%                 % --- perform a median filtering
+%                 obj.bmode = medfilt2(obj.bmode);
+%                 % --- apply treshold
+%                 obj.bmode=imadjust(obj.bmode, [obj.param.imadjust_vals(1) obj.param.imadjust_vals(2)], []);
             end
         end
         
@@ -453,6 +453,12 @@ classdef imageReconstruction < handle
             addpath(fullfile('..', 'mtl_synthetic_aperture'))
             % --- get image information
             [X_img, Z_img, X_RF, Z_RF, obj.x_display, obj.z_display] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
+%             lambda = obj.probe.c/obj.probe.fc;
+%             xAxis = -5e-3:lambda/10:5e-3;
+%             zAxis = 40e-3:lambda/10:60e-3;
+%             [X_img,Z_img] = meshgrid(xAxis,zAxis);
+%             Y_img = zeros(size(X_img));
+            
             [n_points_z, n_points_x] = size(X_img);
             obj.low_res_image = zeros([n_points_z n_points_x obj.probe.Nelements]);
             % --- get probe position elements
@@ -461,12 +467,13 @@ classdef imageReconstruction < handle
             probe_pos_z = zeros(1, obj.probe.Nelements);
             % --- number of active elements
             Nactive_tx = obj.param.Nactive;
+%             Nactive_tx = 101;
             % --- apodization window
-            apodization = fct_get_apodization([nb_sample, n_rcv], Nactive_tx, obj.probe.pitch, 'hanning_adaptative', 2, dz);
+            apodization = fct_get_apodization([nb_sample, n_rcv], Nactive_tx, obj.probe.pitch, 'hanning_adaptative', 0.2, dz);
             apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img, Z_img);
 %             apodization = ones(size(apodization));
             % --- define the CUDA module and kernel
-            cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bin', 'bfLowResRF_new.ptx');
+            cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bin', 'bfLowResRF.ptx');
             cuda_kernel_name = 'das_low_res';
             cuda_kernel = parallel.gpu.CUDAKernel(cuda_module_path_and_file_name,...
             'double*, double*, double*, double*, int, int, int, int, double, double, double*, int, double*, double*, double',...
@@ -490,6 +497,7 @@ classdef imageReconstruction < handle
             fs           = double(obj.probe.fs);
             apodization  = double(apodization);
             tic
+            
             for id_tx=1:1:obj.probe.Nelements
                 I = double(zeros([n_points_z n_points_x]));
                 RF = RF_signals{id_tx};
@@ -508,7 +516,7 @@ classdef imageReconstruction < handle
                 imagesc(apodization(:,:,id_tx))
                 title(num2str(id_tx))
                 colorbar()
-                a=1;
+%                 a=1;
 %                 end
                 % --- store low res image
                 obj.low_res_image(:,:,id_tx) = I;
@@ -535,12 +543,177 @@ classdef imageReconstruction < handle
                     end
             end
             
+%             env=abs(hilbert(obj.RF_final));
+%             env=env/max(env(:));
+%             figure;
+%             imagesc(20*log10(env),[-50 0])
+%             colormap gray
             figure()
             imagesc(20*log10(abs(hilbert(obj.RF_final)))+40)
         end
+        
+        function BF_DG(obj, compounding)
+            % Apply simple DAS/DMAS/DMAS+CF beamforming algorithm.
+                          
+            % --- analytic signal
+            time_offset = fct_get_time_offset(obj.RF_aperture);
+            % --- add zeros padding
+            RF_signals = fct_zero_padding_RF_signals(obj.RF_aperture);
+            % --- signal information
+            [nb_sample, n_rcv] = size(RF_signals{1}); 
+            dz = obj.probe.c/(2*obj.probe.fs);
+            addpath(fullfile('..', 'mtl_synthetic_aperture'))
+            % --- get image information
+            [X_img, Z_img, X_RF, Z_RF, obj.x_display, obj.z_display] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
+            [n_points_z, n_points_x] = size(X_img);
+            obj.low_res_image = zeros([n_points_z n_points_x obj.probe.Nelements]);
+            % --- get probe position elements
+            probe_width = (obj.probe.Nelements-1) * obj.probe.pitch;
+            probe_pos_x = linspace(-probe_width/2, probe_width/2, obj.probe.Nelements);
+            probe_pos_z = zeros(1, obj.probe.Nelements);
+            % --- number of active elements
+            Nactive_tx = obj.param.Nactive;
+%             Nactive_tx = 101;
+            % --- apodization window
+            apodization = fct_get_apodization([nb_sample, n_rcv], Nactive_tx, obj.probe.pitch, 'hanning_adaptative', 0.2, dz);
+            apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img, Z_img);
+%             apodization = ones(size(apodization));
+            % --- define the CUDA module and kernel
+%             cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bin', 'bfLowResRF_new.ptx');
+%             cuda_kernel_name = 'das_low_res';
+%             cuda_kernel = parallel.gpu.CUDAKernel(cuda_module_path_and_file_name,...
+%             'double*, double*, double*, double*, int, int, int, int, double, double, double*, int, double*, double*, double',...
+%             cuda_kernel_name);
+%             % --- define grid and block size
+%             BLOCK_DIM_X = 32;
+%             BLOCK_DIM_Y = 32;
+%             cuda_kernel.GridSize = [round( ((n_points_x-1)/BLOCK_DIM_X) + 1), round( ((n_points_z-1)/BLOCK_DIM_Y) + 1), 1];
+% %             cuda_kernel.GridSize = [100, 100, 1];
+% %             cuda_kernel.GridSize = [n_points_x, n_points_z, 1];
+%             cuda_kernel.ThreadBlockSize = [BLOCK_DIM_X, BLOCK_DIM_Y, 1];
+%             
+%             % --- initialization for kernel
+%             pos_x_img    = X_img(1,:);
+%             pos_z_img    = Z_img(:,1);
+%             nb_rx        = int32(obj.probe.Nelements);
+%             nb_sample    = int32(nb_sample);
+%             imageW       = int32(n_points_x);
+%             imageH       = int32(n_points_z);
+%             c            = obj.param.c;
+%             fs           = double(obj.probe.fs);
+%             apodization  = double(apodization);
+%             tic
+%             for id_tx=1:1:obj.probe.Nelements
+%                 I = double(zeros([n_points_z n_points_x]));
+%                 RF = RF_signals{id_tx};
+%                 t_offset = double(-time_offset(id_tx));
+% %                 apod_ = apodization(:, :, id_tx);
+%                 % --- call the kernel
+%                 I = feval(cuda_kernel, I, RF, probe_pos_x, probe_pos_z, nb_rx, nb_sample, imageW, imageH, c, fs, apodization, id_tx-1, pos_x_img, pos_z_img, t_offset);
+%                 % --- gather the output back from GPU to CPU
+%                 I = gather(I);
+% %                 if id_tx == 35
+% %                 figure(1)
+% %                 subplot(1,2, 1)
+% %                 imagesc(abs(I))
+% %                 colorbar()
+% %                 subplot(1,2, 2)
+% %                 imagesc(apodization(:,:,id_tx))
+% %                 title(num2str(id_tx))
+% %                 colorbar()
+% %                 a=1;
+% %                 end
+%                 % --- store low res image
+%                 obj.low_res_image(:,:,id_tx) = I;
+%             end
+%             toc
+
+
+            disp('Beamformation in progress...');
+            probe_width = (obj.probe.Nelements-1) * obj.probe.pitch;
+            arrayx = linspace(-probe_width/2, probe_width/2, obj.probe.Nelements);
+            arrayz = zeros(1,length(arrayx));
+            arrayy = zeros(1,length(arrayx));
+            rxAptPos=[arrayx' arrayy' arrayz'];
+            txAptPos=rxAptPos;
+
+            param=struct();
+            param.fs = obj.probe.fs;
+            param.c = obj.probe.c;
+            param.pitch = obj.probe.pitch;
+            param.Pitch_x = obj.probe.pitch;
+            param.Pitch_y = obj.probe.pitch;
+% 
+            param.xm = rxAptPos(:,1);
+            param.ym = rxAptPos(:,2);
+            param.zm = rxAptPos(:,3);
+            param.centers = rxAptPos;
+            param.no_elements=obj.probe.Nelements;
+            
+            
+%             [X_img, Z_img, X_RF, Z_RF, obj.x_display, obj.z_display] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
+            lambda = obj.probe.c/obj.probe.fc;
+            xAxis = -5e-3:lambda/10:5e-3;
+            zAxis = 40e-3:lambda/10:60e-3;
+            [X_img,Z_img] = meshgrid(xAxis,zAxis);
+            Y_img = zeros(size(X_img));
+% 
+% 
+            bf_image=zeros(size(X_img)); 
+%             % Beamfrom conventional sta
+%             % first lets get the pulse compensation
+%             pulse_total = conv(conv(pulse, impulse_response), impulse_response);
+%             demi_long = length(pulse_total)/2;
+%             t_compensation = demi_long/fs;
+            t_compensation = 0;
+            for aa=1:obj.probe.Nelements
+                disp(['Beamforming low resolution image ',num2str(aa)]);
+                param.xn =  param.centers(aa,1);
+                param.yn =  param.centers(aa,2);
+                param.zn =  param.centers(aa,3);
+                param.t0 = time_offset(aa)-t_compensation;
+                param.W=ones(1,obj.probe.Nelements); % Rect apodization (recieve)
+                
+                [lowres] = rfbf_3D(RF_signals{aa}, X_img, Y_img, Z_img, param);
+                %Ms{aa}=M;
+                bf_image=bf_image+lowres;
+            end
+            env=abs(hilbert(bf_image));
+            env=env/max(env(:));
+            figure;
+            imagesc(20*log10(env),[-50 0])
+colormap gray
+
+            % --- compounding
+            switch compounding
+                case 'DAS'
+                    obj.RF_final = sum(obj.low_res_image, 3);
+                case 'DMAS'
+%                     low_res_image_ = abs(obj.low_res_image);
+                    low_res_image_ = obj.low_res_image; 
+                    for id_col = 1:size(low_res_image_, 2)
+                        % --- preserve dimensionality
+                        cols_ = low_res_image_(:,id_col,:);
+                        % --- compute yDMAS
+                        col_1 = sum(cols_, 3);
+                        col_1 = col_1.^2;
+                        col_2 = cols_.^2;
+                        col_2 = sum(col_2, 3);         
+                        % --- store result
+                        y_DMAS = col_1-col_2;
+                        obj.RF_final(:, id_col) = y_DMAS;
+                    end
+            end
+            
+            figure()
+            imagesc(20*log10(abs(hilbert(obj.RF_final)))+40)
+        end
+        
     end
     
 end
+
+
 
 % ------------------------------------------------------------------------------------------------------------------------------
 function plot_low_res_images(m, n, low_res_img, path_res)

@@ -175,7 +175,7 @@ classdef wavePropagation < handle
 %             id_tx_active = id_tx + floor(obj.param.Nactive/2);
 
             % --- adapt phantom in order to fit field
-            positions=[obj.phantom.x_scatt, obj.phantom.y_scatt, obj.phantom.z_scatt];
+            positions=[obj.phantom.x_scatt, obj.phantom.y_scatt, obj.phantom.z_scatt + obj.param.shift];
             
             now1 = tic();
 
@@ -192,6 +192,7 @@ classdef wavePropagation < handle
 %             if id_tx > floor(obj.param.Nactive/2) && id_tx < (obj.param.Nelements - floor(obj.param.Nactive/2) + 1)
                 % --- we run the simulation
                 [obj.RF_aperture, tstart] = calc_scat_multi(emit_aperture, receive_aperture, positions, obj.phantom.RC_scatt);  
+%                 [obj.RF_aperture, tstart] = calc_scat_multi(emit_aperture, receive_aperture, [0, 0, 50e-3], 1);  
                 obj.exec_time = toc(now1);
 
                 % --- add zero padding to RF signal
@@ -219,7 +220,7 @@ classdef wavePropagation < handle
             xdc_focus_times(emit_aperture, 0, zeros(1, obj.probe.Nelements));
             % --- transducer impulse response g(t)
             Bg = 10e6;                          % transducer spectral bandwidth [Hz] -> unused
-            Tg = 2/obj.probe.fc;                % signal g(t) duration [sec]
+            Tg = 1/obj.probe.fc;                % signal g(t) duration [sec]
             tg = 0:Ts:Tg;                       % sampled time vector [sec]
             if(~rem(length(tg), 2)), tg=[tg tg(end)+Ts]; end        % even Ng
             Ng = length(tg);                      % sampled time vector length [number of samples]
