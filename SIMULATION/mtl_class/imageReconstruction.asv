@@ -455,8 +455,8 @@ classdef imageReconstruction < handle
             % --- get image information
             [X_img, Z_img, X_RF, Z_RF, obj.x_display, obj.z_display] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
 %             lambda = obj.probe.c/obj.probe.fc;
-%             xAxis = -5e-3:lambda/20:5e-3;
-%             zAxis = (5e-3:lambda/20:20e-3) + obj.param.shift;
+%             xAxis = -5e-3:lambda/10:5e-3;
+%             zAxis = 40e-3:lambda/10:60e-3;
 %             [X_img,Z_img] = meshgrid(xAxis,zAxis);
 %             Y_img = zeros(size(X_img));
             
@@ -469,7 +469,7 @@ classdef imageReconstruction < handle
             % --- number of active elements
             Nactive_tx = obj.param.Nactive;
             % --- apodization window
-            apodization = fct_get_apodization([nb_sample, n_rcv], Nactive_tx, obj.probe.pitch, 'hanning_adaptative', 0.2, dz);
+            apodization = fct_get_apodization([nb_sample + , n_rcv], Nactive_tx, obj.probe.pitch, 'hanning_adaptative', 0.2, dz);
             apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img, Z_img);
             apodization = ones(size(apodization));
             % --- define the CUDA module and kernel
@@ -526,7 +526,7 @@ classdef imageReconstruction < handle
             figure;
             imagesc(20*log10(env),[-50 0])
             colormap gray
-            a=1
+
         end
         
         % -----------------------------------------------------------------

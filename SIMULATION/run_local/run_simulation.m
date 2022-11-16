@@ -11,7 +11,7 @@ end
 %%%%%%% RUN SIMULATION %%%%%%% 
 
 % --- path to data
-path_data='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/SCATTERES_FAR/n01496331_electric_ray/n01496331_electric_ray_id_001_FIELD';
+path_data='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/SHIFT_DEBUG/wip/single_scat/field_sta_strong_shift';
 % --- get phantom name
 phantom_folder = fct_list_ext_files(path_data, 'mat', 'phantom');
 phantom_names = fct_detect_sub_str(phantom_folder, 'dicom');

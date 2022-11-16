@@ -23,7 +23,7 @@ extern "C" { // ---> [kernel]
 
     int col = blockIdx.x * blockDim.x + threadIdx.x;    // column in the grid image
     int row = blockIdx.y * blockDim.y + threadIdx.y;    // row in the grid image
-    int id_tx = blockIdx.z * blockDim.z + threadIdx.z;  // row in the grid image
+    int id_tx = blockIdx.z * blockDim.z + threadIdx.z;  // id_tx element
 
     if (col < W  && row < H && id_tx < nb_el)
     {

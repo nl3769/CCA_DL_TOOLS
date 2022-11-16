@@ -36,7 +36,7 @@ function fct_run_mk_phantom(varargin)
     phantom = createPhantom(pres_, get_extension(dname), [1,0,1,0]);
     phantom.get_image(); 
     phantom.get_scatteres_from_img(); 
-%     phantom.extrusion(true); 
+    phantom.extrusion(true); 
 %     phantom.phantom_tmp();   
     phantom.init_position(parameters.param.nb_images);
     phantom.remove_top_region(parameters.param.remove_top_region);
