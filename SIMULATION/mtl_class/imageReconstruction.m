@@ -448,7 +448,7 @@ classdef imageReconstruction < handle
             dz = obj.probe.c/(2*obj.probe.fs);
             addpath(fullfile('..', 'mtl_synthetic_aperture'))
             % --- get image information
-            z_factor = 8;
+            z_factor = 6;
             x_factor = 1;
             [X_img_bf, Z_img_bf, X_RF, Z_RF, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param, x_factor, z_factor);
 %             lambda = obj.probe.c/obj.probe.fc;
@@ -627,7 +627,7 @@ classdef imageReconstruction < handle
         end
         
         % -----------------------------------------------------------------
-        function compounding(mode)
+        function compounding(obj, mode)
             
             switch mode
                 case 'DAS'
