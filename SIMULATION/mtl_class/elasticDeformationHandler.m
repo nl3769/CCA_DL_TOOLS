@@ -34,7 +34,7 @@ classdef elasticDeformationHandler < handle
     methods
         
         % ------------------------------------------------------------------
-        function obj = elasticDeformationHandler(x_min, x_max, z_min, z_max, t_sample, CF)
+        function obj = elasticDeformationHandler(x_min, x_max, z_min, z_max, t_sample, CF, magnitude_coef)
             
             % Constructor
             
