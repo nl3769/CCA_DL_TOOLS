@@ -3,15 +3,14 @@ clearvars;
 clc;
 
 set(0, 'DefaultFigureWindowStyle', 'docked');
-
 % --- add path
 addpath(fullfile('..', 'mtl_cores/'));
 addpath(fullfile('..', 'mtl_utils'));
 
-% --- path to resultsQ
+% --- path to results
 % path_res = '/home/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER_V1/tech_001/';
 % path_res = '/home/laine/HDD/PROJECTS_IO/SIMULATION/MEIBURGER_1_FRAME/tech_008';
-path_res = '/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/SCATTERES_FAR/n01496331_electric_ray/';
+path_res = '/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/STA/HIGHT_DENSITY/ILSVRC2012_test_00000026';
 % path_res='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/POINT_SCATTERES/sta_field/';
 % path_res='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/STA/POOR_DENSITY/n01496331_electric_ray/';
 
@@ -19,10 +18,9 @@ path_res = '/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/SCATTERES_FAR/n01
 files = list_files(path_res);
 
 for id=1:1:length(files)
-%     id = 2;
-    pres_ = fullfile(path_res, files{id});
+%     id = 3;
+    pres_ = fullfile(path_res, files{id})
     fct_run_image_reconstruction(pres_);
-    
 end
 
 % -------------------------------------------------------------------------

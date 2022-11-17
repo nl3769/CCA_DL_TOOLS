@@ -897,11 +897,10 @@ classdef createPhantom < handle
         % ----------------------------------------------------------------------------------------------------------------------
         function phantom_tmp(obj)
             
-            k=5;
-            obj.data_scatt.z_max = 50e-3;            
+            k=10;   
             
-            z_pos=linspace(obj.data_scatt.z_max * 0.5, obj.data_scatt.z_max, k);
-            x_pos=linspace(obj.data_scatt.x_min*0.3, obj.data_scatt.x_max*0.3, k);
+            z_pos=linspace(obj.data_scatt.z_max * 0.01, obj.data_scatt.z_max, k);
+            x_pos=linspace(obj.data_scatt.x_min, obj.data_scatt.x_max, k);
 %             obj.data_scatt.x_min = obj.data_scatt.x_min * 0.5;
 %             obj.data_scatt.x_max = obj.data_scatt.x_max * 0.5;
 
@@ -910,30 +909,28 @@ classdef createPhantom < handle
             obj.data_scatt.z_scatt=[];
             obj.data_scatt.RC_scatt=[];
             
-%             for i=1:1:k
-%                 for j=1:k
-%                     obj.data_scatt.y_scatt = [obj.data_scatt.y_scatt; 0];
-%                     obj.data_scatt.z_scatt = [obj.data_scatt.z_scatt; z_pos(j)];
-%                     obj.data_scatt.x_scatt = [obj.data_scatt.x_scatt; x_pos(i)];
-%                     if j==1 || j==k || j==1+1 || j==k-1 || i==1 || i==k || i==1+1 || i==k-1
-%                         obj.data_scatt.RC_scatt = [obj.data_scatt.RC_scatt; 0];
+            for i=1:1:k
+                for j=1:k
+%                     if i == 5 && j == 5
+                        obj.data_scatt.y_scatt = [obj.data_scatt.y_scatt; 0];
+                        obj.data_scatt.z_scatt = [obj.data_scatt.z_scatt; z_pos(j)];
+                        obj.data_scatt.x_scatt = [obj.data_scatt.x_scatt; x_pos(i)];
+                        obj.data_scatt.RC_scatt = [obj.data_scatt.RC_scatt; 1];
 %                     else
-%                         obj.data_scatt.RC_scatt = [obj.data_scatt.RC_scatt; 1];
+%                         obj.data_scatt.y_scatt = [obj.data_scatt.y_scatt; 0];
+%                         obj.data_scatt.z_scatt = [obj.data_scatt.z_scatt; z_pos(j)];
+%                         obj.data_scatt.x_scatt = [obj.data_scatt.x_scatt; x_pos(i)];
+%                         obj.data_scatt.RC_scatt = [obj.data_scatt.RC_scatt; 0]; 
 %                     end
-%                 end
-%             end
+                end
+            end
+            
 
-            
+%             obj.data_scatt.y_scatt = [0; 0];
+%             obj.data_scatt.z_scatt = [obj.data_scatt.z_max * 0.5; obj.data_scatt.z_max];
+%             obj.data_scatt.x_scatt = [0; 0];
+%             obj.data_scatt.RC_scatt = [1; 0]; 
                         
-            obj.data_scatt.y_scatt = [obj.data_scatt.y_scatt; 0; 0];
-            obj.data_scatt.z_scatt = [obj.data_scatt.z_scatt; obj.data_scatt.z_min; obj.data_scatt.z_max];
-            obj.data_scatt.x_scatt = [obj.data_scatt.x_scatt; obj.data_scatt.x_min; obj.data_scatt.x_max];
-            obj.data_scatt.RC_scatt = [obj.data_scatt.RC_scatt; 0; 0];
-            
-%             obj.data_scatt.y_scatt= [0];
-%             obj.data_scatt.z_scatt= [obj.data_scatt.z_max/2];
-%             obj.data_scatt.x_scatt= [0];
-%             obj.data_scatt.RC_scatt=[1];
 
             obj.data_scatt.z_scatt = obj.data_scatt.z_scatt; %+obj.param.shift;
             obj.data_scatt.depth_of_focus = max(obj.data_scatt.z_scatt);
