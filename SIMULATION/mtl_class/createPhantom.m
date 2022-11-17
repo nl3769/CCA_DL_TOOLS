@@ -580,7 +580,7 @@ classdef createPhantom < handle
             nb_gaussian_max = 200;
             nb_gaussian = round(nb_gaussian_min + (nb_gaussian_max - nb_gaussian_min) * rand(1,1));
             obj.gaussian2D = gaussian2DHandler(nb_gaussian, x_min, x_max, z_min, z_max, obj.time_sample_simu);
-            obj.elasticDeformation = elasticDeformationHandler(x_min, x_max, z_min, z_max, obj.time_sample_simu, obj.data_img.CF);
+            obj.elasticDeformation = elasticDeformationHandler(x_min, x_max, z_min, z_max, obj.time_sample_simu, obj.data_img.CF, obj.param.elastic_magnitude);
 %             obj.gaussian2D.display_df(1)
 %             obj.elasticDeformation.display_df(1)
         end
