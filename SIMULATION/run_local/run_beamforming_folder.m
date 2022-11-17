@@ -9,7 +9,7 @@ addpath(fullfile('..', 'mtl_cores/'));
 addpath(fullfile('..', 'mtl_utils'));
 
 % --- path to results
-path_res01='/home/laine/HDD/PROJECTS_IO/SIMULATION/MEIBURGER_1_FRAME';
+path_res01='/home/laine/cluster/PROJECTS_IO/SIMULATION/DEBUG/cubs/';
 patients = list_files(path_res01);
 
 

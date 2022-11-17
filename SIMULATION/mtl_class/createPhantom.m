@@ -911,17 +911,17 @@ classdef createPhantom < handle
             
             for i=1:1:k
                 for j=1:k
-                    if i == 5 && j == 5
+%                     if i == 5 && j == 5
                         obj.data_scatt.y_scatt = [obj.data_scatt.y_scatt; 0];
                         obj.data_scatt.z_scatt = [obj.data_scatt.z_scatt; z_pos(j)];
                         obj.data_scatt.x_scatt = [obj.data_scatt.x_scatt; x_pos(i)];
                         obj.data_scatt.RC_scatt = [obj.data_scatt.RC_scatt; 1];
-                    else
-                        obj.data_scatt.y_scatt = [obj.data_scatt.y_scatt; 0];
-                        obj.data_scatt.z_scatt = [obj.data_scatt.z_scatt; z_pos(j)];
-                        obj.data_scatt.x_scatt = [obj.data_scatt.x_scatt; x_pos(i)];
-                        obj.data_scatt.RC_scatt = [obj.data_scatt.RC_scatt; 0]; 
-                    end
+%                     else
+%                         obj.data_scatt.y_scatt = [obj.data_scatt.y_scatt; 0];
+%                         obj.data_scatt.z_scatt = [obj.data_scatt.z_scatt; z_pos(j)];
+%                         obj.data_scatt.x_scatt = [obj.data_scatt.x_scatt; x_pos(i)];
+%                         obj.data_scatt.RC_scatt = [obj.data_scatt.RC_scatt; 0]; 
+%                     end
                 end
             end
             

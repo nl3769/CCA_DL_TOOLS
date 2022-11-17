@@ -22,6 +22,8 @@ classdef imageReconstruction < handle
         x_display;
         z_display;
         in_vivo;
+        x_bmode;
+        z_bmode;
     end
     
     methods
@@ -175,9 +177,9 @@ classdef imageReconstruction < handle
             % Convert the pixel size to the original one
             % --- vertical grid
             
-            n_pixels_start = ceil(obj.param.remove_top_region / obj.image.CF);
+            n_pixels_start = ceil((obj.param.remove_top_region + 1e-3) / obj.image.CF);
             
-            z_start = obj.param.remove_top_region;
+            z_start = obj.param.remove_top_region + 1e-3;
             z_end = obj.image.height * obj.image.CF;
             n_points_z = obj.image.height - n_pixels_start;
             
@@ -241,24 +243,15 @@ classdef imageReconstruction < handle
             % --- RF to IQ
             obj.IQ=rf2iq(obj.RF_final, obj.probe);
             % --- apply TGC
-%             if obj.param.TGC==true
-%                 obj.IQ=tgc(obj.IQ);
-%             end
+            if obj.param.TGC==true
+                obj.IQ=tgc(obj.IQ);
+            end
             % --- compute envelope
             obj.bmode = abs(obj.IQ); % real envelope
             % --- apply gamma correction
             obj.bmode = obj.bmode.^(obj.param.gamma);
             % --- apply image adjustement
             obj.bmode = obj.bmode/max(obj.bmode(:));
-            
-            if ~obj.param.dynamic_focusing
-                % --- perform a low pass filtering
-                obj.bmode=imgaussfilt(obj.bmode, 1, 'FilterSize', 3, 'Padding', 'symmetric');
-                % --- perform a median filtering
-                obj.bmode = medfilt2(obj.bmode);
-                % --- apply treshold
-                obj.bmode=imadjust(obj.bmode, [obj.param.imadjust_vals(1) obj.param.imadjust_vals(2)], []);
-            end
         end
         
         % ------------------------------------------------------------------
@@ -300,6 +293,7 @@ classdef imageReconstruction < handle
             hold off 
             colormap gray;
             colorbar;
+%             axis image
             title('BF signals')
             xlabel('width in mm')
             ylabel('height in mm')
@@ -339,8 +333,8 @@ classdef imageReconstruction < handle
             end
             line([obj.x_display(1)*1e3,obj.x_display(1)*1e3*0.95],[DF*1e3, DF*1e3],'Color','r','LineWidth',1)
             line([obj.x_display(2)*1e3*0.95,obj.x_display(2)*1e3],[DF*1e3, DF*1e3],'Color','r','LineWidth',1)
-            
             hold off 
+            axis image
             colormap gray;
             title('Bmode image')
             xlabel('width in mm')
@@ -350,6 +344,7 @@ classdef imageReconstruction < handle
             % --- we save the image
             pres_sim=fullfile(obj.path_res, [obj.param.phantom_name '_bmode.png']);
 
+%             imwrite(uint8(obj.bmode), pres_sim);
             imwrite(uint8(obj.bmode), pres_sim);
             psave = obj.path_res;
 
@@ -409,35 +404,35 @@ classdef imageReconstruction < handle
         end
         
         % ------------------------------------------------------------------
-        function [pres_in_vivio, x_disp, z_disp] = adapt_in_vivo(obj)
-            
-            % --- in vivo dimension
+        function adapt_dimension(obj)
+%             
+%             % --- in vivo dimension
             x_img = obj.image.width * obj.image.CF;
             x_img = linspace(-x_img/2, x_img/2, obj.image.width);
             z_img = obj.image.height * obj.image.CF;
             z_img = linspace(0, z_img, obj.image.height);
-                        
-            % --- phantom dimension
-            dim_phantom = size(obj.bmode);
-            x_phantom = linspace(obj.x_display(1), obj.x_display(2), dim_phantom(2));
-            z_phantom = linspace(obj.z_display(1), obj.z_display(2), dim_phantom(1));
-
-            disp(['ADAPT_IN_VIVO ( z_phantom(1) = ' num2str(z_phantom(1)) ')']);
-            disp(['ADAPT_IN_VIVO ( z_phantom(2) = ' num2str(z_phantom(2)) ')']);
-            
+                                    
             % --- interpolation
             [x_img  z_img] = meshgrid(x_img, z_img);
-            [x_phantom z_phantom] = meshgrid(x_phantom, z_phantom);
-            obj.in_vivo=interp2(x_img, z_img, double(obj.image.image), x_phantom, z_phantom, 'makima', 0);
+            
+            obj.bmode = imresize(obj.bmode, size(obj.x_bmode));
+            obj.in_vivo=interp2(x_img, z_img, double(obj.image.image), obj.x_bmode, obj.z_bmode - obj.param.shift, 'makima', 0);
+            
+            % --- remove edge effect: high intensity on the borders
+            obj.bmode = obj.bmode(15:end-15,15:end-15);
+            obj.in_vivo = obj.in_vivo(15:end-15,15:end-15);
+            
+        end
+        
+        % ------------------------------------------------------------------
+        function [pres_in_vivio, x_disp, z_disp] = save_in_vivo(obj)
             
             pres_in_vivio = fullfile(obj.path_res, [obj.param.phantom_name '_fit_in_vivo.png']);
             x_disp = obj.x_display;
             z_disp = obj.z_display;
-            obj.in_vivo = fct_expand_histogram(obj.in_vivo, 0, 255);
-%             obj.in_vivo = obj.in_vivo(:, 10:end-10);
-%             obj.bmode = obj.bmode(:, 10:end-10);
-            imwrite(uint8(obj.in_vivo), pres_in_vivio);
-        
+            in_vivo = fct_expand_histogram(obj.in_vivo, 0, 255);
+            imwrite(uint8(in_vivo), pres_in_vivio);
+            
         end
         
         % ------------------------------------------------------------------
@@ -453,25 +448,26 @@ classdef imageReconstruction < handle
             dz = obj.probe.c/(2*obj.probe.fs);
             addpath(fullfile('..', 'mtl_synthetic_aperture'))
             % --- get image information
-            [X_img, Z_img, X_RF, Z_RF, obj.x_display, obj.z_display] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
+            z_factor = 8;
+            x_factor = 1;
+            [X_img_bf, Z_img_bf, X_RF, Z_RF, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param, x_factor, z_factor);
 %             lambda = obj.probe.c/obj.probe.fc;
 %             xAxis = -5e-3:lambda/20:5e-3;
 %             zAxis = (5e-3:lambda/20:20e-3) + obj.param.shift;
 %             [X_img,Z_img] = meshgrid(xAxis,zAxis);
 %             Y_img = zeros(size(X_img));
             
-            [n_points_z, n_points_x] = size(X_img);
+            [n_points_z, n_points_x] = size(X_img_bf);
             obj.low_res_image = zeros([n_points_z n_points_x obj.probe.Nelements]);
             % --- get probe position elements
             probe_width = (obj.probe.Nelements-1) * obj.probe.pitch;
             probe_pos_x = linspace(-probe_width/2, probe_width/2, obj.probe.Nelements);
             probe_pos_z = zeros(1, obj.probe.Nelements);
-            % --- number of active elements
-            Nactive_tx = obj.param.Nactive;
+
             % --- apodization window
-            apodization = fct_get_apodization([nb_sample, n_rcv], Nactive_tx, obj.probe.pitch, 'hanning_adaptative', 0.2, dz);
-            apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img, Z_img);
-            apodization = ones(size(apodization));
+%             apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_adaptative', 0.2, dz);
+%             apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img_bf, Z_img_bf);
+            apodization = ones( [n_points_z, n_points_x obj.probe.Nelements]);
             % --- define the CUDA module and kernel
             cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bin', 'bfFullLowResImg.ptx');
             cuda_kernel_name = 'bf_low_res_images';
@@ -485,8 +481,8 @@ classdef imageReconstruction < handle
             cuda_kernel.GridSize = [round( ((n_points_x-1)/BLOCK_DIM_X) + 1), round( ((n_points_z-1)/BLOCK_DIM_Y) + 1), round( ((n_points_x-1)/BLOCK_DIM_Z) + 1)];
             cuda_kernel.ThreadBlockSize = [BLOCK_DIM_X, BLOCK_DIM_Y, BLOCK_DIM_Z];
             % --- initialization for kernel
-            pos_x_img = X_img(1,:);
-            pos_z_img = Z_img(:,1);
+            pos_x_img = X_img_bf(1,:);
+            pos_z_img = Z_img_bf(:,1);
             nb_rx = int32(obj.probe.Nelements);
             nb_sample = int32(nb_sample);
             imageW = int32(n_points_x);
@@ -495,38 +491,20 @@ classdef imageReconstruction < handle
             fs = double(obj.probe.fs);
             apodization = double(apodization);
             tic
+            % --- call kernel
             obj.low_res_image = feval(cuda_kernel, obj.low_res_image, RF_signals, probe_pos_x, probe_pos_z, nb_rx, nb_sample, imageW, imageH, c, fs, apodization, pos_x_img, pos_z_img, -time_offset);
-%             % --- gather the output back from GPU to CPU
+            % --- gather the output back from GPU to CPU
             obj.low_res_image = gather(obj.low_res_image);
             toc
             
             % --- compounding
-            switch compounding
-                case 'DAS'
-                    obj.RF_final = sum(obj.low_res_image, 3);
-                case 'DMAS'
-%                     low_res_image_ = abs(obj.low_res_image);
-                    low_res_image_ = obj.low_res_image; 
-                    for id_col = 1:size(low_res_image_, 2)
-                        % --- preserve dimensionality
-                        cols_ = low_res_image_(:,id_col,:);
-                        % --- compute yDMAS
-                        col_1 = sum(cols_, 3);
-                        col_1 = col_1.^2;
-                        col_2 = cols_.^2;
-                        col_2 = sum(col_2, 3);         
-                        % --- store result
-                        y_DMAS = col_1-col_2;
-                        obj.RF_final(:, id_col) = y_DMAS;
-                    end
-            end
+            obj.compounding(compounding)
+             
+            % --- grid of real image domain
+            x_img = linspace(X_img_bf(1,1), X_img_bf(1,end), n_pts_x);
+            z_img = linspace(Z_img_bf(1,1), Z_img_bf(end,1), n_pts_z);
+            [obj.x_bmode, obj.z_bmode] = meshgrid(x_img, z_img);
             
-            env=abs(hilbert(obj.RF_final));
-            env=env/max(env(:));
-            figure;
-            imagesc(20*log10(env),[-50 0])
-            colormap gray
-            a=1
         end
         
         % -----------------------------------------------------------------
@@ -636,6 +614,42 @@ classdef imageReconstruction < handle
             imagesc(20*log10(abs(hilbert(obj.RF_final)))+40)
         end
         
+        % -----------------------------------------------------------------
+        function postprocessing(obj)
+            
+            % --- perform a low pass filtering
+%             obj.bmode=imgaussfilt(obj.bmode, 1, 'FilterSize', 3, 'Padding', 'symmetric');
+            % --- perform a median filtering
+            obj.bmode = medfilt2(obj.bmode);
+            % --- apply treshold
+            obj.bmode=imadjust(obj.bmode, [obj.param.imadjust_vals(1) obj.param.imadjust_vals(2)], []);
+                
+        end
+        
+        % -----------------------------------------------------------------
+        function compounding(mode)
+            
+            switch mode
+                case 'DAS'
+                    obj.RF_final = sum(obj.low_res_image, 3);
+                case 'DMAS'
+%                     low_res_image_ = abs(obj.low_res_image);
+                    low_res_image_ = obj.low_res_image; 
+                    for id_col = 1:size(low_res_image_, 2)
+                        % --- preserve dimensionality
+                        cols_ = low_res_image_(:,id_col,:);
+                        % --- compute yDMAS
+                        col_1 = sum(cols_, 3);
+                        col_1 = col_1.^2;
+                        col_2 = cols_.^2;
+                        col_2 = sum(col_2, 3);         
+                        % --- store result
+                        y_DMAS = col_1-col_2;
+                        obj.RF_final(:, id_col) = y_DMAS;
+                    end
+            end
+            
+        end
     end
     
 end
