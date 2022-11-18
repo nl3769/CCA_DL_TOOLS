@@ -52,3 +52,5 @@ def val_loop_seg(param, networks, segLoss, logger, loader, id_epoch, device):
         seg_metrics_[key] = np.mean(np.array(seg_metrics_[key]))
     logger.add_loss_seg(seg_loss_,       set='validation')
     logger.add_metrics_seg(seg_metrics_, set='validation')
+
+    return seg_loss_, seg_metrics_

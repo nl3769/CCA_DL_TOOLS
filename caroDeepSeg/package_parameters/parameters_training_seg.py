@@ -19,6 +19,7 @@ class Parameters:
         EXPNAME,
         DEVICE,
         RESTORE_CHECKPOINT,
+        ENTITY,
         KERNEL_SIZE,
         PADDING,
         USE_BIAS,
@@ -40,6 +41,7 @@ class Parameters:
         self.EXPNAME                            = EXPNAME
         self.DEVICE                             = DEVICE
         self.RESTORE_CHECKPOINT                 = RESTORE_CHECKPOINT
+        self.ENTITY                             = ENTITY
         self.KERNEL_SIZE                        = KERNEL_SIZE
         self.PADDING                            = PADDING
         self.USE_BIAS                           = USE_BIAS
@@ -51,6 +53,7 @@ class Parameters:
         self.PATH_MODEL_HISTORY                 = os.path.join(self.PRES, self.EXPNAME, 'training_history')
         self.PATH_SAVE_FIGURE                   = os.path.join(self.PRES, self.EXPNAME, 'training_figure')
         self.PATH_TST                           = os.path.join(self.PRES, self.EXPNAME, 'test_results')
+        self.PATH_WANDB                         = os.path.join(self.PRES, self.EXPNAME)
 
         # --- create directories
         fh.create_dir(self.PATH_RANDOM_PRED_TRN)
@@ -59,3 +62,4 @@ class Parameters:
         fh.create_dir(self.PATH_MODEL_HISTORY)
         fh.create_dir(self.PATH_SAVE_FIGURE)
         fh.create_dir(self.PATH_TST)
+        fh.create_dir(self.PATH_WANDB)

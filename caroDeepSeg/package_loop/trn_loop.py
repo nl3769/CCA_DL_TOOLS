@@ -11,13 +11,7 @@ from tqdm                                   import tqdm
 
 # ----------------------------------------------------------------------------------------------------------------------
 def trn_loop_seg(param, networks, segLoss, optimizers, scheduler, logger, loader, id_epoch, device):
-    """ Training loop.
-    Args:
-        TODO
-
-    Returns:
-        TODO
-    """
+    """ Training loop."""
 
     # --- init.  variables
     seg_loss_ = []
@@ -59,6 +53,7 @@ def trn_loop_seg(param, networks, segLoss, optimizers, scheduler, logger, loader
             M1_pred = M1_pred[0, ].cpu().detach().numpy().squeeze()
             logger.plot1Seg(I1, M1, M1_pred, param.PATH_RANDOM_PRED_TRN, 'trn_' + str(id_epoch) + "_" + fname[0])
             save = False
+
     ###############################
     # --- SAVE LOSSES/METRICS --- #
     ###############################
@@ -71,4 +66,5 @@ def trn_loop_seg(param, networks, segLoss, optimizers, scheduler, logger, loader
     logger.add_loss_seg(seg_loss_, set='training')
     logger.add_metrics_seg(seg_metrics_, set='training')
 
+    return seg_loss_, seg_metrics_
 # ----------------------------------------------------------------------------------------------------------------------

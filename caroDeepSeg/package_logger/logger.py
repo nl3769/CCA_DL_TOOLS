@@ -60,6 +60,13 @@ class loggerClassSeg():
         #############################
         # --- LOSS SEGMENTATION --- #
         #############################
+        y_max = []
+        if len(self.loss_seg['validation']) != 0:
+            y_max.append(max(self.loss_seg['validation']))
+        y_max.append(max(self.loss_seg['training']))
+
+        y_max = max(y_max)
+        y_min = 0
 
         # --- validation
         if len(self.loss_seg['validation']) != 0:
@@ -71,9 +78,10 @@ class loggerClassSeg():
             plt.title('Validation loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
+            plt.ylim((y_min, y_max))
             psave = os.path.join(self.p.PRES, self.p.EXPNAME, "figure")
             pufh.create_dir(psave)
-            plt.savefig(os.path.join(psave, 'loss_validation_BCEDice_seg.png'), dpi=150)
+            plt.savefig(os.path.join(psave, 'loss_val_BCEDice_seg.png'), dpi=150)
             plt.close()
 
         # --- training
@@ -86,11 +94,29 @@ class loggerClassSeg():
             plt.title('Training loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
+            plt.ylim((y_min, y_max))
             psave = os.path.join(self.p.PRES, self.p.EXPNAME, "figure")
             pufh.create_dir(psave)
-            plt.savefig(os.path.join(psave, 'loss_training_BCEDice_seg.png'), dpi=150)
+            plt.savefig(os.path.join(psave, 'loss_trn_BCEDice_seg.png'), dpi=150)
             plt.close()
 
+        # --- plot both in the same graph
+        if len(self.loss_seg['training']) != 0 and len(self.loss_seg['validation']) != 0:
+            epoch = list(range(0, len(self.loss_seg['training'])))
+            plt.figure()
+            fig = plt.gcf()
+            fig.set_size_inches(8, 6)
+            plt.plot(epoch, self.loss_seg['training'], color='r', label='trn')
+            plt.plot(epoch, self.loss_seg['validation'], color='b', label='vld')
+            plt.title('Training loss')
+            plt.xlabel('Epoch')
+            plt.ylabel('Loss')
+            plt.legend()
+            plt.ylim((y_min, y_max))
+            psave = os.path.join(self.p.PRES, self.p.EXPNAME, "figure")
+            pufh.create_dir(psave)
+            plt.savefig(os.path.join(psave, 'loss_trn_vld_vld_BCEDice_seg.png'), dpi=150)
+            plt.close()
     # ------------------------------------------------------------------------------------------------------------------
     def plot_metrics(self):
         """ Plot the metrics for training and evaluation during training. """

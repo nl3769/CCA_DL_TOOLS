@@ -17,8 +17,8 @@ def setParameters():
         ROI_WIDTH       = 5e-3,                                                                 # SIZE OF THE ROI WIDTH
         PIXEL_WIDTH     = 256,                                                                  # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW (IT IS EQUAL TO ROI_WIDTH)
         PIXEL_HEIGHT    = 256,                                                                  # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW
-        SHIFT_X         = 32,                                                                   # X SHIFT TO GENERATE DATASET
-        SHIFT_Z         = 64                                                                    # Z SHIFT TO GENERATE DATASET
+        SHIFT_X         = 64,                                                                   # X SHIFT TO GENERATE DATASET
+        SHIFT_Z         = 128                                                                    # Z SHIFT TO GENERATE DATASET
         )
 
     pparam = os.path.join(p.PRES, 'backup_parameters')

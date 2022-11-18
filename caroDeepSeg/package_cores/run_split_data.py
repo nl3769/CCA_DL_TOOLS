@@ -60,8 +60,12 @@ def split_center(patients):
     return sort_patients
 
 # ----------------------------------------------------------------------------------------------------------------------
-def split_data(pdata, pres, training_part, validation_part, testing_part):
+def split_data(pdata, pres, nb_split):
     """ Store path directories of each images. data are splitted according to patient instead of patches numbers. """
+
+    tst_part = 1/nb_split
+    val_part = 1/nb_split
+    trn_part = 1 - tst_part - val_part
 
     # --- check folder
     pfh.create_dir(pres)
@@ -74,12 +78,12 @@ def split_data(pdata, pres, training_part, validation_part, testing_part):
 
     patients = split_center(patients)
     patient_split = get_subset(patients)
-    permutation_id = get_permutation_id(10)
+    permutation_id = get_permutation_id(nb_split)
     subset = ['training', 'validation', 'testing']
 
 
 
-    for id_fol in range(10):
+    for id_fol in range(nb_split):
         pres_ = os.path.join(pres, 'fold_' + str(id_fol))
         pfh.create_dir(pres_)
         a=1
@@ -87,36 +91,30 @@ def split_data(pdata, pres, training_part, validation_part, testing_part):
             with open(os.path.join(pres_, nsubset + ".txt"), 'w') as f:
                 for subset_ in patient_split:
                     if nsubset == 'training':
-                        idx = permutation_id[id_fol, :8]
+                        idx = permutation_id[id_fol, :-2]
                         for idx_ in range(idx.shape[0]):
                             patients_ = patient_split[subset_][int(idx[idx_])]
                             for pname in patients_:
                                 f.write(pname + "\n")
                     if nsubset == 'validation':
-                        idx_ = permutation_id[id_fol, 8]
+                        idx_ = permutation_id[id_fol, -2]
                         patients_ = patient_split[subset_][int(idx_)]
                         for pname in patients_:
                             f.write(pname + "\n")
                     if nsubset == 'testing':
-                        idx_ = permutation_id[id_fol, 9]
+                        idx_ = permutation_id[id_fol, -1]
                         patients_ = patient_split[subset_][int(idx_)]
                         for pname in patients_:
                             f.write(pname + "\n")
-    # for key in split.keys():
-    #     with open(os.path.join(pres, key + ".txt"), 'w') as f:
-    #         for patient in split[key]:
-    #             # ppatient = os.path.join(pdata, patient)
-    #             f.write(patient + "\n")
 
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
     # --- VARIABLES DECLARATION
-    pdata   = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/SEGMENTATION/DATA'
-    pres    = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/SEGMENTATION/SPLIT_PATIENT'
-    training_part   = 0.8
-    validation_part = 0.1
-    testing_part    = 0.1
+    pdata   = '/home/laine/Documents/PROJECTS_IO/CARODEEPSEG/CUBS_DATABASE'
+    pres    = '/home/laine/Documents/PROJECTS_IO/CARODEEPSEG/SPLIT_PATIENT'
+
+    nb_split = 10
 
     # --- split data into training/validation/testing part
-    split_data(pdata, pres, training_part, validation_part, testing_part)
+    split_data(pdata, pres, nb_split)
