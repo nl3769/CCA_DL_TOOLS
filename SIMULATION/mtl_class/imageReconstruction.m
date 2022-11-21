@@ -175,39 +175,32 @@ classdef imageReconstruction < handle
         % ------------------------------------------------------------------
         function scan_conversion(obj)
             % Convert the pixel size to the original one
-            % --- vertical grid
             
-            n_pixels_start = ceil((obj.param.remove_top_region + 1e-3) / obj.image.CF);
-            
-            z_start = obj.param.remove_top_region + 1e-3;
+            % --- vertical grid           
+            z_start = obj.param.remove_top_region;
             z_end = obj.image.height * obj.image.CF;
-            n_points_z = obj.image.height - n_pixels_start;
+            n_pts_z = obj.image.height - ceil(z_start/obj.image.CF);   
+
             
-            % --- horizontal grid
             dim_phantom = obj.phantom.x_max-obj.phantom.x_min;
-            dim_RF = obj.probe.pitch * (size(obj.RF_final, 2)-1);
-            
-            if dim_RF > dim_phantom
-                x_start = obj.phantom.x_min;
-                x_end = obj.phantom.x_max;
-                n_points_x = obj.image.width;
+            dim_subprobe = obj.probe.pitch * (obj.probe.Nelements - obj.param.Nactive); 
+
+            if dim_subprobe > dim_phantom    
+                x_start     = -obj.image.width * obj.image.CF / 2;
+                x_end       = obj.image.width * obj.image.CF / 2;
+                n_pts_x  = obj.image.width;
+
             else
-                width = dim_RF;
-                x_start = -width/2;
-                x_end = width/2;
-                n_points_x = round(width / obj.image.CF);
-                k = 2;
-                offset = k*obj.probe.pitch;
-                x_start = x_start + offset;
-                x_end = x_end - offset;
-                n_points_x = n_points_x - 2*k;
+                x_start     = -dim_subprobe/2;
+                x_end       = dim_subprobe/2;
+                n_pts_x  = round((x_end-x_start)/obj.image.CF);
             end
 
-            xq = linspace(x_start, x_end, n_points_x);
+            dim_RF = obj.probe.pitch * (size(obj.RF_final, 2)-1);
+            xq = linspace(x_start, x_end, n_pts_x);
             x_org=linspace(-dim_RF/2, dim_RF/2, size(obj.RF_final, 2));
-            
             dz = obj.probe.c/(2*obj.probe.fs);
-            zq=linspace(z_start, z_end, n_points_z);
+            zq=linspace(z_start, z_end, n_pts_z);
             z_org=linspace(0, size(obj.RF_final, 1) * dz, size(obj.RF_final, 1));
 
             [Xq, Zq]=meshgrid(xq, zq);
@@ -222,16 +215,14 @@ classdef imageReconstruction < handle
             fimg = F(Xq(:), Zq(:));
             obj.bmode = obj.bmode / max(obj.bmode(:));
             obj.bmode = reshape(fimg, size(Xq)); 
-            % --- perform a low pass filtering
-            obj.bmode=imgaussfilt(obj.bmode, 1, 'FilterSize', 3, 'Padding', 'symmetric');
-            % --- perform a median filtering
-            obj.bmode = medfilt2(obj.bmode);
-            % --- apply treshold
-            obj.bmode=imadjust(obj.bmode, [obj.param.imadjust_vals(1) obj.param.imadjust_vals(2)], []);
-            
-            obj.bmode = fct_expand_histogram(obj.bmode, 0, 255);
+                         
+%             obj.bmode = fct_expand_histogram(obj.bmode, 0, 255);
             obj.x_display=[x_start, x_end];
             obj.z_display=[z_start, z_end]; 
+            
+            % --- grid of real image domain
+            obj.x_bmode = Xq;
+            obj.z_bmode = Zq;
             
         end
         
@@ -334,7 +325,7 @@ classdef imageReconstruction < handle
             line([obj.x_display(1)*1e3,obj.x_display(1)*1e3*0.95],[DF*1e3, DF*1e3],'Color','r','LineWidth',1)
             line([obj.x_display(2)*1e3*0.95,obj.x_display(2)*1e3],[DF*1e3, DF*1e3],'Color','r','LineWidth',1)
             hold off 
-            axis image
+%             axis image
             colormap gray;
             title('Bmode image')
             xlabel('width in mm')
@@ -350,42 +341,6 @@ classdef imageReconstruction < handle
 
 %             niftiwrite(obj.bmode, fullfile(obj.path_res, 'bmode_result', 'bmode_simulated.nii'));
 %             niftiwrite(obj.bmode, fullfile(obj.path_res, 'bmode_result', 'bmode_simulated.nii'));
-        end
-        
-        % ------------------------------------------------------------------
-        function [X_image, Z_image, X_org, Z_org]=get_grids_synthetic_aperture(obj, dim)
-            % Returns the corresponding grid to obtain isotropic pixels.            
-            
-            % --- bmode image dimension
-            z_start=obj.param.shift;                                                        % m
-            z_end=obj.phantom.z_max;                                                        % m
-            n_points_z = obj.image.height;                                                    % nb of points
-            dim_phantom=obj.phantom.x_max-obj.phantom.x_min;
-            dim_probe=obj.probe.pitch*(obj.probe.Nelements-1);
-            if dim_probe>dim_phantom
-                delta=(dim_probe-dim_phantom)/2;
-                x_start=-obj.probe.pitch*(obj.probe.Nelements-1)/2+delta;
-                x_end=obj.probe.pitch*(obj.probe.Nelements-1)/2-delta;
-                n_points_x=obj.image.width;
-            else
-                x_start=-obj.probe.pitch*(obj.probe.Nelements-1)/2;
-                x_end=-x_start;
-                n_points_x=round((x_end-x_start)/obj.image.CF);
-            end
-            
-            
-            x_image=linspace(x_start, x_end, n_points_x);
-            x_org=linspace(-obj.probe.pitch*(obj.probe.Nelements-1)/2, obj.probe.pitch*(obj.probe.Nelements-1)/2, dim(2));
-            
-            z_image=linspace(z_start, z_end, n_points_z);
-            z_org=linspace(0, dim(1)*obj.probe.c/(2*obj.probe.fs), dim(1));
-            
-            [X_image Z_image]=meshgrid(x_image, z_image);
-            [X_org Z_org]=meshgrid(x_org, z_org);
-            
-            % --- for display
-            obj.x_display=[x_start, x_end];
-            obj.z_display=[z_start, z_end];
         end
         
         % ------------------------------------------------------------------
@@ -405,8 +360,8 @@ classdef imageReconstruction < handle
         
         % ------------------------------------------------------------------
         function adapt_dimension(obj)
-%             
-%             % --- in vivo dimension
+        
+            % --- in vivo dimension
             x_img = obj.image.width * obj.image.CF;
             x_img = linspace(-x_img/2, x_img/2, obj.image.width);
             z_img = obj.image.height * obj.image.CF;
@@ -414,8 +369,10 @@ classdef imageReconstruction < handle
                                     
             % --- interpolation
             [x_img  z_img] = meshgrid(x_img, z_img);
+            if ~obj.param.dynamic_focusing
+                obj.bmode = imresize(obj.bmode, size(obj.x_bmode));
+            end
             
-            obj.bmode = imresize(obj.bmode, size(obj.x_bmode));
             obj.in_vivo=interp2(x_img, z_img, double(obj.image.image), obj.x_bmode, obj.z_bmode - obj.param.shift, 'makima', 0);
             
             % --- remove edge effect: high intensity on the borders
@@ -448,7 +405,7 @@ classdef imageReconstruction < handle
             dz = obj.probe.c/(2*obj.probe.fs);
             addpath(fullfile('..', 'mtl_synthetic_aperture'))
             % --- get image information
-            z_factor = 6;
+            z_factor = 8;
             x_factor = 1;
             [X_img_bf, Z_img_bf, X_RF, Z_RF, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param, x_factor, z_factor);
 %             lambda = obj.probe.c/obj.probe.fc;
@@ -465,8 +422,9 @@ classdef imageReconstruction < handle
             probe_pos_z = zeros(1, obj.probe.Nelements);
 
             % --- apodization window
-%             apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_adaptative', 0.2, dz);
-%             apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img_bf, Z_img_bf);
+%             apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_adaptative', 5, dz, t_offset);
+            %apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_adaptative', 1.5, dz);
+            %apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img_bf, Z_img_bf);
             apodization = ones( [n_points_z, n_points_x obj.probe.Nelements]);
             % --- define the CUDA module and kernel
             cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bin', 'bfFullLowResImg.ptx');

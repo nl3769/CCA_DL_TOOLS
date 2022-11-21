@@ -37,7 +37,7 @@ function fct_run_mk_phantom(varargin)
     phantom.get_image(); 
     phantom.get_scatteres_from_img(); 
     phantom.extrusion(true); 
-    %phantom.phantom_tmp();   
+    % phantom.phantom_tmp();   
     phantom.init_position(parameters.param.nb_images);
     phantom.remove_top_region(parameters.param.remove_top_region);
     substr=fct_get_substr_id_seq(phantom.id_seq);

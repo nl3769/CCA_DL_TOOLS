@@ -40,8 +40,8 @@ function fct_run_image_reconstruction(pres)
     end
     
     data.adapt_dimension();
-    data.postprocessing()
-    [pres_in_vivio, x_disp, z_disp] = data.save_in_vivo()
+    data.postprocessing();
+    [pres_in_vivio, x_disp, z_disp] = data.save_in_vivo();
     data.save_beamformed_data();
     [psave, pres_sim] = data.save_bmode(true);    
 %     fct_analysis(psave, pres_in_vivio, pres_sim, x_disp, z_disp);
