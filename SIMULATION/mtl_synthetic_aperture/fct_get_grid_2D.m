@@ -1,4 +1,4 @@
-function [X_image, Z_image, X_RF, Z_RF, x_display, z_display, n_pts_x, n_pts_z]=fct_get_grid_2D(phantom, image, probe, dim, dz, param, factor_x, factor_z)
+function [X_image, Z_image, X_RF, Z_RF, x_display, z_display, n_pts_x, n_pts_z]=fct_get_grid_2D(phantom, image, probe, dim, dz, param)
 
     
     % --- bmode image dimension
@@ -20,9 +20,13 @@ function [X_image, Z_image, X_RF, Z_RF, x_display, z_display, n_pts_x, n_pts_z]=
         n_pts_x  = round((x_end-x_start)/image.CF);
     end
     
-    x_image = linspace(x_start, x_end, n_pts_x * factor_x);
-    z_image = linspace(z_start, z_end, n_pts_z * factor_z) + param.shift;
-% z_image = linspace(z_start, z_end, n_pts_z) + 0.002;
+    
+    % --- compute number of points to avoid sub nyquist issue
+    lambda = probe.c/probe.fc;
+    dz_ = lambda/15;
+    nb_pts_x_recq = ceil((x_end - x_start)/dz_);
+    x_image = linspace(x_start, x_end, n_pts_x);
+    z_image = linspace(z_start, z_end, nb_pts_x_recq) + param.shift;
     [X_image, Z_image] = meshgrid(x_image, z_image);
     
     x_rf = linspace(-probe.pitch * (probe.Nelements - 1)/2, probe.pitch * (probe.Nelements - 1)/2, probe.Nelements);

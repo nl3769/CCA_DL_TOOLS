@@ -8,6 +8,7 @@
   "Nelements": 192,
   "fsCoef": 6,
   "gamma": 0.3,
+  "input_bf": "RF",
   "TGC": false,
   "distribution": [0,0,1],
   "imadjust_vals": [0.03, 0.75],

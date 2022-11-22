@@ -232,7 +232,13 @@ classdef imageReconstruction < handle
             % correction is applyed.
             
             % --- RF to IQ
-            obj.IQ=rf2iq(obj.RF_final, obj.probe);
+            if isfield(obj.param, "input_bf") && obj.param.input_bf == "IQ"
+                obj.IQ = obj.RF_final ;
+            else
+                obj.IQ=rf2iq(obj.RF_final, obj.probe);
+            end
+            
+            
             % --- apply TGC
             if obj.param.TGC==true
                 obj.IQ=tgc(obj.IQ);
@@ -405,10 +411,10 @@ classdef imageReconstruction < handle
             dz = obj.probe.c/(2*obj.probe.fs);
             addpath(fullfile('..', 'mtl_synthetic_aperture'))
             % --- get image information
-            z_factor = 8;
-            x_factor = 1;
-            [X_img_bf, Z_img_bf, X_RF, Z_RF, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param, x_factor, z_factor);
-%             lambda = obj.probe.c/obj.probe.fc;
+            
+            [X_img_bf, Z_img_bf, X_IQ, Z_IQ, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
+
+%             lambda = obj.probe.c/obj.probe.fc;             
 %             xAxis = -5e-3:lambda/20:5e-3;
 %             zAxis = (5e-3:lambda/20:20e-3) + obj.param.shift;
 %             [X_img,Z_img] = meshgrid(xAxis,zAxis);
@@ -427,11 +433,26 @@ classdef imageReconstruction < handle
             %apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img_bf, Z_img_bf);
             apodization = ones( [n_points_z, n_points_x obj.probe.Nelements]);
             % --- define the CUDA module and kernel
-            cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bin', 'bfFullLowResImg.ptx');
-            cuda_kernel_name = 'bf_low_res_images';
-            cuda_kernel = parallel.gpu.CUDAKernel(cuda_module_path_and_file_name,...
-            'double*, double*, double*, double*, int, int, int, int, double, double, double*, double*, double*, double*',...
-            cuda_kernel_name);
+        
+            if isfield(obj.param, "input_bf") && obj.param.input_bf == "IQ" 
+                cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bin', 'bfFullLowResImgIQ.ptx');
+                cuda_kernel_name = 'bf_low_res_images';
+                cuda_kernel = parallel.gpu.CUDAKernel(cuda_module_path_and_file_name,...
+                'const double*, const double*, const double*, const double*, const int, const int, const int, const int, const double, const double, const double*, const double*, const double*, const double*, double*, double*',...
+                cuda_kernel_name);
+
+            else
+                cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bin', 'bfFullLowResImgRF.ptx');
+                cuda_kernel_name = 'bf_low_res_images';
+                cuda_kernel = parallel.gpu.CUDAKernel(cuda_module_path_and_file_name,...
+                'double*, double*, double*, double*, int, int, int, int, double, double, double*, double*, double*, double*',...
+                cuda_kernel_name);
+                % --- get IQ signal
+                IQ_signals = fct_get_analytic_signals(RF_signals, obj.param.fsCoef * obj.param.fc, obj.param.fc);
+            end
+%             cuda_kernel = parallel.gpu.CUDAKernel(cuda_module_path_and_file_name,...
+%             'double*, double*, double*, double*, int, int, int, int, double, double, double*, double*, double*, double*',...
+%             cuda_kernel_name);
             % --- define grid and block size
             BLOCK_DIM_X = 8;
             BLOCK_DIM_Y = 16;
@@ -448,16 +469,31 @@ classdef imageReconstruction < handle
             c = obj.param.c;
             fs = double(obj.probe.fs);
             apodization = double(apodization);
+            Iiq = imag(IQ_signals);
+            Riq = real(IQ_signals);
             tic
             % --- call kernel
-            obj.low_res_image = feval(cuda_kernel, obj.low_res_image, RF_signals, probe_pos_x, probe_pos_z, nb_rx, nb_sample, imageW, imageH, c, fs, apodization, pos_x_img, pos_z_img, -time_offset);
-            % --- gather the output back from GPU to CPU
-            obj.low_res_image = gather(obj.low_res_image);
+            IlowRes = zeros(size(obj.low_res_image));
+            RlowRes = zeros(size(obj.low_res_image));
+%             
+            if isfield(obj.param, "input_bf") && obj.param.input_bf == "IQ"
+                [IlowRes, RlowRes] = feval(cuda_kernel, Iiq, Riq, probe_pos_x, probe_pos_z, nb_rx, nb_sample, imageW, imageH, c, fs, apodization, pos_x_img, pos_z_img, -time_offset, IlowRes, RlowRes);
+                % --- gather the output back from GPU to CPU
+                IlowRes = gather(IlowRes);
+                RlowRes = gather(RlowRes);
+                obj.low_res_image = abs(RlowRes + IlowRes*1i);
+            else
+                obj.low_res_image = feval(cuda_kernel, obj.low_res_image, RF_signals, probe_pos_x, probe_pos_z, nb_rx, nb_sample, imageW, imageH, c, fs, apodization, pos_x_img, pos_z_img, -time_offset);
+                % --- gather the output back from GPU to CPU
+                obj.low_res_image = gather(obj.low_res_image);
+            end            
             toc
+            
+            
             
             % --- compounding
             obj.compounding(compounding)
-             
+%             obj.RF_final=abs(obj.RF_final);
             % --- grid of real image domain
             x_img = linspace(X_img_bf(1,1), X_img_bf(1,end), n_pts_x);
             z_img = linspace(Z_img_bf(1,1), Z_img_bf(end,1), n_pts_z);
