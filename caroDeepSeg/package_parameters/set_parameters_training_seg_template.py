@@ -13,10 +13,10 @@ import package_utils.fold_handler                               as fh
 def setParameters():
 
   p = Parameters(
-        PDATA='/home/laine/PROJECTS_IO/CARODEEPSEG/CUBS_DATABASE',                # PATH TO LOAD DATA
-        PRES='/home/laine/PROJECTS_IO/CARODEEPSEG/TRAINING',                      # PATH TO SAVE TRAINING RESULTS
-        PSPLIT='/home/laine/PROJECTS_IO/CARODEEPSEG/SPLIT_PATIENT/fold_0',
-        IN_VIVO=True,
+        PDATA='/home/laine/cluster/PROJECTS_IO/CARODEEPSEG/CUBS_DATABASE',                # PATH TO LOAD DATA
+        PRES='/home/laine/cluster/PROJECTS_IO/CARODEEPSEG/',                      # PATH TO SAVE TRAINING RESULTS
+        PSPLIT='/home/laine/cluster/PROJECTS_IO/CARODEEPSEG//SPLIT_PATIENT/fold_0',
+        IN_VIVO =True,
         LEARNING_RATE=0.001,
         BATCH_SIZE=2,           # size of a batch
         NB_EPOCH=15,
