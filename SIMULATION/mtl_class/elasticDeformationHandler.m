@@ -39,8 +39,8 @@ classdef elasticDeformationHandler < handle
             % Constructor
             
             % --- set min and max values
-            A_max = CF * 1.5;
-            A_min = -CF * 1.5;
+            A_max = CF * magnitude_coef;
+            A_min = -CF * magnitude_coef;
             
             obj.t_sample = t_sample;
             

@@ -4,10 +4,10 @@ function warpped_image()
     clearvars;
     clc;
 
-    pI0 = "/home/laine/cluster/PROJECTS_IO/SIMULATION/MOTION_TEST/V1/tech_001/tech_001_id_003_FIELD/bmode_result/RF/dicom_tech_001_phantom_id_003_FIELD_bmode.png";
-    pI1 = "/home/laine/cluster/PROJECTS_IO/SIMULATION/MOTION_TEST/V1/tech_001/tech_001_id_004_FIELD/bmode_result/RF/dicom_tech_001_phantom_id_004_FIELD_bmode.png";
-    pOF = "/home/laine/cluster/PROJECTS_IO/SIMULATION/MOTION_TEST/V1/tech_001/tech_001_id_004_FIELD/phantom/OF_3_4.nii";
-    pparam = "/home/laine/cluster/PROJECTS_IO/SIMULATION/MOTION_TEST/tech_001/tech_001_id_003_FIELD/phantom/image_information.mat";
+    pI0     = "/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/MOTION/n01440764_tench/n01440764_tench_id_001_FIELD/bmode_result/RF/dicom_n01440764_tench_phantom_id_001_FIELD_bmode.png";
+    pI1     = "/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/MOTION/n01440764_tench/n01440764_tench_id_002_FIELD/bmode_result/RF/dicom_n01440764_tench_phantom_id_002_FIELD_bmode.png";
+    pOF     = "/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/MOTION/n01440764_tench/n01440764_tench_id_002_FIELD/phantom/OF_1_2.nii";
+    pparam  = "/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/MOTION/n01440764_tench/n01440764_tench_id_001_FIELD/phantom/image_information.mat";
     
     x_start = 30;
     x_end   = 30;
@@ -22,7 +22,7 @@ function warpped_image()
 
     param = load(pparam);
     CF = param.image.CF;
-    zstart = 1e-3;
+    zstart = 3e-3;
     OF = adapt_flow(I0, OF, CF, zstart);
 
     Iw = warpped(I0, OF);
@@ -38,7 +38,7 @@ function warpped_image()
     display(uint8(Iw), 2, 'Iw')
     display(I1, 3, 'I1')
     display_err(double(I1)-Iw, 4, 'diff_warpped')
-    display_err(double(I1)-double(I0), 4, 'diff_org')
+    display_err(double(I1)-double(I0), 5, 'diff_org')
 
     
     display_OF(dx, 5, 'dx')
@@ -72,7 +72,7 @@ function display(I, nb, figname)
     width=550;
     height=400;
     set(gcf,'units','points','position',[x0,y0,width,height])
-
+    I = I(30:end-30, 30:end-30);
     figure(nb)
     imagesc(I)
 %     title(figname)
@@ -92,7 +92,7 @@ function display_err(I, nb, figname)
     width=550;
     height=400;
     set(gcf,'units','points','position',[x0,y0,width,height])
-
+     I = I(30:end-30, 30:end-30);
     figure(nb)
     imagesc(I)
 %     title(figname)
@@ -133,14 +133,14 @@ end
 % -------------------------------------------------------------------------
 function OF_out = adapt_flow(I, flow, CF, z_start)
     
-    [height_I, width_I]     = size(I);
-    [height_OF, width_OF, ~]   = size(flow);
+    [height_I, width_I] = size(I);
+    [height_OF_, width_OF_, ~] = size(flow);
 
     width_roi = linspace(-width_I/2*CF, width_I/2*CF, width_I);
-    height_roi = linspace(0, height_I*CF, height_I) + z_start;
-    
-    width_OF = linspace(-width_OF/2 * CF, width_OF/2 * CF, width_OF);
-    height_OF = linspace(0, height_OF * CF, height_OF); 
+%     height_roi = linspace(0, height_I*CF, height_I) + z_start;
+    height_roi = linspace(z_start, height_I*CF+z_start, height_I);
+    width_OF = linspace(-width_OF_/2 * CF, width_OF_/2 * CF, width_OF_);
+    height_OF = linspace(0, height_OF_ * CF, height_OF_); 
     
     [X,Y]   = meshgrid(width_OF, height_OF);
     [Xq,Yq] = meshgrid(width_roi ,height_roi);

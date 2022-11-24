@@ -803,7 +803,7 @@ classdef createPhantom < handle
 %                 x_org = linspace(min(obj.scatt_pos_ref{2}.x_scatt), max(obj.scatt_pos_ref{2}.x_scatt), size(obj.scatt_pos_ref{2}.x_scatt, 1));
 %                 z_org = linspace(min(obj.scatt_pos_ref{2}.z_scatt), max(obj.scatt_pos_ref{2}.z_scatt), size(obj.scatt_pos_ref{2}.z_scatt, 1));
                 x_q = scatt_ref_real.x_scatt';
-%                 y_q = scatt_ref_real.y_scatt';
+                y_q = scatt_ref_real.y_scatt';
                 z_q = scatt_ref_real.z_scatt';
 
 %                 diff = reshape(diff,[obj.data_img.height * 2 obj.data_img.width *2  3]); % because the gruid is twice bigger in x and z
@@ -897,10 +897,10 @@ classdef createPhantom < handle
         % ----------------------------------------------------------------------------------------------------------------------
         function phantom_tmp(obj)
             
-            k=10;   
+            k=5;   
             
-            z_pos=linspace(obj.data_scatt.z_max * 0.01, obj.data_scatt.z_max, k);
-            x_pos=linspace(obj.data_scatt.x_min, obj.data_scatt.x_max, k);
+            z_pos=linspace(obj.data_scatt.z_max * 0.3, obj.data_scatt.z_max * 0.7, k);
+            x_pos=linspace(obj.data_scatt.x_min * 0.5, obj.data_scatt.x_max * 0.5, k);
 %             obj.data_scatt.x_min = obj.data_scatt.x_min * 0.5;
 %             obj.data_scatt.x_max = obj.data_scatt.x_max * 0.5;
 
@@ -957,8 +957,18 @@ function [struct_image]=load_JPEG(path_img, param)
     % probe around 7MHz
     rng('shuffle')
     probe = getparam(param.probe_name);
+    
+    % --- compute CF in the range [10, 100] micro meters
     width_probe = (param.Nelements - param.Nactive)* probe.pitch;
-    CF = width_probe/size(image, 2);
+    CF_min =  20e-6;
+    CF_max = 80e-6;
+    CF = (CF_max-CF_min).*rand(1) + CF_min;
+    
+    nb_x = round(width_probe/CF);
+    coef =  size(image, 2)/nb_x;
+    nb_z = round(size(image, 1)/coef);
+    image = imresize(image, [nb_z, nb_x]);
+%     CF = width_probe/size(image, 2);
     
     % --- fill obj
     struct_image.CF = CF;
