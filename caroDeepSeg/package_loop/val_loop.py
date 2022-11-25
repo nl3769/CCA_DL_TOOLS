@@ -42,6 +42,9 @@ def val_loop_seg(param, networks, segLoss, logger, loader, id_epoch, device):
             M1_pred = M1_pred[0, ].cpu().detach().numpy().squeeze()
             logger.plot1Seg(I1, M1, M1_pred, param.PATH_RANDOM_PRED_TRN, 'val_' + str(id_epoch) + "_" + fname[0])
             save = False
+
+
+
     ##################
     # --- LOGGER --- #
     ##################
@@ -52,5 +55,6 @@ def val_loop_seg(param, networks, segLoss, logger, loader, id_epoch, device):
         seg_metrics_[key] = np.mean(np.array(seg_metrics_[key]))
     logger.add_loss_seg(seg_loss_,       set='validation')
     logger.add_metrics_seg(seg_metrics_, set='validation')
+    logger.early_stop(id_epoch)
 
     return seg_loss_, seg_metrics_

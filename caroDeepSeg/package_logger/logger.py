@@ -18,11 +18,11 @@ class loggerClassSeg():
 
         self.p = p
         self.total_steps = 0
+        self.early_stop_id = 0
         self.loss_seg = {'training': [],
                          'validation': []}
         self.metrics_seg = {'training': {},
                             'validation': {}}
-
         for key in self.metrics_seg.keys():
             for key_metrics in keys_metrics_seg:
                 self.metrics_seg[key][key_metrics] = []
@@ -52,6 +52,14 @@ class loggerClassSeg():
 
         for key in metrics.keys():
             self.metrics_seg[set][key].append(metrics[key])
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def early_stop(self, epoch):
+
+        if epoch > 0 and self.loss_seg['validation'][-1] < np.min(self.loss_seg['validation'][:-1]):
+            self.early_stop_id = 0
+        else:
+            self.early_stop_id = self.early_stop_id+1
 
     # ------------------------------------------------------------------------------------------------------------------
     def plot_loss(self):
@@ -117,6 +125,7 @@ class loggerClassSeg():
             pufh.create_dir(psave)
             plt.savefig(os.path.join(psave, 'loss_trn_vld_vld_BCEDice_seg.png'), dpi=150)
             plt.close()
+
     # ------------------------------------------------------------------------------------------------------------------
     def plot_metrics(self):
         """ Plot the metrics for training and evaluation during training. """
@@ -199,7 +208,6 @@ class loggerClassSeg():
                 textfile = open(os.path.join(self.p.PATH_MODEL_HISTORY, 'metrics_' + metric + "_" + set + '.txt'), "w")
                 for id, val in enumerate(self.metrics_seg[set][metric]):
                     textfile.write(str(id) + " " + str(val) + "\n")
-
 
     # ------------------------------------------------------------------------------------------------------------------
     def save_best_model(self, epoch, models):

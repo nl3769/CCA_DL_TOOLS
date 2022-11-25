@@ -12,6 +12,7 @@ class Parameters:
         LEARNING_RATE,
         BATCH_SIZE,
         NB_EPOCH,
+        EARLY_STOP,
         VALIDATION,
         DROPOUT,
         WORKERS,
@@ -34,6 +35,7 @@ class Parameters:
         self.LEARNING_RATE                      = LEARNING_RATE
         self.BATCH_SIZE                         = BATCH_SIZE
         self.NB_EPOCH                           = NB_EPOCH
+        self.EARLY_STOP                         = EARLY_STOP
         self.VALIDATION                         = VALIDATION
         self.DROPOUT                            = DROPOUT
         self.WORKERS                            = WORKERS
