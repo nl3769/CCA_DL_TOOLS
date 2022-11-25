@@ -26,9 +26,10 @@ def setParameters():
         WORKERS=0,
         USER='LAINE',
         EXPNAME='test_early_stop',
+        USE_WANDB=False,
+        ENTITY='nl37',
         DEVICE='cuda',          # cuda/cpu
         RESTORE_CHECKPOINT=True,
-        ENTITY='nl37',
         # --- parameters for unet
         KERNEL_SIZE=(3, 3),
         PADDING=(1, 1),

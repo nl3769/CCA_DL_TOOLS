@@ -18,9 +18,10 @@ class Parameters:
         WORKERS,
         USER,
         EXPNAME,
+        USE_WANDB,
+        ENTITY,
         DEVICE,
         RESTORE_CHECKPOINT,
-        ENTITY,
         KERNEL_SIZE,
         PADDING,
         USE_BIAS,
@@ -41,9 +42,10 @@ class Parameters:
         self.WORKERS                            = WORKERS
         self.USER                               = USER
         self.EXPNAME                            = EXPNAME
+        self.USE_WANDB                          = USE_WANDB
+        self.ENTITY                             = ENTITY
         self.DEVICE                             = DEVICE
         self.RESTORE_CHECKPOINT                 = RESTORE_CHECKPOINT
-        self.ENTITY                             = ENTITY
         self.KERNEL_SIZE                        = KERNEL_SIZE
         self.PADDING                            = PADDING
         self.USE_BIAS                           = USE_BIAS
