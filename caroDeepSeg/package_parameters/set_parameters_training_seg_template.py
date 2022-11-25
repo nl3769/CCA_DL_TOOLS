@@ -17,17 +17,22 @@ def setParameters():
         PRES='/home/laine/cluster/PROJECTS_IO/CARODEEPSEG/',                      # PATH TO SAVE TRAINING RESULTS
         PSPLIT='/home/laine/cluster/PROJECTS_IO/CARODEEPSEG//SPLIT_PATIENT/fold_0',
         IN_VIVO =True,
+        PRES='/home/laine/PROJECTS_IO/CARODEEPSEG/TRAINING',                      # PATH TO SAVE TRAINING RESULTS
+        PSPLIT='/home/laine/cluster/PROJECTS_IO/CARODEEPSEG/SPLIT_PATIENT/fold_0',
+        IN_VIVO=True,
         LEARNING_RATE=0.001,
         BATCH_SIZE=2,           # size of a batch
-        NB_EPOCH=15,
+        NB_EPOCH=50,
+        EARLY_STOP=5,
         VALIDATION=True,
         DROPOUT=0.1,            # dropout during training
-        WORKERS=4,
+        WORKERS=0,
         USER='LAINE',
-        EXPNAME='SEG_TRAINING_FOLD_0',
+        EXPNAME='test_early_stop',
+        USE_WANDB=False,
+        ENTITY='nl37',
         DEVICE='cuda',          # cuda/cpu
         RESTORE_CHECKPOINT=True,
-        ENTITY='nl37',
         # --- parameters for unet
         KERNEL_SIZE=(3, 3),
         PADDING=(1, 1),

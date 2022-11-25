@@ -12,14 +12,16 @@ class Parameters:
         LEARNING_RATE,
         BATCH_SIZE,
         NB_EPOCH,
+        EARLY_STOP,
         VALIDATION,
         DROPOUT,
         WORKERS,
         USER,
         EXPNAME,
+        USE_WANDB,
+        ENTITY,
         DEVICE,
         RESTORE_CHECKPOINT,
-        ENTITY,
         KERNEL_SIZE,
         PADDING,
         USE_BIAS,
@@ -34,14 +36,16 @@ class Parameters:
         self.LEARNING_RATE                      = LEARNING_RATE
         self.BATCH_SIZE                         = BATCH_SIZE
         self.NB_EPOCH                           = NB_EPOCH
+        self.EARLY_STOP                         = EARLY_STOP
         self.VALIDATION                         = VALIDATION
         self.DROPOUT                            = DROPOUT
         self.WORKERS                            = WORKERS
         self.USER                               = USER
         self.EXPNAME                            = EXPNAME
+        self.USE_WANDB                          = USE_WANDB
+        self.ENTITY                             = ENTITY
         self.DEVICE                             = DEVICE
         self.RESTORE_CHECKPOINT                 = RESTORE_CHECKPOINT
-        self.ENTITY                             = ENTITY
         self.KERNEL_SIZE                        = KERNEL_SIZE
         self.PADDING                            = PADDING
         self.USE_BIAS                           = USE_BIAS

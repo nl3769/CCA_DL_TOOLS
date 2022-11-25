@@ -54,9 +54,10 @@ def main():
     schedulers = {"netSeg": scheduler}
     # --- logger
     logger = plog.loggerClassSeg(p, segLoss.metrics.keys())
-
-    config = puwu.get_param_wandb(p)
-    wandb.init(project="caroDeepSegPytorch", entity=p.ENTITY, dir=p.PATH_WANDB, config=config, name=p.EXPNAME)
+    # --- config wandb
+    if p.USE_WANDB:
+        config = puwu.get_param_wandb(p)
+        wandb.init(project="caroDeepSegPytorch", entity=p.ENTITY, dir=p.PATH_WANDB, config=config, name=p.EXPNAME)
 
     # --- trn/val loop
     for epoch in range(p.NB_EPOCH):
@@ -66,14 +67,18 @@ def main():
 
         # --- Log information to wandb
         lr = get_lr(optimizer)
-        wandb.log({"loss_trn": loss_trn,
-                   "trn_BCE": metric_trn['BCE_I1'],
-                   "trn_DICE": metric_trn['dice_I1'],
-                   "loss_val": loss_val,
-                   "val_BCE": metric_trn['BCE_I1'],
-                   "val_DICE": metric_trn['dice_I1'],
-                   "learning_rate": lr})
+        if p.USE_WANDB:
+            wandb.log({"loss_trn": loss_trn,
+                       "trn_BCE": metric_trn['BCE_I1'],
+                       "trn_DICE": metric_trn['dice_I1'],
+                       "loss_val": loss_val,
+                       "val_BCE": metric_trn['BCE_I1'],
+                       "val_DICE": metric_trn['dice_I1'],
+                       "learning_rate": lr})
 
+        if logger.early_stop_id >= p.EARLY_STOP:
+            print('EARLY STOP')
+            break
 
     logger.plot_loss()
     logger.plot_metrics()
