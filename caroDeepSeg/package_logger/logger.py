@@ -254,13 +254,13 @@ class loggerClassSeg():
         plt.imshow(M1, cmap='gray')
         plt.colorbar()
         plt.axis('off')
-        plt.title('MA GT', fontsize=ftsize)
+        plt.title('seg. GT', fontsize=ftsize)
         # --- predicted mask
         plt.subplot2grid((2, 2), (1, 0), colspan=1)
         plt.imshow(M1_pred, cmap='gray')
         plt.colorbar()
         plt.axis('off')
-        plt.title('MA pred', fontsize=ftsize)
+        plt.title('seg. pred', fontsize=ftsize)
         # --- superposition
         superimpose = np.zeros(I1.shape + (3,))
         superimpose[..., 0] = I1 * 255
@@ -273,7 +273,7 @@ class loggerClassSeg():
         plt.imshow(superimpose.astype(np.int))
         plt.colorbar()
         plt.axis('off')
-        plt.title('MA pred', fontsize=ftsize)
+        plt.title('seg. pred', fontsize=ftsize)
 
         # --- save fig and close
 
