@@ -320,14 +320,13 @@ def preprocessing_GIF(I, LI, MA):
 def compute_real_CF(Odim, Fdim, CF_init):
     """ Compute the real pixel size as we can't reach the desired value because of rounding. """
 
-    zcoef = Fdim[0] / Odim[0]
-    zCF = CF_init / zcoef
 
-    xcoef = Fdim[1] / Odim[1]
-    xCF = CF_init / xcoef
-
+    zCF = CF_init * Odim[0] / Fdim[0]
+    xCF = CF_init * Odim[1] / Fdim[1]
     CF = {"xCF": xCF,
           "zCF": zCF}
+
+    zcoef = Fdim[0] / Odim[0]
 
     return CF, zcoef
 

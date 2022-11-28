@@ -74,10 +74,6 @@ class dataHandlerSegInSilico(segDataloader):
                     self.CF_list.append([pCF])
                     self.CF_list.append([pCF])
 
-        #self.image_list = self.image_list[:10]
-        #self.mask_list = self.mask_list[:10]
-        #self.CF_list = self.CF_list[:10]
-
 # ----------------------------------------------------------------------------------------------------------------------
 class dataHandlerSegCubs(segDataloader):
     '''
@@ -118,9 +114,5 @@ class dataHandlerSegCubs(segDataloader):
                 self.image_list.append([pI])
                 self.mask_list.append([pM])
                 self.CF_list.append([pCF])
-'''
-        self.image_list = self.image_list[:6]
-        self.mask_list = self.mask_list[:6]
-        self.CF_list = self.CF_list[:6]
-'''
+
 # ----------------------------------------------------------------------------------------------------------------------

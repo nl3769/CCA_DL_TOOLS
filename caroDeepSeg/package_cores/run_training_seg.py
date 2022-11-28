@@ -55,7 +55,7 @@ def main():
     # --- logger
     logger = plog.loggerClassSeg(p, segLoss.metrics.keys())
     # --- config wandb
-    if p.self.USE_WANDB:
+    if p.USE_WANDB:
         config = puwu.get_param_wandb(p)
         wandb.init(project="caroDeepSegPytorch", entity=p.ENTITY, dir=p.PATH_WANDB, config=config, name=p.EXPNAME)
 
@@ -67,7 +67,7 @@ def main():
 
         # --- Log information to wandb
         lr = get_lr(optimizer)
-        if p.self.USE_WANDB:
+        if p.USE_WANDB:
             wandb.log({"loss_trn": loss_trn,
                        "trn_BCE": metric_trn['BCE_I1'],
                        "trn_DICE": metric_trn['dice_I1'],
@@ -102,7 +102,7 @@ def fetch_optimizer(p, model):
     optimizer = optim.Adam(model.parameters(), lr=p.LEARNING_RATE, betas=(beta1, beta2))
 
     # --- schedular
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.99)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.95)
 
     return optimizer, scheduler
 
