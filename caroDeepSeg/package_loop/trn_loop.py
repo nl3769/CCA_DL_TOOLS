@@ -37,7 +37,6 @@ def trn_loop_seg(param, networks, segLoss, optimizers, scheduler, logger, loader
         seg_loss, seg_metrics = segLoss(M1_pred, M1)
         seg_loss.backward()
         optimizers["netSeg"].step()
-        scheduler["netSeg"].step()
 
         ##################
         # --- LOGGER --- #
@@ -65,6 +64,7 @@ def trn_loop_seg(param, networks, segLoss, optimizers, scheduler, logger, loader
         seg_metrics_[key] = np.mean(np.array(seg_metrics_[key]))
     logger.add_loss_seg(seg_loss_, set='training')
     logger.add_metrics_seg(seg_metrics_, set='training')
+    scheduler["netSeg"].step()
 
     return seg_loss_, seg_metrics_
 # ----------------------------------------------------------------------------------------------------------------------

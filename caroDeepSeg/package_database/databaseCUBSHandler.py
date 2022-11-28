@@ -57,7 +57,7 @@ class databaseHandler():
         mean = dbu.mean_pos(LI, MA)
         args_coordinates = {
             "roi_borders"   : roi_borders,
-            "pos"          : mean,
+            "pos"           : mean,
             "shift_x"       : self.parameters.SHIFT_X,
             "shift_z"       : self.parameters.SHIFT_Z,
             "roi_width"     : self.parameters.PIXEL_WIDTH,

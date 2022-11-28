@@ -49,6 +49,9 @@ def get_path_models(pres, keys):
     else:
         models_name = None
 
+    if not bool(models_name):
+        models_name = None
+
     return models_name
 
 # ----------------------------------------------------------------------------------------------------------------------

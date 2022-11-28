@@ -13,7 +13,7 @@ class simulationHandler():
         self.pdata          = pdata
         self.path           = {}
         self.success        = {}
-        self.tx_events      = 128
+        self.tx_events      = 192
         self.tx_store       = "raw_data/raw_"
         self.bmode_store    = "bmode_result/RF"
 
@@ -104,8 +104,8 @@ def create_dir(path):
 def main():
 
     #pres  = '/run/media/laine/HDD/PROJECTS_IO/SIMULATION/CUBS'
-    pres  = '/run/media/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER'
-    pdata = '/home/laine/cluster/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER'
+    pres  = '/run/media/laine/HDD/PROJECTS_IO/SIMULATION/IMAGENET_STA'
+    pdata = '/home/laine/cluster/PROJECTS_IO/SIMULATION/IMAGENET_STA'
 
     simHandler = simulationHandler(pres, pdata)
     simHandler()
