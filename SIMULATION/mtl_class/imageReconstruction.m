@@ -413,7 +413,7 @@ classdef imageReconstruction < handle
             addpath(fullfile('..', 'mtl_synthetic_aperture'))
             % --- get image information
             
-            [X_img_bf, Z_img_bf, X_IQ, Z_IQ, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
+            [X_img_bf, Z_img_bf, X_RF, Z_RF, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
 
 %             lambda = obj.probe.c/obj.probe.fc;             
 %             xAxis = -5e-3:lambda/20:5e-3;
@@ -430,11 +430,11 @@ classdef imageReconstruction < handle
 
             % --- apodization window
 %             apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_adaptative', 5, dz, t_offset);
-            %apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_adaptative', 1.5, dz);
-            %apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img_bf, Z_img_bf);
+%             apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_adaptative', 1.5, dz);
+%             apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img_bf, Z_img_bf);
             apodization = ones( [n_points_z, n_points_x obj.probe.Nelements]);
             % --- define the CUDA module and kernel
-%             obj.param.input_bf = "IQ";
+            obj.param.input_bf = "IQ";
             if isfield(obj.param, "input_bf") && obj.param.input_bf == "IQ" 
                 cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bin', 'bfFullLowResImgIQ.ptx');
                 cuda_kernel_name = 'bf_low_res_images';
@@ -442,7 +442,7 @@ classdef imageReconstruction < handle
                 'const double*, const double*, const double*, const double*, const int, const int, const int, const int, const double, const double, const double*, const double*, const double*, const double*, double*, double*',...
                 cuda_kernel_name);
                 % --- get IQ signal
-                IQ_signals = fct_get_analytic_signals(RF_signals, obj.probe);
+                IQ_signals = fct_get_analytic_signals(RF_signals, obj.probe, time_offset);
                 Iiq = imag(IQ_signals);
                 Riq = real(IQ_signals);
                 IlowRes = zeros(size(obj.low_res_image));
