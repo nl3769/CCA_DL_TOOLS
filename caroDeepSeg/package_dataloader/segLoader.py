@@ -1,15 +1,12 @@
 import os
 import torch
-
+import sys
 import numpy                as  np
 import package_utils.loader as  pul
 import matplotlib.pyplot    as plt
-
-from torch                  import nn
-from torchvision            import transforms
-from torch.utils.data       import        Dataset
-
 import imgaug.augmenters    as iaa
+
+from torch.utils.data       import        Dataset
 
 # ----------------------------------------------------------------------------------------------------------------------
 class segDataloader(Dataset):
@@ -81,8 +78,8 @@ class segDataloader(Dataset):
         I1 = pul.load_pickle(self.image_list[index][0])
         M1 = pul.load_pickle(self.mask_list[index][0])
 
-        I1 = np.array(I1).astype(np.float32)[None, ...] / np.max(I1)
-        M1 = np.array(M1).astype(np.float32)[None, ...] / np.max(M1)
+        I1 = np.array(I1).astype(np.float32)[None, ...] / (np.max(I1) + sys.float_info.epsilon)
+        M1 = np.array(M1).astype(np.float32)[None, ...] / (np.max(M1) + sys.float_info.epsilon)
 
         return I1, M1
 

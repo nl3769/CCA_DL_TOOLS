@@ -16,6 +16,12 @@ def setParameters():
         PDATA='/home/laine/Documents/PROJECTS_IO/CARODEEPSEG/CUBS_DATABASE',                # PATH TO LOAD DATA
         PRES='/home/laine/Documents/PROJECTS_IO/CARODEEPSEG/TRAINING',                      # PATH TO SAVE TRAINING RESULTS
         PSPLIT='/home/laine/Documents/PROJECTS_IO/CARODEEPSEG/SPLIT_PATIENT/fold_0',
+        PDATA='/home/laine/cluster/PROJECTS_IO/CARODEEPSEG/CUBS_DATABASE',                # PATH TO LOAD DATA
+        PRES='/home/laine/cluster/PROJECTS_IO/CARODEEPSEG/',                      # PATH TO SAVE TRAINING RESULTS
+        PSPLIT='/home/laine/cluster/PROJECTS_IO/CARODEEPSEG//SPLIT_PATIENT/fold_0',
+        IN_VIVO =True,
+        PRES='/home/laine/PROJECTS_IO/CARODEEPSEG/TRAINING',                      # PATH TO SAVE TRAINING RESULTS
+        PSPLIT='/home/laine/cluster/PROJECTS_IO/CARODEEPSEG/SPLIT_PATIENT/fold_0',
         IN_VIVO=True,
         LEARNING_RATE=0.01,
         BATCH_SIZE=2,           # size of a batch
