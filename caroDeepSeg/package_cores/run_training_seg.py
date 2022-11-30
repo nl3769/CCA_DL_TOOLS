@@ -33,7 +33,6 @@ def main():
     arg = vars(my_parser.parse_args())
     param = importlib.import_module('package_parameters.' + arg['Parameters'].split('.')[0])
     p = param.setParameters()
-
     # --- device configuration
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # device = 'cpu'
@@ -68,13 +67,14 @@ def main():
         # --- Log information to wandb
         lr = get_lr(optimizer)
         if p.USE_WANDB:
-            wandb.log({"loss_trn": loss_trn,
-                       "trn_BCE": metric_trn['BCE_I1'],
-                       "trn_DICE": metric_trn['dice_I1'],
-                       "loss_val": loss_val,
-                       "val_BCE": metric_trn['BCE_I1'],
-                       "val_DICE": metric_trn['dice_I1'],
-                       "learning_rate": lr})
+            wandb.log({
+                "loss_trn": loss_trn,
+                "trn_BCE": metric_trn['BCE_I1'],
+                "trn_DICE": metric_trn['dice_I1'],
+                "loss_val": loss_val,
+                "val_BCE": metric_trn['BCE_I1'],
+                "val_DICE": metric_trn['dice_I1'],
+                "learning_rate": lr})
 
         if logger.early_stop_id >= p.EARLY_STOP:
             print('EARLY STOP')

@@ -3,5 +3,5 @@
 source ~/anaconda3/etc/profile.d/conda.sh
 conda activate pytorch
 
-WD=/home/laine/cluster/REPOSITORIES/CCA_DL_TOOLS/caroDeepFlow
+WD=/home/laine/cluster/REPOSITORIES/CCA_DL_TOOLS/caroDeepSeg
 PYTHONPATH=$WD python package_core/run_database.py -param set_parameters_database.py
