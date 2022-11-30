@@ -11,7 +11,7 @@ end
 %%%%%%% RUN SIMULATION %%%%%%% 
 
 % --- path to data
-path_data='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/SHIFT_DEBUG/exp_GZ/CAMO03_image2/shift_0cm';
+path_data='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/MOTION/n01440764_tench/n01440764_tench_id_001_FIELD';
 % --- get phantom name
 phantom_folder = fct_list_ext_files(path_data, 'mat', 'phantom');
 phantom_names = fct_detect_sub_str(phantom_folder, 'dicom');

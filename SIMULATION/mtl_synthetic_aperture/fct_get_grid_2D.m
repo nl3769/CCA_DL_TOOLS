@@ -2,13 +2,13 @@ function [X_image, Z_image, X_RF, Z_RF, x_display, z_display, n_pts_x, n_pts_z]=
 
     
     % --- bmode image dimension
-    z_start = param.remove_top_region;
+    z_start = param.remove_top_region * 2; % avoid problem of luminance at the top of the image
     z_end = image.height * image.CF;
     n_pts_z = image.height - ceil(z_start/image.CF);                                                    
 
     dim_phantom = phantom.x_max-phantom.x_min;
     dim_subprobe = probe.pitch * (probe.Nelements - param.Nactive); 
-    
+%     dim_subprobe = probe.pitch * (probe.Nelements - 1); 
     if dim_subprobe > dim_phantom    
         x_start     = -image.width * image.CF / 2;
         x_end       = image.width * image.CF / 2;
@@ -23,7 +23,7 @@ function [X_image, Z_image, X_RF, Z_RF, x_display, z_display, n_pts_x, n_pts_z]=
     
     % --- compute number of points to avoid sub nyquist issue
     lambda = probe.c/probe.fc;
-    dz_ = lambda/15;
+    dz_ = lambda/2;
     nb_pts_x_recq = ceil((x_end - x_start)/dz_);
     x_image = linspace(x_start, x_end, n_pts_x);
     z_image = linspace(z_start, z_end, nb_pts_x_recq) + param.shift;
