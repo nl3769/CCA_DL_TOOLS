@@ -1,3 +1,4 @@
+restoredefaultpath;
 close all; 
 clearvars;
 

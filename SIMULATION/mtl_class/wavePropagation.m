@@ -22,7 +22,8 @@ classdef wavePropagation < handle
             
             obj.phantom               = fct_load_phantom(path_phantom);
             obj.param                 = fct_load_param(path_param);
-            obj.probe                 = getparam(obj.param.probe_name);
+%             obj.probe                 = fct_get_probe(obj.param.probe_name);
+            obj.probe                 = fct_get_probe(obj.param.Nelements, obj.param.c/obj.param.fc);
             obj.probe.fnumber         = obj.param.fnumber;
             obj.probe.c               = obj.param.c;
             obj.probe.fc              = obj.param.fc;

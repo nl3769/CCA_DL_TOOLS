@@ -41,13 +41,10 @@ class dataHandlerSegInSilico(segDataloader):
         fsplit = [key for key in fsplit if set in key]
         with open(os.path.join(param.PSPLIT, fsplit[0]), 'r') as f:
             path = f.readlines()
-
         # --- remove unused string
         path = [os.path.join(param.PDATA, key.split('\n')[0]) for key in path]
-
         # --- subfolders
         subfolds = ['I1', 'I2', 'M1', 'M2']
-
         # --- get path
         for patient in path:
             seq = os.listdir(patient)

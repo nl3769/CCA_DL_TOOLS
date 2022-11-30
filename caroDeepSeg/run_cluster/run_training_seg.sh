@@ -1,15 +1,15 @@
 #!/bin/bash
 
-parameters=("set_parameters_training_seg_fold0.py"
-            "set_parameters_training_seg_fold1.py"
-            "set_parameters_training_seg_fold2.py"
-            "set_parameters_training_seg_fold3.py"
-            "set_parameters_training_seg_fold4.py"
-            "set_parameters_training_seg_fold5.py"
-            "set_parameters_training_seg_fold6.py"
-            "set_parameters_training_seg_fold7.py"
-            "set_parameters_training_seg_fold8.py"
-            "set_parameters_training_seg_fold9.py"
+parameters=("set_parameters_training_seg_f0.py"
+            "set_parameters_training_seg_f1.py"
+            "set_parameters_training_seg_f2.py"
+            "set_parameters_training_seg_f3.py"
+            "set_parameters_training_seg_f4.py"
+            "set_parameters_training_seg_f5.py"
+            "set_parameters_training_seg_f6.py"
+            "set_parameters_training_seg_f7.py"
+            "set_parameters_training_seg_f8.py"
+            "set_parameters_training_seg_f9.py"
             )
 
 exp=("fold0"
@@ -21,7 +21,7 @@ exp=("fold0"
      "fold6"
      "fold7"
      "fold8"
-     "fold8"
+     "fold9"
      )
 
 
