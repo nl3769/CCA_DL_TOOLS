@@ -236,8 +236,8 @@ classdef imageReconstruction < handle
                 obj.IQ = obj.RF_final ;
             else
 %                 obj.IQ = obj.RF_final;
-                obj.IQ=rf2iq(obj.RF_final, obj.probe);
-%                 obj.IQ=hilbert(obj.RF_final);
+%                 obj.IQ=rf2iq(obj.RF_final, obj.probe);
+                obj.IQ=hilbert(obj.RF_final);
             end
             
             
