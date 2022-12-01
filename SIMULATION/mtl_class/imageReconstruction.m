@@ -414,25 +414,26 @@ classdef imageReconstruction < handle
             addpath(fullfile('..', 'mtl_synthetic_aperture'))
             % --- get image information
             [X_img_bf, Z_img_bf, X_RF, Z_RF, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
-
 %             lambda = obj.probe.c/obj.probe.fc;             
 %             xAxis = -5e-3:lambda/20:5e-3;
 %             zAxis = (5e-3:lambda/20:20e-3) + obj.param.shift;
 %             [X_img,Z_img] = meshgrid(xAxis,zAxis);
 %             Y_img = zeros(size(X_img));
-            
             [n_points_z, n_points_x] = size(X_img_bf);
             obj.low_res_image = zeros([n_points_z n_points_x obj.probe.Nelements]);
             % --- get probe position elements
             probe_width = (obj.probe.Nelements-1) * obj.probe.pitch;
             probe_pos_x = linspace(-probe_width/2, probe_width/2, obj.probe.Nelements);
             probe_pos_z = zeros(1, obj.probe.Nelements);
-            
             % --- apodization window
-%             apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_adaptative', 5, dz, t_offset);
-%             apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_full', 0.2, dz);
-%             apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img_bf, Z_img_bf);
-            apodization = ones( [n_points_z, n_points_x obj.probe.Nelements]);
+            apod = false;
+            if apod
+                apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_adaptative', 5, dz, t_offset);
+                apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_full', 0.2, dz);
+                apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img_bf, Z_img_bf);
+            else
+                apodization = ones( [n_points_z, n_points_x obj.probe.Nelements]);
+            end
             % --- define the CUDA module and kernel
             obj.param.input_bf = "IQ";
             if isfield(obj.param, "input_bf") && obj.param.input_bf == "IQ" 
@@ -454,9 +455,6 @@ classdef imageReconstruction < handle
                 'double*, double*, double*, double*, int, int, int, int, double, double, double*, double*, double*, double*',...
                 cuda_kernel_name);
             end
-%             cuda_kernel = parallel.gpu.CUDAKernel(cuda_module_path_and_file_name,...
-%             'double*, double*, double*, double*, int, int, int, int, double, double, double*, double*, double*, double*',...
-%             cuda_kernel_name);
             % --- define grid and block size
             BLOCK_DIM_X = 8;
             BLOCK_DIM_Y = 16;
@@ -473,6 +471,7 @@ classdef imageReconstruction < handle
             c = obj.param.c;
             fs = double(obj.probe.fs);
             apodization = double(apodization);
+            
             tic
             % --- call kernel            
             if isfield(obj.param, "input_bf") && obj.param.input_bf == "IQ"
@@ -481,27 +480,14 @@ classdef imageReconstruction < handle
                 IlowRes = gather(IlowRes);
                 RlowRes = gather(RlowRes);
                 obj.low_res_image = RlowRes + IlowRes*1i;
-%                 obj.low_res_image = RlowRes + IlowRes*1i;
             else
                 obj.low_res_image = feval(cuda_kernel, obj.low_res_image, RF_signals, probe_pos_x, probe_pos_z, nb_rx, nb_sample, imageW, imageH, c, fs, apodization, pos_x_img, pos_z_img, -time_offset);
                 % --- gather the output back from GPU to CPU
                 obj.low_res_image = gather(obj.low_res_image);
             end            
-            toc
-            
-            
-            
             % --- compounding
-<<<<<<< HEAD
-%             obj.RF_final=abs(obj.RF_final);
-            obj.compounding(compounding)
-=======
->>>>>>> b8e86bf1a46520afb5df7076851ae62af9972375
-%             obj.RF_final=abs(obj.RF_final);
-            obj.low_res_image=abs(obj.low_res_image);
-            obj.compounding(compounding)
-            
-            % --- grid of real image domain
+            obj.compounding(compounding);            
+            % --- real image domain
             x_img = linspace(X_img_bf(1,1), X_img_bf(1,end), n_pts_x);
             z_img = linspace(Z_img_bf(1,1), Z_img_bf(end,1), n_pts_z);
             [obj.x_bmode, obj.z_bmode] = meshgrid(x_img, z_img);
@@ -618,11 +604,8 @@ classdef imageReconstruction < handle
         % -----------------------------------------------------------------
         function postprocessing(obj)
             
-<<<<<<< HEAD
-=======
             % --- perform a low pass filtering
             obj.bmode=imgaussfilt(obj.bmode, 1, 'FilterSize', 3, 'Padding', 'symmetric');
->>>>>>> b8e86bf1a46520afb5df7076851ae62af9972375
             % --- perform a median filtering
             obj.bmode = medfilt2(obj.bmode);
             % --- perform a low pass filtering
