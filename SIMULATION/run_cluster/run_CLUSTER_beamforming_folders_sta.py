@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import glob
@@ -19,18 +20,18 @@ def get_mat_files(files):
         if '.mat' in file:
             list_.append(file)
     return list_
+
 # ----------------------------------------------------------------------------------------------------------------------
 def get_param(ppath):
 
-    file = glob.glob(os.path.join(ppath, '*.mat'))
-    ic(file)
-    PARAM = scipy.io.loadmat(os.path.join(ppath, file[0]))
-
+    file = glob.glob(os.path.join(ppath, '*.json'))
+    with open(os.path.join(ppath, file[0]), 'r') as f:
+        PARAM = json.load(f)
     info_list = ['phantom_name', 'Nelements', 'Nactive', 'mode', 'nb_tx']
     info = {}
 
     for key in info_list[:-1]:
-        info[key] = PARAM['p'][key][0,0][0]
+            info[key] = PARAM[key]
 
     if info['mode'][0] == 1:
         info['nb_tx'] = info['Nelements'] - info['Nactive']
@@ -40,6 +41,7 @@ def get_param(ppath):
     pname = os.path.join(ppath, file[0])
 
     return info['phantom_name'], info['nb_tx'], pname
+
 # ----------------------------------------------------------------------------------------------------------------------
 def get_phantom_name(phpath, sub_str):
 
@@ -56,10 +58,9 @@ if __name__ == '__main__':
     
     nfolder = '/home/laine/PROJECTS_IO/SIMULATION/IMAGENET_STA'
     pname = os.listdir(nfolder)
-    for name in pname:
+    for name in pname[:2]:
         fname = os.path.join(nfolder, name) 
         folders = os.listdir(fname)
-
         for exp in folders:
             ic(exp)
             path_param=os.path.join(fname, exp, 'parameters')
@@ -75,6 +76,6 @@ if __name__ == '__main__':
             ic(pname)
             ic(phname)
             ic(log_name)
-            ic(nb_tx[0])
+            ic(nb_tx)
             ic(pRF)
-            subprocess.run(['sh', path_shell, pname, phname, 'true', log_name, str(nb_tx[0]), pRF, pres])
+            subprocess.run(['sh', path_shell, pname, phname, 'true', log_name, str(nb_tx), pRF, pres])
