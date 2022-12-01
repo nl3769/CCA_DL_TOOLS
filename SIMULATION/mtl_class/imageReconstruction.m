@@ -5,7 +5,7 @@ classdef imageReconstruction < handle
     end
     
     properties (Access = private)
-        RF_aperture;
+        RF_signals;
         probe;
         sub_probe;
         phantom;
@@ -35,20 +35,20 @@ classdef imageReconstruction < handle
             switch nargin
                 case 6
                     % varargin{1} -> path_data
-                    % varargin{2} -> name of the radio frequence data
-                    % varargin{3} -> param_name
-                    % varargin{4} -> probe name
-                    % varargin{5} -> subprobe name
-                    % varargin{6} -> phantom_name
-                    
-                    [obj.RF_aperture, obj.probe, obj.sub_probe, obj.param, obj.phantom]=fct_get_data(varargin{1}, varargin{2}, varargin{3}, varargin{4}, varargin{5}, varargin{6});
-                    obj.tstart = zeros(size(obj.RF_aperture, 1), 65);
+                    % varargin{2} -> param_name
+                    % varargin{3} -> probe name
+                    % varargin{4} -> subprobe name
+                    % varargin{5} -> phantom_name
+                    % varargin{6} -> raw_data
+                    [obj.probe, obj.sub_probe, obj.param, obj.phantom]=fct_get_data(varargin{1}, varargin{2}, varargin{3}, varargin{4}, varargin{5});
+                    obj.RF_signals = varargin{6};
+                    obj.tstart = zeros(size(obj.RF_signals, 1), 65);
                     obj.tcompensation = 0;
                     %obj.param.path_res = '/home/laine/Desktop/STA_TEST_/tech_001/tech_001_id_001_FIELD_3D/';
                     path_image_information=fullfile(obj.param.path_res, 'phantom', 'image_information.mat');
                     image=load(path_image_information);
                     obj.image=image.image;
-                    obj.path_res=fct_create_directory(varargin{1}, varargin{2});
+                    obj.path_res=fct_create_directory(varargin{1}, 'results');
 
                 otherwise
                     disp('Problem with parameters (imageReconstruction constructor)');
@@ -69,15 +69,15 @@ classdef imageReconstruction < handle
             dz=obj.probe.c/(2*obj.probe.fs);
             z_das=0:dz:obj.phantom.z_max;
             x_das=zeros(1, size(z_das, 2));                                     
-            obj.RF_final=zeros(size(z_das, 2), size(obj.RF_aperture, 2));       
+            obj.RF_final=zeros(size(z_das, 2), size(obj.RF_signals, 2));       
             
             obj.sub_probe.fnumber=0;
             obj.probe.fnumber=0;
-            for id=1:1:size(obj.RF_aperture, 2)
+            for id=1:1:size(obj.RF_signals, 2)
                 
                 disp(['DAS process: ' num2str(id)])
 
-                RF_=obj.RF_aperture{id}(:, id:id+obj.param.Nactive-1);
+                RF_=obj.RF_signals{id}(:, id:id+obj.param.Nactive-1);
                 RF_=bsxfun(@times, obj.apod, RF_);
                 obj.RF_final(:,id)=das(RF_, x_das, z_das, obj.tx_delay, obj.sub_probe, 'linear'); % MUST function
             end
@@ -97,8 +97,8 @@ classdef imageReconstruction < handle
                 addpath(fullfile('..', 'mtl_scanline_based'))
             end
             % --- add zero padding to fix potential dimension error
-            obj.RF_aperture = fct_zero_padding_RF_signals(obj.RF_aperture);
-            height=size(obj.RF_aperture{1}, 1);
+            obj.RF_signals = fct_zero_padding_RF_signals(obj.RF_signals);
+            height=size(obj.RF_signals{1}, 1);
             % --- delta z
             dz=obj.param.c/(2*obj.sub_probe.fs);
             
@@ -117,7 +117,7 @@ classdef imageReconstruction < handle
             
             % --- beamforming
             for id_apert = 1:(obj.probe.Nelements-obj.sub_probe.Nelements+1)
-                sig = obj.RF_aperture{id_apert}(:, id_apert:id_apert+obj.sub_probe.Nelements-1);
+                sig = obj.RF_signals{id_apert}(:, id_apert:id_apert+obj.sub_probe.Nelements-1);
                 inc = 1;
                 for id_tx=1:1:obj.sub_probe.Nelements
                     for id_rx=1:1:obj.sub_probe.Nelements
@@ -353,14 +353,14 @@ classdef imageReconstruction < handle
         % ------------------------------------------------------------------
         function init_using_DA(obj)
 
-            [obj.RF_aperture, obj.tstart, obj.tcompensation] = fct_zero_padding_RF_signals_DA(obj.RF_aperture);
-            width = length(obj.RF_aperture);
-            height = size(obj.RF_aperture{1}, 1);
+            [obj.RF_signals, obj.tstart, obj.tcompensation] = fct_zero_padding_RF_signals_DA(obj.RF_signals);
+            width = length(obj.RF_signals);
+            height = size(obj.RF_signals{1}, 1);
 
             obj.RF_final = zeros([height, width]);
             
             for col=1:1:width
-               obj.RF_final(:,col) = obj.RF_aperture{col}; 
+               obj.RF_final(:,col) = obj.RF_signals{col}; 
             end
                         
         end
@@ -404,9 +404,9 @@ classdef imageReconstruction < handle
             % Apply simple DAS/DMAS/DMAS+CF beamforming algorithm.
                           
             % --- analytic signal
-            time_offset = fct_get_time_offset(obj.RF_aperture);
+            time_offset = fct_get_time_offset(obj.RF_signals);
             % --- add zeros padding
-            RF_signals = fct_zero_padding_RF_signals(obj.RF_aperture);
+            RF_signals = fct_zero_padding_RF_signals(obj.RF_signals);
             % --- signal information
             [nb_sample, n_rcv, ~] = size(RF_signals); 
             dz = obj.probe.c/(2*obj.probe.fs);
@@ -480,8 +480,8 @@ classdef imageReconstruction < handle
                 % --- gather the output back from GPU to CPU
                 IlowRes = gather(IlowRes);
                 RlowRes = gather(RlowRes);
-%                 obj.low_res_image = abs(RlowRes + IlowRes*1i);
                 obj.low_res_image = RlowRes + IlowRes*1i;
+%                 obj.low_res_image = RlowRes + IlowRes*1i;
             else
                 obj.low_res_image = feval(cuda_kernel, obj.low_res_image, RF_signals, probe_pos_x, probe_pos_z, nb_rx, nb_sample, imageW, imageH, c, fs, apodization, pos_x_img, pos_z_img, -time_offset);
                 % --- gather the output back from GPU to CPU
@@ -492,6 +492,7 @@ classdef imageReconstruction < handle
             
             
             % --- compounding
+%             obj.RF_final=abs(obj.RF_final);
             obj.compounding(compounding)
 %             obj.RF_final=abs(obj.RF_final);
             % --- grid of real image domain
@@ -506,9 +507,9 @@ classdef imageReconstruction < handle
             % Apply simple DAS/DMAS/DMAS+CF beamforming algorithm.
                           
             % --- analytic signal
-            time_offset = fct_get_time_offset(obj.RF_aperture);
+            time_offset = fct_get_time_offset(obj.RF_signals);
             % --- add zeros padding
-            RF_signals = fct_zero_padding_RF_signals(obj.RF_aperture);
+            RF_signals = fct_zero_padding_RF_signals(obj.RF_signals);
             % --- signal information
             [nb_sample, n_rcv, ~] = size(RF_signals); 
             dz = obj.probe.c/(2*obj.probe.fs);
@@ -611,13 +612,13 @@ classdef imageReconstruction < handle
         % -----------------------------------------------------------------
         function postprocessing(obj)
             
-            % --- perform a low pass filtering
-%             obj.bmode=imgaussfilt(obj.bmode, 1, 'FilterSize', 3, 'Padding', 'symmetric');
             % --- perform a median filtering
             obj.bmode = medfilt2(obj.bmode);
+            % --- perform a low pass filtering
+            obj.bmode=imgaussfilt(obj.bmode, 1, 'FilterSize', 3, 'Padding', 'symmetric');    
             % --- apply treshold
             obj.bmode=imadjust(obj.bmode, [obj.param.imadjust_vals(1) obj.param.imadjust_vals(2)], []);
-                
+            
         end
         
         % -----------------------------------------------------------------

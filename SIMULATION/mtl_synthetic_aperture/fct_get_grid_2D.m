@@ -23,7 +23,7 @@ function [X_image, Z_image, X_RF, Z_RF, x_display, z_display, n_pts_x, n_pts_z]=
     
     % --- compute number of points to avoid sub nyquist issue
     lambda = probe.c/probe.fc;
-    dz_ = lambda/4;
+    dz_ = lambda/1;
     nb_pts_x_recq = ceil((x_end - x_start)/dz_);
     x_image = linspace(x_start, x_end, n_pts_x);
     z_image = linspace(z_start, z_end, nb_pts_x_recq) + param.shift;

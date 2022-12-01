@@ -11,7 +11,7 @@ addpath(fullfile('..', 'mtl_utils'));
 % --- path to results
 % path_res = '/home/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER_V1/tech_001/';
 % path_res = '/home/laine/HDD/PROJECTS_IO/SIMULATION/MEIBURGER_1_FRAME/tech_008';
-path_res = '/home/laine/cluster/PROJECTS_IO/SIMULATION/test_new_probe/pitch_as_lambda/tech_001';
+path_res = '/home/laine/Desktop/CAMO03_image2/';
 % path_res='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/POINT_SCATTERES/sta_field/';
 % path_res='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/STA/POOR_DENSITY/n01496331_electric_ray/';
 
@@ -20,8 +20,9 @@ files = list_files(path_res);
 
 for id=1:1:length(files)
 %     id = 3;
-    pres_ = fullfile(path_res, files{id})
+    pres_ = fullfile(path_res, files{id});
     fct_run_image_reconstruction(pres_);
+
 end
 
 % -------------------------------------------------------------------------
