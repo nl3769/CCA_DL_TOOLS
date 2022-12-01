@@ -235,6 +235,7 @@ classdef imageReconstruction < handle
             if isfield(obj.param, "input_bf") && obj.param.input_bf == "IQ"
                 obj.IQ = obj.RF_final ;
             else
+%                 obj.IQ = obj.RF_final;
                 obj.IQ=rf2iq(obj.RF_final, obj.probe);
 %                 obj.IQ=hilbert(obj.RF_final);
             end
@@ -383,8 +384,8 @@ classdef imageReconstruction < handle
             obj.in_vivo=interp2(x_img, z_img, double(obj.image.image), obj.x_bmode, obj.z_bmode - obj.param.shift, 'makima', 0);
             
             % --- remove edge effect: high intensity on the borders
-            obj.bmode = obj.bmode(15:end-15,15:end-15);
-            obj.in_vivo = obj.in_vivo(15:end-15,15:end-15);
+%             obj.bmode = obj.bmode(50:end-30,30:end-30);
+%             obj.in_vivo = obj.in_vivo(50:end-30,30:end-30);
             
         end
         
@@ -412,7 +413,6 @@ classdef imageReconstruction < handle
             dz = obj.probe.c/(2*obj.probe.fs);
             addpath(fullfile('..', 'mtl_synthetic_aperture'))
             % --- get image information
-            
             [X_img_bf, Z_img_bf, X_RF, Z_RF, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
 
 %             lambda = obj.probe.c/obj.probe.fc;             
@@ -427,10 +427,10 @@ classdef imageReconstruction < handle
             probe_width = (obj.probe.Nelements-1) * obj.probe.pitch;
             probe_pos_x = linspace(-probe_width/2, probe_width/2, obj.probe.Nelements);
             probe_pos_z = zeros(1, obj.probe.Nelements);
-
+            
             % --- apodization window
 %             apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_adaptative', 5, dz, t_offset);
-%             apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_adaptative', 1.5, dz);
+%             apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_full', 0.2, dz);
 %             apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img_bf, Z_img_bf);
             apodization = ones( [n_points_z, n_points_x obj.probe.Nelements]);
             % --- define the CUDA module and kernel
@@ -492,9 +492,15 @@ classdef imageReconstruction < handle
             
             
             % --- compounding
+<<<<<<< HEAD
 %             obj.RF_final=abs(obj.RF_final);
             obj.compounding(compounding)
+=======
+>>>>>>> b8e86bf1a46520afb5df7076851ae62af9972375
 %             obj.RF_final=abs(obj.RF_final);
+            obj.low_res_image=abs(obj.low_res_image);
+            obj.compounding(compounding)
+            
             % --- grid of real image domain
             x_img = linspace(X_img_bf(1,1), X_img_bf(1,end), n_pts_x);
             z_img = linspace(Z_img_bf(1,1), Z_img_bf(end,1), n_pts_z);
@@ -514,7 +520,9 @@ classdef imageReconstruction < handle
             [nb_sample, n_rcv, ~] = size(RF_signals); 
             dz = obj.probe.c/(2*obj.probe.fs);
             addpath(fullfile('..', 'mtl_synthetic_aperture'))
+            
             % --- get image information
+%             obj.param.Nactive_tx = 11;
             [X_img, Z_img, X_RF, Z_RF, obj.x_display, obj.z_display] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
             [n_points_z, n_points_x] = size(X_img);
             obj.low_res_image = zeros([n_points_z n_points_x obj.probe.Nelements]);
@@ -524,9 +532,9 @@ classdef imageReconstruction < handle
             probe_pos_z = zeros(1, obj.probe.Nelements);
             % --- number of active elements
             Nactive_tx = obj.param.Nactive;
-%             Nactive_tx = 101;
+            
             % --- apodization window
-            apodization = fct_get_apodization([nb_sample, n_rcv], Nactive_tx, obj.probe.pitch, 'hanning_adaptative', 0.2, dz);
+            apodization = fct_get_apodization([nb_sample, n_rcv], Nactive_tx, obj.probe.pitch, 'hanning_adaptative', 5, dz);
             apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img, Z_img);
 %             apodization = ones(size(apodization));
             disp('Beamformation in progress...');
@@ -557,8 +565,6 @@ classdef imageReconstruction < handle
 %             zAxis = 40e-3:lambda/10:60e-3;
 %             [X_img,Z_img] = meshgrid(xAxis,zAxis);
             Y_img = zeros(size(X_img));
-% 
-% 
             bf_image=zeros(size(X_img)); 
 %             % Beamfrom conventional sta
 %             % first lets get the pulse compensation
@@ -612,6 +618,11 @@ classdef imageReconstruction < handle
         % -----------------------------------------------------------------
         function postprocessing(obj)
             
+<<<<<<< HEAD
+=======
+            % --- perform a low pass filtering
+            obj.bmode=imgaussfilt(obj.bmode, 1, 'FilterSize', 3, 'Padding', 'symmetric');
+>>>>>>> b8e86bf1a46520afb5df7076851ae62af9972375
             % --- perform a median filtering
             obj.bmode = medfilt2(obj.bmode);
             % --- perform a low pass filtering

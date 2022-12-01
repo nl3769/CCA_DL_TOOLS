@@ -42,8 +42,8 @@ def fetch_dataloader_seg(p):
         }
 
 
-    loader_trn     = DataLoader(**args_trn)
-    loader_val   = DataLoader(**args_val)
+    loader_trn = DataLoader(**args_trn)
+    loader_val = DataLoader(**args_val)
     loader_tst = DataLoader(**args_tst)
 
     return loader_trn, loader_val, loader_tst

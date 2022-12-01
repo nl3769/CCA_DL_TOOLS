@@ -19,10 +19,10 @@ path_res = '/home/laine/Desktop/CAMO03_image2/';
 files = list_files(path_res);
 
 for id=1:1:length(files)
-%     id = 3;
     pres_ = fullfile(path_res, files{id});
     fct_run_image_reconstruction(pres_);
-
+    pres_ = fullfile(path_res, files{id})
+    fct_run_image_reconstruction(pres_);
 end
 
 % -------------------------------------------------------------------------

@@ -81,8 +81,6 @@ def split_data(pdata, pres, nb_split):
     permutation_id = get_permutation_id(nb_split)
     subset = ['training', 'validation', 'testing']
 
-
-
     for id_fol in range(nb_split):
         pres_ = os.path.join(pres, 'fold_' + str(id_fol))
         pfh.create_dir(pres_)
