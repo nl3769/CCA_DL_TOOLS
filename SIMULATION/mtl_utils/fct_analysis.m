@@ -23,7 +23,7 @@ function fct_analysis(psave, pres_org, pres_sim, x_disp, z_disp)
     cluster_profil(x_prof_org, y_prof_org, x_prof_sim, y_prof_sim, psave, x_axis, z_axis);
 
     % --- plot histogram
-    z_s = max(z_disp) * 4/5;
+    z_s = max(z_disp) * 0.6;
     dz =  abs(z_disp(1) - z_disp(2)) / 8; 
     
     x_s = 0;
