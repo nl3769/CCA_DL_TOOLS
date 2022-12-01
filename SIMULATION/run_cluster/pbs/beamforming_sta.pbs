@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#PBS -l walltime=00:05:00
+#PBS -l nodes=1:ppn=1:turing:gpus=1 -qgpu
+#PBS -l mem=10GB
+#PBS -e /home/laine/PROJECTS_IO/SIMULATION/LOG/BEAMFORMING/${log_name}_BF.err
+#PBS -o /home/laine/PROJECTS_IO/SIMULATION/LOG/BEAMFORMING/${log_name}_BF.out
+#PBS -m ae
+#PBS -M laine@creatis.insa-lyon.fr
+
+# --- RUN THE SCRIPT
+cd /misc/raid/home/laine/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/mtl_cores
+instruction="matlab -r fct_run_image_reconstruction('${pres}')"
+$instruction
