@@ -72,10 +72,4 @@ if __name__ == '__main__':
             log_name = ph_sub_str
             pres = os.path.join(fname, exp)
             # --- display
-            ic(path_shell)
-            ic(pname)
-            ic(phname)
-            ic(log_name)
-            ic(nb_tx)
-            ic(pRF)
             subprocess.run(['sh', path_shell, pname, phname, 'true', log_name, str(nb_tx), pRF, pres])
