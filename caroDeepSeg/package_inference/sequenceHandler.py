@@ -26,29 +26,24 @@ class sequenceClassIMC():
         self.SHIFT_X = p.SHIFT_X
         self.SHIFT_Z = p.SHIFT_Z
 
-        self.sequence, self.firstFrame, self.scale, self.CF = load_data(path=path_seq, param=p)    # load data
+        self.sequence, self.firstFrame, self.scale, self.CF, self.CF_org = load_data(path=path_seq, param=p)    # load data
         self.annotationClass = annotationClassIMC(
             dimension=self.sequence.shape,
             first_frame=self.firstFrame,
             scale=self.scale,
             patient_name=patient_name,
-            p=p
-        )
+            CF_org=self.CF_org,
+            p=p)
         self.predictionClass = predictionClassIMC(
             dimensions=self.sequence.shape,
             borders=self.annotationClass.borders_ROI,
             p = p,
-            img=self.sequence[0, ]
-        )
+            img=self.sequence[0, ])
 
-        #####################################################################################
-        #####################################################################################
-        DEBUG = False
+        DEBUG = True
         if DEBUG:
             for id in range(self.annotationClass.borders['leftBorder'], self.annotationClass.borders['rightBorder']):
                 self.sequence[0, round(self.annotationClass.map_annotation[0, id, 0]), id] = 255
-        #####################################################################################
-        #####################################################################################
 
         self.patch = np.empty((self.PATCH_WIDTH, self.PIXEL_HEIGHT), dtype=np.float32)
         self.step = 0
@@ -82,8 +77,7 @@ class sequenceClassIMC():
                     xLeft=x,
                     width=self.PATCH_WIDTH,
                     height=self.PIXEL_HEIGHT,
-                    map=self.annotationClass.map_annotation[frame_ID, ]
-                )
+                    map=self.annotationClass.map_annotation[frame_ID, ])
                 y_pos = y_mean
 
                 # --- by default, we take three patches for a given position x. If this is not enough, the number of patches is dynamically adjusted.
@@ -107,7 +101,8 @@ class sequenceClassIMC():
                             "Overlay": overlay_,
                             "(x, y)": (x, y_pos)})
                         y_pos_list.append(self.predictionClass.patches[-1]["(x, y)"][-1])
-                    if y_mean < self.sequence.shape[1] - 1 :
+
+                    if y_mean < self.sequence.shape[1] - 1:
                         y_pos = y_mean - self.SHIFT_Z
                         self.predictionClass.patches.append({
                              "patch": self.extract_patch(x, y_pos, image=self.sequence[frame_ID, ]),
@@ -120,25 +115,24 @@ class sequenceClassIMC():
 
                 # --- if the condition is not verified, the artery wall is not fully considered and a vertical scan is applied
                 else:
-                    y_inc = median_min - 32
+                    y_inc = median_min - 128
                     while(vertical_scanning):
 
-                        if y_inc + 32 > median_max - 32:
-                            vertical_scanning = False
+                        patch_ = self.extract_patch(x, round(y_inc), image=self.sequence[frame_ID, ])
+                        if patch_.shape == (self.PATCH_WIDTH, self.PIXEL_HEIGHT):
+                            self.predictionClass.patches.append({
+                                "patch": patch_,
+                                 "frameID": frame_ID,
+                                 "Step": self.step,
+                                 "Overlay": overlay_,
+                                 "(x, y)": (x, round(y_inc))})
 
-                        self.predictionClass.patches.append({
-                            "patch": self.extract_patch(x, round(y_inc), image=self.sequence[frame_ID, ]),
-                             "frameID": frame_ID,
-                             "Step": self.step,
-                             "Overlay": overlay_,
-                             "(x, y)": (x, round(y_inc))})
-
-                        y_inc += 32
-                        y_pos_list.append(self.predictionClass.patches[-1]["(x, y)"][-1])
-
+                            y_inc += 32
+                            y_pos_list.append(self.predictionClass.patches[-1]["(x, y)"][-1])
+                        else:
+                            vertical_scanning = Falseù
                 self.step += 1
                 vertical_scanning = True
-
                 if ((x + self.PATCH_WIDTH) == self.annotationClass.borders_ROI['rightBorder']):  # if we reach the last position (on the right)
                     condition = False
 
@@ -157,16 +151,14 @@ class sequenceClassIMC():
             max_y = max(y_pos_list)
             self.predictionClass.prediction_masks(
                 id=frame_ID,
-                pos={"min": min_y, "max": max_y+self.PIXEL_HEIGHT}
-            )
+                pos={"min": min_y, "max": max_y+self.PIXEL_HEIGHT})
 
             mask_ = self.predictionClass.map_prediction[str(frame_ID)]["prediction"]
             t = time.time()
             mask_tmp = self.annotationClass.update_annotation(
                 previous_mask=mask_,
                 frame_ID=frame_ID + 1,
-                offset=self.predictionClass.map_prediction[str(frame_ID)]["offset"]
-            ).copy()
+                offset=self.predictionClass.map_prediction[str(frame_ID)]["offset"]).copy()
             mask_tmp_height = mask_tmp.shape[0]
             # --- for display only
             self.final_mask_after_post_processing[self.predictionClass.map_prediction[str(frame_ID)]["offset"]:self.predictionClass.map_prediction[str(frame_ID)]["offset"]+mask_tmp_height,:] = mask_tmp
@@ -186,7 +178,9 @@ class sequenceClassIMC():
     def extract_patch(self, x: int, y: int, image: np.ndarray):
         """ Extracts a patch at a given (x, y) coordinate. """
 
-        return image[y:(y + self.PIXEL_HEIGHT), x:(x + self.PATCH_WIDTH)]
+        img = image[y:(y + self.PIXEL_HEIGHT), x:(x + self.PATCH_WIDTH)]
+
+        return img
 
     # ------------------------------------------------------------------------------------------------------------------
     def compute_IMT(self, p, patient: str):

@@ -8,10 +8,8 @@ import argparse
 import importlib
 import time
 import torch
-
 import numpy                            as np
 import matplotlib.pyplot                as plt
-
 from package_inference.sequenceHandler  import sequenceClassIMC
 from tqdm                               import tqdm
 
@@ -80,13 +78,15 @@ def main():
     # --- to write number of patches by patient
     nb_patches = open(os.path.join(p.PATH_NB_PATCHES, "nb_patches.txt"), "w")
     # --- launch process
+    """
     for id_patient in tqdm(range(len(patient_name_list))):
+    """
+    for id_patient in tqdm(range(250, len(patient_name_list))):
         # --- create the object sequenceClass
         patientName = patient_name_list[id_patient]
         seq = sequenceClassIMC(
             path_seq=os.path.join(p.PDATA, patientName),
-            p=p
-        )
+            p=p)
         # --- launch the segmentation
         t = time.time()
         inference_time = seq.sliding_window_vertical_scan()
@@ -105,4 +105,5 @@ def main():
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
     main()
+
 # ----------------------------------------------------------------------------------------------------------------------

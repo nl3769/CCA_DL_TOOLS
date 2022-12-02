@@ -73,7 +73,7 @@ class annotationClassIMC():
         - initialize the annotation maps
         - compute the intima-media thickness """
 
-    def __init__(self, dimension: tuple, first_frame: np.ndarray, scale: dict, patient_name: str, p=None):
+    def __init__(self, dimension: tuple, first_frame: np.ndarray, scale: dict, patient_name: str, CF_org: float, p=None):
 
         self.map_annotation = np.zeros((dimension[0] + 1, dimension[2], 2))
         self.map_annotation_org = np.zeros((dimension[0],) + (first_frame.shape[1],) + (2,))
@@ -81,17 +81,13 @@ class annotationClassIMC():
         self.overlay = p.SHIFT_X
         self.seq_dimension = dimension
         self.borders_ROI = {}
-        pos, borders_seg, borders_ROI = self.get_far_wall(img=first_frame, patient_name=patient_name, p=p)
+        pos, borders_seg, borders_ROI = self.get_far_wall(img=first_frame, patient_name=patient_name, CF_org=CF_org, p=p)
         self.org_grid = np.linspace(0, pos.shape[0]-1, pos.shape[0])
         self.query_grid = np.linspace(0, pos.shape[0]-1, self.seq_dimension[2])
         self.borders_org = {"leftBorder": borders_ROI[0], "rightBorder": borders_ROI[1]}
         self.initialization(localization=pos, scale=scale)
         self.borders = {"leftBorder": round(borders_seg[0] * scale['scale_x']), "rightBorder": round(borders_seg[1] * scale['scale_x'])}
         self.borders_ROI = {"leftBorder": round(borders_ROI[0] * scale['scale_x']), "rightBorder": round(borders_ROI[1] * scale['scale_x'])}
-        # # --- display borders
-        # keys = list(self.borders.keys())
-        # print(keys[0] + " = ", self.borders[keys[0]])
-        # print(keys[1] + " = ", self.borders[keys[1]])
 
     # ------------------------------------------------------------------------------------------------------------------
     def initialization(self, localization: np.ndarray, scale: float):
@@ -131,7 +127,7 @@ class annotationClassIMC():
         return previous_mask
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_far_wall(self, img: np.ndarray, patient_name: str, p):
+    def get_far_wall(self, img: np.ndarray, patient_name: str, CF_org: float, p):
 
         if p.INITIALIZATION_FROM_REFERENCES:
 
@@ -151,6 +147,18 @@ class annotationClassIMC():
 
             for i in range(borders_seg[0], borders_seg[1]):
                 fw_approx[i] = (MA[i] + LI[i])/2
+
+            # --- check if roi is width enought to segment the artery, else we extend the median axis using the same value
+            recquired_width = p.ROI_WIDTH
+            roi_width = (borders_seg[1] - borders_seg[0]) * CF_org
+            if roi_width <= recquired_width:
+                min_pxl_recq = floor(recquired_width/CF_org)
+                mean_pos = int((borders_seg[1] + borders_seg[0]))/2
+                # --- clearly more than the minimum recquired, but it allows overllaping
+                for i in range((borders_seg[0] - int(min_pxl_rec/2)) - 10, borders_seg[0]):
+                    fw_approx[i] = fw_approx[borders_seg[0]]
+                for i in range(borders_seg[1], (borders_seg[1] + int(min_pxl_rec/2)) ):
+                    fw_approx[i] = fw_approx[borders_seg[1]]
 
         else:
 

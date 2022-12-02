@@ -37,7 +37,7 @@ def load_TIFF_image(path: str, param):
         seq = seq * 255
 
     path_spacing = os.path.join(param.PCF, path.split('/')[-1].split('.')[0] + "_CF.txt")
-    CF = read_CF_directory(path_spacing)
+    CF_org = read_CF_directory(path_spacing)
 
     I_in = seq.copy()
 
@@ -46,10 +46,10 @@ def load_TIFF_image(path: str, param):
         width_roi_meter = param.ROI_WIDTH,
         width_roi_pixel = param.PIXEL_WIDTH,
         height_roi_pixel = param.PIXEL_HEIGHT,
-        CF = CF
+        CF = CF_org
     )
 
-    return I_out, I_in, scale, CF
+    return I_out, I_in, scale, CF, CF_org
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -58,6 +58,7 @@ def read_CF_directory(path: str):
 
     f = open(path, "r")
     val = f.readline().split(' \n')
+    
     # --- convert in meter
     return float(val[0]) * 1e-3
 
