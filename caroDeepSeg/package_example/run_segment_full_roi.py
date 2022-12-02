@@ -78,10 +78,7 @@ def main():
     # --- to write number of patches by patient
     nb_patches = open(os.path.join(p.PATH_NB_PATCHES, "nb_patches.txt"), "w")
     # --- launch process
-    """
     for id_patient in tqdm(range(len(patient_name_list))):
-    """
-    for id_patient in tqdm(range(250, len(patient_name_list))):
         # --- create the object sequenceClass
         patientName = patient_name_list[id_patient]
         seq = sequenceClassIMC(

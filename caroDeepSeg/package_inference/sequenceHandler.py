@@ -130,7 +130,7 @@ class sequenceClassIMC():
                             y_inc += 32
                             y_pos_list.append(self.predictionClass.patches[-1]["(x, y)"][-1])
                         else:
-                            vertical_scanning = Falseù
+                            vertical_scanning = False
                 self.step += 1
                 vertical_scanning = True
                 if ((x + self.PATCH_WIDTH) == self.annotationClass.borders_ROI['rightBorder']):  # if we reach the last position (on the right)
