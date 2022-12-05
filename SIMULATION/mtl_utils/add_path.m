@@ -1,4 +1,3 @@
-
 addpath(fullfile('..', 'mtl_class'));
 addpath(fullfile('..', 'mtl_utils'));
 addpath(fullfile('..', 'mtl_cores'));

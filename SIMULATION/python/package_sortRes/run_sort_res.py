@@ -15,7 +15,7 @@ class simulationHandler():
         self.success        = {}
         self.tx_events      = 192
         self.tx_store       = "raw_data/raw_"
-        self.bmode_store    = "bmode_result/RF"
+        self.bmode_store    = "bmode_result/results"
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_pres(self):

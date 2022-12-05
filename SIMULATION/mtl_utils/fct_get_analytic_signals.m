@@ -2,7 +2,7 @@ function [anal_sig] = fct_get_analytic_signals(RF_aperture, probe, t_offset)
 	% Return analytic signal of the RF signal.
     
     anal_sig = zeros(size(RF_aperture));
-    name = 'IQ';
+    name = 'hilbert';
     for emit=1:1:size(RF_aperture, 3)
 %         emit=90;
         

@@ -235,12 +235,8 @@ classdef imageReconstruction < handle
             if isfield(obj.param, "input_bf") && obj.param.input_bf == "IQ"
                 obj.IQ = obj.RF_final ;
             else
-%                 obj.IQ = obj.RF_final;
-%                 obj.IQ=rf2iq(obj.RF_final, obj.probe);
                 obj.IQ=hilbert(obj.RF_final);
-            end
-            
-            
+            end            
             % --- apply TGC
             if obj.param.TGC==true
                 obj.IQ=tgc(obj.IQ);
@@ -248,6 +244,8 @@ classdef imageReconstruction < handle
             % --- compute envelope
             obj.bmode = abs(obj.IQ); % real envelope
             % --- apply gamma correction
+            obj.bmode = obj.bmode - min(obj.bmode(:)); %/max(obj.bmode(:));
+            obj.bmode = obj.bmode / max(obj.bmode(:)) * 255;
             obj.bmode = obj.bmode.^(obj.param.gamma);
             % --- apply image adjustement
             obj.bmode = obj.bmode/max(obj.bmode(:));
@@ -475,10 +473,14 @@ classdef imageReconstruction < handle
             tic
             % --- call kernel            
             if isfield(obj.param, "input_bf") && obj.param.input_bf == "IQ"
+                
+%                 Iiq = permute(Iiq,[1 3 2]) ;
+%                 Riq = permute(Riq,[1 3 2]) ;
                 [IlowRes, RlowRes] = feval(cuda_kernel, Iiq, Riq, probe_pos_x, probe_pos_z, nb_rx, nb_sample, imageW, imageH, c, fs, apodization, pos_x_img, pos_z_img, -time_offset, IlowRes, RlowRes);
                 % --- gather the output back from GPU to CPU
                 IlowRes = gather(IlowRes);
                 RlowRes = gather(RlowRes);
+%                 obj.low_res_image = RlowRes + IlowRes*1i;
                 obj.low_res_image = RlowRes + IlowRes*1i;
             else
                 obj.low_res_image = feval(cuda_kernel, obj.low_res_image, RF_signals, probe_pos_x, probe_pos_z, nb_rx, nb_sample, imageW, imageH, c, fs, apodization, pos_x_img, pos_z_img, -time_offset);
