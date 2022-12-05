@@ -28,7 +28,7 @@ def get_gt_from_txt(path):
     dim_val = (2, len(contour_[0])-1)
     val = np.zeros(dim_val)
     for i in range(len(contour[0])-1):
-        val[0, i] = float(contour[0][i])
+        val[0, i] = float(contour[0][i]) - 1
         val[1, i] = float(contour[1][i])
 
     return val

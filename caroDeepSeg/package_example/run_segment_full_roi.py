@@ -31,7 +31,7 @@ def save_seg(path, seq, patient):
     LI_ = open(os.path.join(path, patient.split('.')[0] + "-LI.txt"), "w+")
     MA_ = open(os.path.join(path, patient.split('.')[0] + "-MA.txt"), "w+")
     for k in range(seq.annotationClass.borders_org['leftBorder'], seq.annotationClass.borders_org['rightBorder'], 1):
-        LI_.write(str(k) + " " + str(seq.annotationClass.map_annotation_org[0, k, 0]) + "\n")
+        LI_.write(str(k+1) + " " + str(seq.annotationClass.map_annotation_org[0, k, 0]) + "\n")
         MA_.write(str(k) + " " + str(seq.annotationClass.map_annotation_org[0, k, 1]) + "\n")
 
     LI_.close()
@@ -79,6 +79,7 @@ def main():
     nb_patches = open(os.path.join(p.PATH_NB_PATCHES, "nb_patches.txt"), "w")
     # --- launch process
     for id_patient in tqdm(range(len(patient_name_list))):
+    # for id_patient in tqdm(range(210, 211)):
         # --- create the object sequenceClass
         patientName = patient_name_list[id_patient]
         seq = sequenceClassIMC(
