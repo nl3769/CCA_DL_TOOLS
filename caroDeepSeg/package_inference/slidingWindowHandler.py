@@ -67,46 +67,52 @@ class slidingWindowHandler():
                 median_min = np.min(median[x:x+self.patch_width])
                 median_max = np.max(median[x:x+self.patch_width])
 
-                y_mean, _, _ = self.annotationClass.yPosition(xLeft=x,
-                                                              width=self.patch_width,
-                                                              height=self.patch_height,
-                                                              map=self.annotationClass.map_annotation[frame_ID,])
+                y_mean, _, _ = self.annotationClass.yPosition(
+                    xLeft=x,
+                    width=self.patch_width,
+                    height=self.patch_height,
+                    map=self.annotationClass.map_annotation[frame_ID, ])
                 y_pos = y_mean
 
                 # --- by default, we take three patches for a given position x. If this is not enough, the number of patches is dynamically adjusted.
-                if 768 > 2*100 + median_max-median_min:
-                    self.predictionClass.patches.append({"patch": self.extract_patch(x, y_pos, image = self.sequence[frame_ID,]),
-                                                         "frameID": frame_ID,
-                                                         "Step": self.step,
-                                                         "Overlay": overlay_,
-                                                         "(x, y)": (x, y_pos)})
+                if 2*self.patch_height > median_max-median_min:
+                    patch = self.extract_patch(x, y_pos, image = self.sequence[frame_ID,])
+                    self.predictionClass.patches.append(
+                        {"patch": patch,
+                        "frameID": frame_ID,
+                        "Step": self.step,
+                        "Overlay": overlay_,
+                        "(x, y)": (x, y_pos)})
 
                     y_pos_list.append(self.predictionClass.patches[-1]["(x, y)"][-1])
                     if y_mean - 128 > 0:
                         y_pos = y_mean + 128
-                        self.predictionClass.patches.append({"patch": self.extract_patch(x, y_pos, image = self.sequence[frame_ID,]),
-                                                             "frameID": frame_ID,
-                                                             "Step": self.step,
-                                                             "Overlay": overlay_,
-                                                             "(x, y)": (x, y_pos)})
+                        patch = self.extract_patch(x, y_pos, image = self.sequence[frame_ID,])
+                        self.predictionClass.patches.append(
+                            {"patch": patch,
+                            "frameID": frame_ID,
+                            "Step": self.step,
+                            "Overlay": overlay_,
+                            "(x, y)": (x, y_pos)})
                         y_pos_list.append(self.predictionClass.patches[-1]["(x, y)"][-1])
                     if y_mean < self.sequence.shape[1] - 1 :
                         y_pos = y_mean - 128
+                        patch = self.extract_patch(x, y_pos, image=self.sequence[frame_ID,])
                         self.predictionClass.patches.append(
-                            {"patch": self.extract_patch(x, y_pos, image=self.sequence[frame_ID,]),
+                            {"patch": patch,
                              "frameID": frame_ID,
                              "Step": self.step,
                              "Overlay": overlay_,
                              "(x, y)": (x, y_pos)})
                         y_pos_list.append(self.predictionClass.patches[-1]["(x, y)"][-1])
-                    # print(y_pos_list)
 
                 # --- if the condition is not verified, the artery wall is not fully considered and a vertical scan is applied
                 else:
+                    val_incr = 64
                     y_inc = median_min - 256
                     while(vertical_scanning):
 
-                        if y_inc + 128 > median_max - 128:
+                        if y_inc + val_incr > median_max - val_incr:
                             vertical_scanning=False
 
                         self.predictionClass.patches.append(
@@ -116,7 +122,7 @@ class slidingWindowHandler():
                              "Overlay": overlay_,
                              "(x, y)": (x, round(y_inc))})
 
-                        y_inc+=128
+                        y_inc+=val_incr
                         y_pos_list.append(self.predictionClass.patches[-1]["(x, y)"][-1])
 
                 self.step += 1
