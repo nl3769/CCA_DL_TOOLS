@@ -11,6 +11,7 @@ from package_inference.gui                              import cv2Annotation
 from package_utils.get_biggest_connected_region         import get_biggest_connected_region
 from numba                                              import jit
 
+# ----------------------------------------------------------------------------------------------------------------------
 def get_gt_from_txt(path):
 
     contour_ = []
@@ -141,8 +142,8 @@ class annotationClassIMC():
             for i in range(MA_contour_.shape[1]):
                 MA[int(MA_contour_[0, i])-1] = MA_contour_[1, i]
 
-            borders_seg = [int(max(MA_contour_[0, 0], LI_contour_[0, 0])), int(min(MA_contour_[0, -1]-1, LI_contour_[0, -1]))]
-            borders_ROI = borders_seg
+            borders_ROI = [int(max(MA_contour_[0, 0], LI_contour_[0, 0])), int(min(MA_contour_[0, -1]-1, LI_contour_[0, -1]))]
+            borders_seg = borders_ROI
             fw_approx = np.zeros(img.shape[1])
 
             for i in range(borders_seg[0], borders_seg[1]):
@@ -152,13 +153,16 @@ class annotationClassIMC():
             recquired_width = p.ROI_WIDTH
             roi_width = (borders_seg[1] - borders_seg[0]) * CF_org
             if roi_width <= recquired_width:
-                min_pxl_recq = floor(recquired_width/CF_org)
+                min_pxl_recq = np.floor(recquired_width/CF_org)
                 mean_pos = int((borders_seg[1] + borders_seg[0]))/2
-                # --- clearly more than the minimum recquired, but it allows overllaping
-                for i in range((borders_seg[0] - int(min_pxl_rec/2)) - 10, borders_seg[0]):
+                # --- clearly more than the minimum recquired, but it allows overlaping
+                for i in range((borders_seg[0] - int(min_pxl_recq/2)) - 10, borders_seg[0]):
                     fw_approx[i] = fw_approx[borders_seg[0]]
-                for i in range(borders_seg[1], (borders_seg[1] + int(min_pxl_rec/2)) ):
-                    fw_approx[i] = fw_approx[borders_seg[1]]
+                for i in range(borders_seg[1], (borders_seg[1] + int(min_pxl_recq/2)) + 10):
+                    fw_approx[i] = fw_approx[borders_seg[1]-1]
+
+                borders_seg[0] = borders_seg[0] - int(min_pxl_recq/2) - 10
+                borders_seg[1] = borders_seg[1] + int(min_pxl_recq / 2) + 10
 
         else:
 

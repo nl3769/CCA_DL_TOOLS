@@ -13,8 +13,6 @@ from package_inference.annotationHandler                import annotationClassIM
 from package_utils.get_biggest_connected_region         import get_biggest_connected_region
 from package_utils.load_data                            import load_data
 
-VERTICAL_SHIFT = 64
-
 class sequenceClassIMC():
     """ sequenceClass calls all the other classes to perform the calculations. This class contains all the results and runs the sliding window (sliding_window_vertical_scan). """
     def __init__(self, path_seq: str, p):
@@ -22,7 +20,7 @@ class sequenceClassIMC():
         patient_name = path_seq.split('/')[-1]
 
         self.PATCH_WIDTH = p.PIXEL_WIDTH
-        self.PIXEL_HEIGHT = p.PIXEL_HEIGHT
+        self.PATCH_HEIGHT = p.PIXEL_HEIGHT
         self.SHIFT_X = p.SHIFT_X
         self.SHIFT_Z = p.SHIFT_Z
 
@@ -40,12 +38,14 @@ class sequenceClassIMC():
             p = p,
             img=self.sequence[0, ])
 
-        DEBUG = True
+        DEBUG = False
         if DEBUG:
             for id in range(self.annotationClass.borders['leftBorder'], self.annotationClass.borders['rightBorder']):
                 self.sequence[0, round(self.annotationClass.map_annotation[0, id, 0]), id] = 255
+            plt.imshow(self.sequence[0, ])
+            plt.show()
 
-        self.patch = np.empty((self.PATCH_WIDTH, self.PIXEL_HEIGHT), dtype=np.float32)
+        self.patch = np.empty((self.PATCH_WIDTH, self.PATCH_HEIGHT), dtype=np.float32)
         self.step = 0
         self.current_frame = 0
         self.final_mask_after_post_processing = np.zeros(self.sequence.shape[1:])
@@ -76,13 +76,12 @@ class sequenceClassIMC():
                 y_mean, _, _ = self.annotationClass.yPosition(
                     xLeft=x,
                     width=self.PATCH_WIDTH,
-                    height=self.PIXEL_HEIGHT,
+                    height=self.PATCH_HEIGHT,
                     map=self.annotationClass.map_annotation[frame_ID, ])
                 y_pos = y_mean
 
                 # --- by default, we take three patches for a given position x. If this is not enough, the number of patches is dynamically adjusted.
-                if self.PATCH_WIDTH * self.CF['CF_y'] > (median_max - median_min) * self.CF['CF_y']:
-                # if 768 > 2 * 100 + median_max-median_min:
+                if self.PATCH_HEIGHT * 2 > (median_max - median_min):
                     self.predictionClass.patches.append({
                         "patch": self.extract_patch(x, y_pos, image = self.sequence[frame_ID, ]),
                         "frameID": frame_ID,
@@ -119,7 +118,7 @@ class sequenceClassIMC():
                     while(vertical_scanning):
 
                         patch_ = self.extract_patch(x, round(y_inc), image=self.sequence[frame_ID, ])
-                        if patch_.shape == (self.PATCH_WIDTH, self.PIXEL_HEIGHT):
+                        if patch_.shape == (self.PATCH_WIDTH, self.PATCH_HEIGHT):
                             self.predictionClass.patches.append({
                                 "patch": patch_,
                                  "frameID": frame_ID,
@@ -151,7 +150,7 @@ class sequenceClassIMC():
             max_y = max(y_pos_list)
             self.predictionClass.prediction_masks(
                 id=frame_ID,
-                pos={"min": min_y, "max": max_y+self.PIXEL_HEIGHT})
+                pos={"min": min_y, "max": max_y+self.PATCH_HEIGHT})
 
             mask_ = self.predictionClass.map_prediction[str(frame_ID)]["prediction"]
             t = time.time()
@@ -178,7 +177,7 @@ class sequenceClassIMC():
     def extract_patch(self, x: int, y: int, image: np.ndarray):
         """ Extracts a patch at a given (x, y) coordinate. """
 
-        img = image[y:(y + self.PIXEL_HEIGHT), x:(x + self.PATCH_WIDTH)]
+        img = image[y:(y + self.PATCH_HEIGHT), x:(x + self.PATCH_WIDTH)]
 
         return img
 
