@@ -11,6 +11,9 @@ from package_inference.gui                              import cv2Annotation
 from package_utils.get_biggest_connected_region         import get_biggest_connected_region
 from numba                                              import jit
 
+# --- window of +/- neighbours pixels where the algorithm searches the borders
+NEIGHBOURS = 15
+
 # ----------------------------------------------------------------------------------------------------------------------
 def get_gt_from_txt(path):
 
@@ -102,8 +105,6 @@ class annotationClassIMC():
     def update_annotation(self, previous_mask: np.ndarray, frame_ID: int, offset: int):
         """ Computes the position of the LI and MA interfaces according to the predicted mask. """
 
-        # --- window of +/- neighbours pixels where the algorithm searches the borders
-        neighours = 30
         # --- the algorithm starts from the left to the right
         x_start = self.borders['leftBorder']
         x_end = self.borders['rightBorder']
@@ -116,14 +117,14 @@ class annotationClassIMC():
         # --- we count the number of white pixels to localize the seed
         white_pixels = np.array(np.where(previous_mask == 1))
         seed = (round(np.mean(white_pixels[0,])), round(np.mean(white_pixels[1,])))
-        j, limit=0,dim[0]-1
-        self.LI_center_to_left_propagation(j, seed, x_start, dim, previous_mask, offset, self.map_annotation[frame_ID,], neighours, limit)
-        j, limit=0,dim[0]-1
-        self.LI_center_to_right_propagation(j, seed, x_end, dim, previous_mask, offset, self.map_annotation[frame_ID,], neighours, limit)
+        j, limit=0, dim[0]-1
+        self.LI_center_to_left_propagation(j, seed, x_start, dim, previous_mask, offset, self.map_annotation[frame_ID,], NEIGHBOURS, limit)
+        j, limit=0, dim[0]-1
+        self.LI_center_to_right_propagation(j, seed, x_end, dim, previous_mask, offset, self.map_annotation[frame_ID,], NEIGHBOURS, limit)
         j, limit = 0, dim[0]-1
-        self.MA_center_to_left_propagation(j, seed, x_start, dim, previous_mask, offset, self.map_annotation[frame_ID,], neighours, limit)
+        self.MA_center_to_left_propagation(j, seed, x_start, dim, previous_mask, offset, self.map_annotation[frame_ID,], NEIGHBOURS, limit)
         j, limit = 0, dim[0]-1
-        self.MA_center_to_right_propagation(j, seed, x_end, dim, previous_mask, offset, self.map_annotation[frame_ID,], neighours, limit)
+        self.MA_center_to_right_propagation(j, seed, x_end, dim, previous_mask, offset, self.map_annotation[frame_ID,], NEIGHBOURS, limit)
 
         return previous_mask
 
@@ -233,7 +234,7 @@ class annotationClassIMC():
     # --- use numba to be faster
     @staticmethod
     @jit(nopython=True)
-    def LI_center_to_right_propagation(j: int, seed: tuple, x_end: int, dim: tuple, previous_mask: np.ndarray, offset: int, map_annotation: np.ndarray, neighours: int, limit: int):
+    def LI_center_to_right_propagation(j: int, seed: tuple, x_end: int, dim: tuple, previous_mask: np.ndarray, offset: int, map_annotation: np.ndarray, neighbours: int, limit: int):
         """ Computes the LI interface from the center to the right. """
 
         for i in range(seed[1] + 1, x_end):
@@ -253,14 +254,14 @@ class annotationClassIMC():
                 j += 1
 
             # --- we initialize the new neighbours windows as well as the new limit value (+1 to compensate j+=1)
-            j -= neighours + 1
-            limit = j + 2 * neighours
+            j -= neighbours + 1
+            limit = j + 2 * neighbours
 
     # ------------------------------------------------------------------------------------------------------------------
     # --- use numba to be faster
     @staticmethod
     @jit(nopython=True)
-    def LI_center_to_left_propagation(j: int, seed: tuple, x_start: int, dim: tuple, previous_mask: np.ndarray, offset: int, map_annotation: np.ndarray, neighours: int, limit: int):
+    def LI_center_to_left_propagation(j: int, seed: tuple, x_start: int, dim: tuple, previous_mask: np.ndarray, offset: int, map_annotation: np.ndarray, neighbours: int, limit: int):
         """ Computes the LI interface from the center to the left. """
 
         for i in range(seed[1], x_start - 1, -1):
@@ -281,14 +282,14 @@ class annotationClassIMC():
                 j += 1
 
             # --- we initialize the new neighbours windows as well as the new limit value (+1 to compensate j+=1)
-            j -= neighours + 1
-            limit = j + 2 * neighours
+            j -= neighbours + 1
+            limit = j + 2 * neighbours
 
     # ------------------------------------------------------------------------------------------------------------------
     # --- use numba to be faster
     @staticmethod
     @jit(nopython=True)
-    def MA_center_to_right_propagation(j: int, seed: tuple, x_end: int, dim: tuple, previous_mask: np.ndarray, offset: int, map_annotation: np.ndarray, neighours: int, limit: int):
+    def MA_center_to_right_propagation(j: int, seed: tuple, x_end: int, dim: tuple, previous_mask: np.ndarray, offset: int, map_annotation: np.ndarray, neighbours: int, limit: int):
         """ Computes the MA interface from the center to the right. """
 
         for i in range(seed[1] + 1, x_end):
@@ -307,14 +308,14 @@ class annotationClassIMC():
 
                 j += 1
 
-            j -= neighours + 1
-            limit = j + 2 * neighours
+            j -= neighbours + 1
+            limit = j + 2 * neighbours
 
     # ------------------------------------------------------------------------------------------------------------------
     # --- use numba to be faster
     @staticmethod
     @jit(nopython=True)
-    def MA_center_to_left_propagation(j: int, seed: tuple, x_start: int, dim: tuple, previous_mask: np.ndarray, offset: int, map_annotation: np.ndarray, neighours: int, limit: int):
+    def MA_center_to_left_propagation(j: int, seed: tuple, x_start: int, dim: tuple, previous_mask: np.ndarray, offset: int, map_annotation: np.ndarray, neighbours: int, limit: int):
         """ Computes the MA interface from the center to the left. """
 
         for i in range(seed[1], x_start - 1, -1):
@@ -332,75 +333,5 @@ class annotationClassIMC():
 
                 j += 1
 
-            j -= neighours + 1
-            limit = j + 2 * neighours
-
-# ----------------------------------------------------------------------------------------------------------------------
-class annotationClassFW():
-
-    """ TODO """
-
-    def __init__(self, dimension: tuple, borders_path, first_frame: np.ndarray, scale: float, overlay: int, patient_name: str, p):
-
-        self.map_annotation = np.zeros((dimension[0] + 1, dimension[2], 2))
-        self.overlay = overlay
-        self.seq_dimension = dimension
-        self.borders_ROI = load_borders(borders_path=borders_path)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def FW_auto_initialization(self, img, seed):
-        """ Retreive the approximate position of the far wall. """
-
-        # --- window of +/- neighbours pixels where the algorithm search the borders
-        neighours = 10
-        # --- the algorithm starts from the left to the right
-        x_start = self.borders_ROI['leftBorder']
-        x_end = self.borders_ROI['rightBorder']
-        # --- dimension of the mask
-        dim = img.shape
-        # --- random value to j but not to high. It the first y coordinate at the x_start position
-        j = 5
-        # --- j cannot exceed limit
-        limit = dim[0] - 1
-        # --- delimitation of the LI boundary
-        for i in range(seed[1], x_end + 1):
-            # --- if condition while a boundary is found
-            condition = True
-            while condition == True:
-
-                # --- the boundary is found, while we change the column
-                if (j < dim[0] and img[j, i] == 1):
-                    self.map_annotation[0, i, 0] = j
-                    self.map_annotation[0, i, 1] = j
-                    condition = False
-                # --- if any boundary is found, the current boundary is equal to the previous one. Note that it is a problem if a boundary is not found at the first step.
-                elif j == limit:
-                    self.map_annotation[0, i, 0] = self.map_annotation[0, i - 1, 0]
-                    self.map_annotation[0, i, 1] = self.map_annotation[0, i - 1, 1]
-                    condition = False
-
-                j += 1
-            # --- we initialize the new neighbours windows as well as the new limit value (+1 to compensate j+=1)
-            j -= neighours + 1
-            limit = j + 2 * neighours
-        j = 5
-        for i in range(seed[1], x_start - 1, -1):
-            # --- if condition while a boundary is found
-            condition = True
-            while condition == True:
-                # --- the boundary is found, while we change the column
-                if (j < dim[0] and img[j, i] == 1):
-                    self.map_annotation[0, i, 0] = j
-                    self.map_annotation[0, i, 1] = j
-                    condition = False
-                # --- if any boundary is found, the current boundary is equal to the previous one. Note that it is a problem if a boundary is not found at the first step.
-                elif j == limit:
-                    self.map_annotation[0, i, 0] = self.map_annotation[0, i - 1, 0]
-                    self.map_annotation[0, i, 1] = self.map_annotation[0, i - 1, 1]
-                    condition = False
-                j += 1
-            # --- we initialize the new neighbours windows as well as the new limit value (+1 to compensate j+=1)
-            j -= neighours + 1
-            limit = j + 2 * neighours
-
-# ----------------------------------------------------------------------------------------------------------------------
+            j -= neighbours + 1
+            limit = j + 2 * neighbours
