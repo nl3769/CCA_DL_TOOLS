@@ -5,7 +5,7 @@
 
 import os
 
-from package_parameters.parameters_IMC_seg_inference_template           import Parameters
+from package_parameters.parameters_IMC_seg_inference           import Parameters
 from shutil                                                             import copyfile
 import package_utils.fold_handler                                       as fh
 
@@ -13,15 +13,15 @@ import package_utils.fold_handler                                       as fh
 def setParameters():
 
   p = Parameters(
-        PDATA='/home/laine/cluster/PROJECTS_IO/DATA/MEIBURGER/DATASET_for_CREATIS/images',        # PATH TO LOAD DATA
-        PSEG='/home/laine/cluster/PROJECTS_IO/DATA/MEIBURGER/LIMA-Profiles/Manual-A1',              # PATH TO SAVE TRAINING RESULTS
-        PCF='/home/laine/cluster/PROJECTS_IO/DATA/MEIBURGER/CF',
-        PMODELIMC='/home/laine/cluster/PROJECTS_IO/CARODEEPSEG/TRAINING/SEG_TRAINING_FOLD_0/saved_model/netSeg_val.pth',
+        PDATA='/home/laine/Desktop/data_cubs/images',        # PATH TO LOAD DATA
+        PSEG_REF='/home/laine/Desktop/data_cubs/LIMA-Profiles-interpolated/Manual-A1',              # PATH TO SAVE TRAINING RESULTS
+        PCF='/home/laine/Desktop/data_cubs/CF',
+        PMODELIMC='/home/laine/Documents/PROJECTS_IO/CARODEEPSEG/TRAINING/SEG_TRAINING_FOLD_0/saved_model/netSeg_val.pth',
         PMODELFW=None,
-        PRES='/home/laine/cluster/PROJECTS_IO/CARODEEPSEG/INFERENCE_FULL_ROI',                        # PATH TO SAVE TRAINING RESULTS
+        PRES='/home/laine/Documents/PROJECTS_IO/CARODEEPSEG/INFERENCE_FULL_ROI/TST',                        # PATH TO SAVE TRAINING RESULTS
         EXPNAME='FOLD_0',
-        PATH_FW_REFERENCES = '/home/laine/Documents/PROJECTS_IO/DATA/MEIBURGER/DATASET_for_CREATIS/LIMA-Profiles-interpolated/Manual-A1',
-        PATIENT_NAME='/home/laine/cluster/PROJECTS_IO/CARODEEPSEG//SPLIT_PATIENT/fold_0/testing.txt',
+        PATH_FW_REFERENCES='/home/laine/Documents/PROJECTS_IO/DATA/CUBS/FAR_WALL_DETECTION_CREATIS',  # has to be a path if FW_INITIALIZATION='FW_PRED'
+        PATIENT_NAME='/home/laine/Documents/PROJECTS_IO/CARODEEPSEG/SPLIT_PATIENT/fold_0/testing.txt',
         DEVICE='cuda',
         FW_DETECTION='MANUAL',                                                      # select manual, expert or automatic
         ROI_WIDTH=5e-3,                                                 # SIZE OF THE ROI WIDTH
@@ -29,7 +29,7 @@ def setParameters():
         PIXEL_HEIGHT=256,                                               # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW
         SHIFT_X=32,                                                     # X SHIFT TO GENERATE DATASET
         SHIFT_Z=64,                                                     # Z SHIFT TO GENERATE DATASET
-        INITIALIZATION_FROM_REFERENCES=True,
+        FW_INITIALIZATION='FW_PRED',                       # chose 'FW_PRED', 'GT', 'GUI'
         # --- parameters for unet
         KERNEL_SIZE=(3, 3),
         PADDING=(1, 1),

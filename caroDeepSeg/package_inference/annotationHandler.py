@@ -15,7 +15,7 @@ from numba                                              import jit
 NEIGHBOURS = 15
 
 # ----------------------------------------------------------------------------------------------------------------------
-def get_gt_from_txt(path):
+def get_fw_from_gt(path):
 
     contour_ = []
     contour = []
@@ -33,6 +33,20 @@ def get_gt_from_txt(path):
     for i in range(len(contour[0])-1):
         val[0, i] = float(contour[0][i]) - 1
         val[1, i] = float(contour[1][i])
+
+    return val
+
+# ----------------------------------------------------------------------------------------------------------------------
+def get_fw_from_pred(path):
+
+    with open(path, 'r') as f:
+        contour_gt = f.readlines()
+    contour_gt = [[key.split(' ')[0], key.split(' ')[1].replace('\n', '')] for key in contour_gt]
+    dim_val = (len(contour_gt), 2)
+    val = np.zeros(dim_val)
+    for i in range(len(contour_gt)-1):
+        val[i, 0] = float(contour_gt[i][0])
+        val[i, 1] = float(contour_gt[i][1])
 
     return val
 
@@ -131,10 +145,9 @@ class annotationClassIMC():
     # ------------------------------------------------------------------------------------------------------------------
     def get_far_wall(self, img: np.ndarray, patient_name: str, CF_org: float, p):
 
-        if p.INITIALIZATION_FROM_REFERENCES:
-
-            LI_contour_ = get_gt_from_txt(os.path.join(p.PATH_FW_REFERENCES, patient_name.split('.tiff')[0] + "-LI.txt"))
-            MA_contour_ = get_gt_from_txt(os.path.join(p.PATH_FW_REFERENCES, patient_name.split('.tiff')[0] + "-MA.txt"))
+        if p.FW_INITIALIZATION == 'GT':
+            LI_contour_ = get_fw_from_gt(os.path.join(p.PSEG_REF, patient_name.split('.tiff')[0] + "-LI.txt"))
+            MA_contour_ = get_fw_from_gt(os.path.join(p.PSEG_REF, patient_name.split('.tiff')[0] + "-MA.txt"))
 
             LI = np.zeros(img.shape[1])
             MA = np.zeros(img.shape[1])
@@ -165,8 +178,14 @@ class annotationClassIMC():
                 borders_seg[0] = borders_seg[0] - int(min_pxl_recq/2) - 10
                 borders_seg[1] = borders_seg[1] + int(min_pxl_recq / 2) + 10
 
-        else:
+        if p.FW_INITIALIZATION == 'FW_PRED':
+            fw_approx = get_fw_from_pred(os.path.join(p.PATH_FW_REFERENCES, patient_name.split('.tiff')[0] + ".txt"))
+            non_zeros_idx = np.where(fw_approx[:, 1] > 0)[0]
+            borders_ROI = [non_zeros_idx[0], non_zeros_idx[-1]]
+            borders_seg = borders_ROI
+            fw_approx = fw_approx[:, 1]
 
+        elif p.FW_INITIALIZATION == 'GUI':
             img = np.array(img)
             I_ = img
             image = np.zeros(img.shape + (3,))

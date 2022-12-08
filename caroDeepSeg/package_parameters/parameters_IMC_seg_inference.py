@@ -7,7 +7,7 @@ class Parameters:
 
     def __init__(self,
                  PDATA,
-                 PSEG,
+                 PSEG_REF,
                  PCF,
                  PMODELIMC,
                  PMODELFW,
@@ -22,7 +22,7 @@ class Parameters:
                  PIXEL_HEIGHT,
                  SHIFT_X,
                  SHIFT_Z,
-                 INITIALIZATION_FROM_REFERENCES,
+                 FW_INITIALIZATION,
                  KERNEL_SIZE,
                  PADDING,
                  USE_BIAS,
@@ -30,7 +30,7 @@ class Parameters:
                  NB_LAYERS):
 
         self.PDATA = PDATA
-        self.PSEG = PSEG
+        self.PSEG_REF = PSEG_REF
         self.PCF = PCF
         self.PMODELIMC = PMODELIMC
         self.PMODELFW = PMODELFW
@@ -45,7 +45,7 @@ class Parameters:
         self.PIXEL_HEIGHT = PIXEL_HEIGHT
         self.SHIFT_X = SHIFT_X
         self.SHIFT_Z = SHIFT_Z
-        self.INITIALIZATION_FROM_REFERENCES = INITIALIZATION_FROM_REFERENCES
+        self.FW_INITIALIZATION = FW_INITIALIZATION
         self.KERNEL_SIZE = KERNEL_SIZE
         self.PADDING = PADDING
         self.USE_BIAS = USE_BIAS
