@@ -33,6 +33,7 @@ def setParameters():
 
     pparam = os.path.join(p.PRES, 'backup_parameters')
     fh.create_dir(pparam)
+
     # --- Print all attributes in the console
     attrs = vars(p)
     print('----------------------------------------------------------------')

@@ -20,11 +20,10 @@ def main():
 
     for key in keys:
         eval.get_diff(key)
-        eval.get_MAE(key)
 
-
-    eval.write_metrics_to_cvs(p.PRES, p.SET + '_')
-
+    eval.write_metrics_to_cvs(p.PRESCSV, p.SET + '_')
+    eval.mk_plot_seaborn(p.PLOT, p.SET + '_')
+    eval.write_unprocessed_images(p.PUNPROCESSED)
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":

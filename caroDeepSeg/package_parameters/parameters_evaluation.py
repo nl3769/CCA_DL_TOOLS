@@ -1,3 +1,4 @@
+import os
 import package_utils.fold_handler as fh
 
 class Parameters:
@@ -20,5 +21,12 @@ class Parameters:
         self.PMETHODS = PMETHODS
         self.SET = SET
 
+        self.PRESCSV = os.path.join(self.PRES, 'CVS')
+        self.PLOT = os.path.join(self.PRES, 'VIOLINPLOT')
+        self.PUNPROCESSED = os.path.join(self.PRES, 'UNPROCESSED_IMAGES')
+
         # --- create directory
         fh.create_dir(PRES)
+        fh.create_dir(self.PRESCSV)
+        fh.create_dir(self.PLOT)
+        fh.create_dir(self.PUNPROCESSED)

@@ -1,73 +1,14 @@
 import os
 import sys
 import csv
-
+import pandas                           as pd
+import seaborn                          as sns
 import numpy                            as np
 import matplotlib.pyplot                as plt
 from scipy                              import interpolate
 
 OUTLIER = 500
 REMOVE_OUTLIER = True
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------------
-def adjacent_values(vals, q1, q3):
-    upper_adjacent_value = q3 + (q3 - q1) * 1.5
-    upper_adjacent_value = np.clip(upper_adjacent_value, q3, vals[-1])
-
-    lower_adjacent_value = q1 - (q3 - q1) * 1.5
-    lower_adjacent_value = np.clip(lower_adjacent_value, vals[0], q1)
-    return lower_adjacent_value, upper_adjacent_value
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------------
-def set_axis_style(ax, labels, rot):
-    ax.xaxis.set_tick_params(direction='out')
-    ax.xaxis.set_ticks_position('bottom')
-    ax.set_xticks(np.arange(1, len(labels) + 1))
-    ax.set_xticklabels(labels, rotation=rot)
-    ax.set_xlim(0.25, len(labels) + 0.75)
-    ax.set_xlabel('Sample name')
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------------
-def mk_violinplot(data, labels, pos_labels, title, x_label, y_label, path, ninfo):
-
-    # fig, ax1 = plt.subplots(nrows=1, ncols=1, figsize=(20, 10), sharey=True)
-    fig, ax1 = plt.subplots(nrows=1, ncols=1, sharey=True)
-    ax1.set_title(title)
-    parts = ax1.violinplot(
-        data,
-        showmeans=False,
-        showmedians=False,
-        showextrema=False)
-
-    for pc in parts['bodies']:
-        pc.set_facecolor('#D43F3A')
-        pc.set_edgecolor('blue')
-        pc.set_alpha(0.8)
-
-    quartile1, medians, quartile3 = np.percentile(data, [25, 50, 75], axis=1)
-    whiskers = np.array([adjacent_values(sorted_array, q1, q3) for sorted_array, q1, q3 in zip(data, quartile1, quartile3)])
-    whiskers_min, whiskers_max = whiskers[:, 0], whiskers[:, 1]
-    inds = np.arange(1, len(medians) + 1)
-    ax1.scatter(inds, medians, marker='o', color='white', s=30, zorder=3)
-    ax1.vlines(inds, quartile1, quartile3, color='k', linestyle='-', lw=5)
-    ax1.vlines(inds, whiskers_min, whiskers_max, color='k', linestyle='-', lw=1)
-
-    # --- add position of the minimal value
-    mean_median = np.min(medians)
-    index = np.where(medians == mean_median)[0] + 1
-    plt.axhline(y=mean_median, color='g', linestyle='--', linewidth=0.5)
-    for id in range(index.shape[0]):
-        plt.axvline(x=index[id], color='g', linestyle='--', linewidth=0.5)
-
-    # --- set style for the axes
-    set_axis_style(ax=ax1, labels=labels, rot=45)
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
-
-    # --- save figure
-    plt.tight_layout()
-    plt.savefig(os.path.join(path, ninfo + title + '.png'), dpi=800)
-    plt.close()
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 def enforce_id_integer(pos, val):
@@ -90,54 +31,13 @@ def enforce_id_integer(pos, val):
     return pos, val
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
-def display(mae_IMT, mae_LI, mae_MA):
-
-    print('MAE intima-media thickness +/- std: \n')
-    print("%.2f" % float(mae_IMT.mean()*1e6), end = ' ')
-    print(' +/- ', end = ' ')
-    print("%.2f" % float(mae_IMT.std() * 1e6), end = ' ')
-    print(' um. \n')
-    print('MAE lumen-intima +/- std: \n')
-    print("%.2f" % float(mae_LI.mean()*1e6), end = ' ')
-    print(' +/- ', end = ' ')
-    print("%.2f" % float(mae_LI.std() * 1e6), end = ' ')
-    print(' um. \n')
-    print('MAE media-adventice +/- std: \n')
-    print("%.2f" % float(mae_MA.mean()*1e6), end = ' ')
-    print(' +/- ', end = ' ')
-    print("%.2f" % float(mae_MA.std() * 1e6), end = ' ')
-    print(' um. \n')
-    print('############################# \n \n')
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------------
-def compute_mae(arr):
-
-    mae_LI = np.zeros([])
-    mae_MA = np.zeros([])
-    mae_IMT = np.zeros([])
-    for id, patient in enumerate(arr.keys()):
-        if arr[patient]['LI'] is not None:
-            if id == 0:
-                mae_LI = arr[patient]['LI']
-                mae_MA = arr[patient]['MA']
-                mae_IMT = arr[patient]['IMT']
-            else:
-                mae_LI = np.concatenate((mae_LI, arr[patient]['LI']))
-                mae_MA = np.concatenate((mae_MA, arr[patient]['MA']))
-                mae_IMT = np.concatenate((mae_IMT, arr[patient]['IMT']))
-
-    return {'mae_LI': mae_LI, 'mae_MA': mae_MA, 'mae_IMT': mae_IMT}
-
-    # display(mae_IMT, mae_LI, mae_MA)
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------------
-def compute_diff(arr1, arr2, CF, common_support):
-    diff = {}
-
+def compute_diff(arr1, arr2, CF, common_support, opponent):
+    out = []
+    index = []
     for patient in list(common_support.keys()):
     # for patient in list(arr1.keys()):
         if patient in arr2.keys():
-            # print(patient)
+            diff = {}
             diff[patient] = {}
             # idx = compute_intersection(arr1[patient]['LI_id'], arr2[patient]['LI_id'], arr1[patient]['MA_id'], arr2[patient]['MA_id']) # if we want to compare on bigger support but there is no sense do to it for fair comparison
             idx = common_support[patient]
@@ -158,11 +58,28 @@ def compute_diff(arr1, arr2, CF, common_support):
                 diff[patient]['MA'] = np.abs((arr1[patient]['MA_val'][MA_A1_idx] - arr2[patient]['MA_val'][MA_A1bis_idx])) * CF[patient]
                 diff[patient]['IMT'] = np.abs(((arr1[patient]['MA_val'][MA_A1_idx] - arr1[patient]['LI_val'][LI_A1_idx]) - (arr2[patient]['MA_val'][MA_A1bis_idx] - arr2[patient]['LI_val'][LI_A1bis_idx]))) * CF[patient]
             else:
-                diff[patient]['IMT']=None
+                diff[patient]['IMT'] = None
                 diff[patient]['MA'] = None
                 diff[patient]['LI'] = None
 
-    return diff
+            method_ = opponent.replace('Computerized-', '')
+            if diff[patient]['IMT'] is not None:
+                for id in range(diff[patient]['IMT'].shape[0]):
+                    out += [{'Method': method_, 'Interest': 'IMT', 'Patient': patient, 'Value': diff[patient]['IMT'][id]*1e6}]
+                    index += ['IMT']
+                    out += [{'Method': method_, 'Interest': 'LI', 'Patient': patient, 'Value': diff[patient]['LI'][id]*1e6}]
+                    index += ['LI']
+                    out += [{'Method': method_, 'Interest': 'MA', 'Patient': patient, 'Value': diff[patient]['MA'][id]*1e6}]
+                    index  += ['MA']
+            else:
+                out += [{'Method': method_, 'Interest': 'IMT', 'Patient': patient, 'Value': None}]
+                index  += ['IMT']
+                out += [{'Method': method_, 'Interest': 'LI', 'Patient': patient, 'Value': None}]
+                index  += ['LI']
+                out += [{'Method': method_, 'Interest': 'MA', 'Patient': patient, 'Value': None}]
+                index += ['MA']
+
+    return out, index
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 def get_idx(array, val):
@@ -178,14 +95,13 @@ def get_idx(array, val):
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 def compute_intersection(arr1, arr2, arr3, arr4):
 
-    arr1 = list(arr1)
-    arr2 = list(arr2)
-    arr3 = list(arr3)
-    arr4 = list(arr4)
+    arr = [list(arr1), list(arr2), list(arr3), list(arr4)]
 
-    arr = [arr1, arr2, arr3, arr4]
     intersection = set.intersection(*map(set, arr))
-    intersection = np.array(list(intersection))
+    intersection = list(intersection)
+    intersection.sort()
+    intersection = np.array(intersection)
+
     return intersection
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -288,7 +204,11 @@ class evaluationHandler():
         self.A2_annotation = get_annotation(param.PA2, param.SET)
         self.common_support = self.get_common_support()
 
-        self.diff = {}
+        self.data_frame = {}
+
+        self.diff = []
+        self.index = []
+        self.df_diff = []
         self.metrics = {}
 
     # ----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -304,22 +224,9 @@ class evaluationHandler():
                 print("Problem with key.\n")
                 sys.exit(1)
 
-        self.diff[opponent + 'VSA1'] = compute_diff(self.A1_annotation, array_opponent, self.CF, self.common_support)
-
-    # ----------------------------------------------------------------------------------------------------------------------------------------------------
-    def get_MAE(self, opponent):
-        if opponent == 'A1bis':
-            array = self.diff[opponent + 'VSA1']
-        elif opponent == 'A2':
-            array = self.diff[opponent + 'VSA1']
-        else:
-            if opponent in self.annotation_methods.keys():
-                array = self.diff[opponent + 'VSA1']
-            else:
-                print("Problem with key.\n")
-                sys.exit(1)
-
-        self.metrics[opponent + 'VSA1'] = compute_mae(array)
+        [diff_, index_] = compute_diff(self.A1_annotation, array_opponent, self.CF, self.common_support, opponent)
+        self.diff += diff_
+        self.index += index_
 
     # ----------------------------------------------------------------------------------------------------------------------------------------------------
     def get_common_support(self):
@@ -352,6 +259,7 @@ class evaluationHandler():
 
         # --- get indexes of each annotation (method + experts)
         list_idx = []
+
         list_idx.append(list(self.A1_annotation[patient]['LI_id']))
         list_idx.append(list(self.A1_annotation[patient]['MA_id']))
 
@@ -369,57 +277,157 @@ class evaluationHandler():
 
         if not intersection:
             out = None
+            DEBUG = False
+            if DEBUG:
+                print('A1 LI min: ', self.A1_annotation[patient]['LI_id'][0])
+                print('A1 MA min: ', self.A1_annotation[patient]['MA_id'][0])
+                print('A1bis LI min: ', self.A1bis_annotation[patient]['LI_id'][0])
+                print('A1bis MA min: ', self.A1bis_annotation[patient]['MA_id'][0])
+                print('A2 LI min: ', self.A2_annotation[patient]['LI_id'][0])
+                print('A2 MA min: ', self.A2_annotation[patient]['MA_id'][0])
+
+                print('A1 LI max: ', self.A1_annotation[patient]['LI_id'][-1])
+                print('A1 MA max: ', self.A1_annotation[patient]['MA_id'][-1])
+                print('A1bis LI max: ', self.A1bis_annotation[patient]['LI_id'][-1])
+                print('A1bis MA max: ', self.A1bis_annotation[patient]['MA_id'][-1])
+                print('A2 LI max: ', self.A2_annotation[patient]['LI_id'][-1])
+                print('A2 MA max: ', self.A2_annotation[patient]['MA_id'][-1])
         else:
             out = np.array(intersection)
 
         return out
 
     # ----------------------------------------------------------------------------------------------------------------------------------------------------
-
     def write_metrics_to_cvs(self, path, ninfo):
 
-        headers = ['method/expert', 'mae LI (mean)', 'mae LI (std)', 'mae MA (mean)', 'mae MA (std)', 'mae IMT (mean)', 'mae IMT (std)']
+        self.df_diff = pd.DataFrame(self.diff, index=self.index)
 
-        with open(os.path.join(path, ninfo + 'metrics.csv'), 'w') as file:
-            # --- create a CSV writer
-            writer = csv.writer(file)
+        mae_IMT = self.df_diff.filter(like='IMT', axis=0).groupby(['Method']).mean()
+        mae_IMT.rename(columns={'Value': 'mean IMT'}, inplace=True)
+        std_IMT = self.df_diff.filter(like='IMT', axis=0).groupby(['Method']).std()
+        std_IMT.rename(columns={'Value': 'std IMT'}, inplace=True)
 
-            # --- write data to the file
-            writer.writerow(headers)
-            data = []
-            for key in self.metrics.keys():
-                data.append([key.split('VS')[0], self.metrics[key]['mae_LI'].mean()*1e6, self.metrics[key]['mae_LI'].std()*1e6, self.metrics[key]['mae_MA'].mean()*1e6, self.metrics[key]['mae_MA'].std()*1e6, self.metrics[key]['mae_IMT'].mean()*1e6, self.metrics[key]['mae_IMT'].std()*1e6])
+        mae_LI = self.df_diff.filter(like='LI', axis=0).groupby(['Method']).mean()
+        mae_LI.rename(columns={'Value': 'mean LI'}, inplace=True)
+        std_LI = self.df_diff.filter(like='LI', axis=0).groupby(['Method']).std()
+        std_LI.rename(columns={'Value': 'std LI'}, inplace=True)
 
-            for id in range(len(data)):
-                writer.writerow(data[id])
+        mae_LI = self.df_diff.filter(like='MA', axis=0).groupby(['Method']).mean()
+        mae_LI.rename(columns={'Value': 'mean MA'}, inplace=True)
+        std_MA = self.df_diff.filter(like='MA', axis=0).groupby(['Method']).std()
+        std_MA.rename(columns={'Value': 'std MA'}, inplace=True)
 
-        labels = [key.split('VS')[0].replace('Computerized-', '') for key in self.metrics.keys()]
-        pos_labels = list(np.linspace(1, len(labels), len(labels)))
-        data_LI = [self.metrics[key]['mae_LI']*1e6 for key in self.metrics.keys()]
-        data_MA = [self.metrics[key]['mae_MA']*1e6 for key in self.metrics.keys()]
-        data_IMT = [self.metrics[key]['mae_IMT']*1e6 for key in self.metrics.keys()]
+        metrics_df = pd.concat([mae_IMT, mae_LI, mae_LI, std_IMT, std_LI, std_LI], axis=1)
+        metrics_df.to_csv(os.path.join(path, ninfo + 'metrics.csv'), index=True, header=True)
 
-        # --- reject outlier (error biggers than 500 um)
+    # ----------------------------------------------------------------------------------------------------------------------------------------------------
+    def mk_plot_seaborn(self, path, ninfo):
 
-        id_outlier_LA = [list(np.where(arr > OUTLIER)[0]) for arr in data_LI]
-        id_outlier_MA = [list(np.where(arr > OUTLIER)[0]) for arr in data_MA]
-        id_outlier_IMT = [list(np.where(arr > OUTLIER)[0]) for arr in data_IMT]
+        # BOX PLOT
+        # --- plot all mae (IMT, LI, MA) on the same graph
+        sns.boxplot(self.df_diff, x='Method', y='Value', showfliers=False, hue='Interest')
+        sns.despine()
+        plt.xticks(rotation=30, ha='right')
+        plt.tight_layout()
+        plt.savefig(os.path.join(path, ninfo + 'boxplot_full' + '.png'), dpi=500)
+        plt.close()
 
-        id_reject = []
-        for id in id_outlier_LA:
-            id_reject+=id
-        for id in id_outlier_MA:
-            id_reject+=id
-        for id in id_outlier_IMT:
-            id_reject += id
-        # --- remove duplicate
-        id_reject = list(dict.fromkeys(id_reject))
-        data_LI = [np.delete(arr, id_reject) for arr in data_LI]
-        data_MA = [np.delete(arr, id_reject) for arr in data_MA]
-        data_IMT = [np.delete(arr, id_reject) for arr in data_IMT]
+        # --- plot MA mae
+        df = self.df_diff[self.df_diff['Interest'] == 'MA']
+        sns.boxplot(df, x='Method', y='Value', showfliers=False)
+        sns.despine()
+        plt.xticks(rotation=30, ha='right')
+        mean_val = df.groupby(['Method']).median()
+        min_median = np.min(mean_val.to_numpy().squeeze())
+        plt.axhline(y=min_median, color='r', linestyle='--', linewidth=0.5)
+        plt.tight_layout()
+        plt.savefig(os.path.join(path, ninfo + 'boxplot_MA' + '.png'), dpi=500)
+        plt.close()
 
+        # --- plot LI mae
+        df = self.df_diff[self.df_diff['Interest'] == 'LI']
+        sns.boxplot(df, x='Method', y='Value', showfliers=False)
+        sns.despine()
+        plt.xticks(rotation=30, ha='right')
+        mean_val = df.groupby(['Method']).median()
+        min_median = np.min(mean_val.to_numpy().squeeze())
+        plt.axhline(y=min_median, color='r', linestyle='--', linewidth=0.5)
+        plt.tight_layout()
+        plt.savefig(os.path.join(path, ninfo + 'boxplot_LI' + '.png'), dpi=500)
+        plt.close()
 
-        mk_violinplot(data_LI, labels, pos_labels, 'LI', 'method/expert', 'thickness in um', path, ninfo)
-        mk_violinplot(data_MA, labels, pos_labels, 'MI', 'method/expert', 'thickness in um', path, ninfo)
-        mk_violinplot(data_IMT, labels, pos_labels, 'IMT', 'method/expert', 'thickness in um', path, ninfo)
+        # --- plot IMT mae
+        df = self.df_diff[self.df_diff['Interest'] == 'IMT']
+        sns.boxplot(df, x='Method', y='Value', showfliers=False)
+        sns.despine()
+        plt.xticks(rotation=30, ha='right')
+        mean_val = df.groupby(['Method']).median()
+        min_median = np.min(mean_val.to_numpy().squeeze())
+        plt.axhline(y=min_median, color='r', linestyle='--', linewidth=0.5)
+        plt.tight_layout()
+        plt.savefig(os.path.join(path, ninfo + 'boxplot_IMT' + '.png'), dpi=500)
+        plt.close()
+
+        # VIOLIN PLOT
+        df_rm_outliers = self.df_diff[self.df_diff['Value'] < 600]
+        # --- plot all mae (IMT, LI, MA) on the same graph
+
+        sns.violinplot(df_rm_outliers, x='Method', y='Value', showfliers=False, hue='Interest', linewidth=0.2)
+        sns.despine()
+        plt.xticks(rotation=30, ha='right')
+        plt.tight_layout()
+        plt.savefig(os.path.join(path, ninfo + 'violin_full' + '.png'), dpi=500)
+        plt.close()
+
+        # --- plot MA mae
+        df = df_rm_outliers[df_rm_outliers['Interest'] == 'MA']
+        sns.violinplot(df, x='Method', y='Value', showfliers=False, linewidth=0.8)
+        sns.despine()
+        plt.xticks(rotation=30, ha='right')
+        mean_val = df.groupby(['Method']).median()
+        min_median = np.min(mean_val.to_numpy().squeeze())
+        plt.axhline(y=min_median, color='r', linestyle='--', linewidth=0.5)
+        plt.tight_layout()
+        plt.savefig(os.path.join(path, ninfo + 'violin_MA' + '.png'), dpi=500)
+        plt.close()
+
+        # --- plot LI mae
+        df = df_rm_outliers[df_rm_outliers['Interest'] == 'LI']
+        sns.violinplot(df, x='Method', y='Value', showfliers=False, linewidth=0.8)
+        sns.despine()
+        plt.xticks(rotation=30, ha='right')
+        mean_val = df.groupby(['Method']).median()
+        min_median = np.min(mean_val.to_numpy().squeeze())
+        plt.axhline(y=min_median, color='r', linestyle='--', linewidth=0.5)
+        plt.tight_layout()
+        plt.savefig(os.path.join(path, ninfo + 'violin_LI' + '.png'), dpi=500)
+        plt.close()
+
+        # --- plot IMT mae
+        df = df_rm_outliers[df_rm_outliers['Interest'] == 'IMT']
+        sns.violinplot(df, x='Method', y='Value', showfliers=False, linewidth=0.8)
+        sns.despine()
+        plt.xticks(rotation=30, ha='right')
+        mean_val = df.groupby(['Method']).median()
+        min_median = np.min(mean_val.to_numpy().squeeze())
+        plt.axhline(y=min_median, color='r', linestyle='--', linewidth=0.5)
+        plt.tight_layout()
+        plt.savefig(os.path.join(path, ninfo + 'violin_IMT' + '.png'), dpi=500)
+        plt.close()
+
+    # ----------------------------------------------------------------------------------------------------------------------------------------------------
+    def write_unprocessed_images(self, path):
+
+        # --- get key from A1 expert (suppose to contain all processed images)
+        unprocessed_patients = list(self.A1_annotation.keys())
+        processed_patients = []
+        for processed_patient in self.common_support.keys():
+            if self.common_support[processed_patient] is not None:
+                processed_patients.append(processed_patient)
+                unprocessed_patients.remove(processed_patient)
+
+        with open(os.path.join(path, 'unprocessed.txt'), 'w') as f:
+            for patient in unprocessed_patients:
+                f.write(patient + '\n')
+
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
