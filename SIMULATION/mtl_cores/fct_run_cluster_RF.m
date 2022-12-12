@@ -24,7 +24,6 @@ function [RF_signals, nb_tx] = fct_run_cluster_RF(pres)
     
 end
 
-
 % ----------------------------------------------------------------------------------------------------------------------
 function RF_tx = load_RF_tx(path)
     RF_tx = load(path);

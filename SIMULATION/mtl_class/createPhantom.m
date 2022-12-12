@@ -50,6 +50,8 @@ classdef createPhantom < handle
         
         gaussian2D;         % (class) control motion from gaussian noise
         elasticDeformation  % (class) control motion from elastic deformation
+        
+        segmentation_mask
     end
     
     methods
@@ -361,6 +363,11 @@ classdef createPhantom < handle
                 obj.seg_LI_ref = obj.seg_LI;
                 obj.seg_MA_ref = obj.seg_MA;
             end
+            
+            
+            if size(obj.seg_LI_ref.z_scatt, 1) > 10
+                obj.segmentation_mask = true;
+            end
         end
   
         % ----------------------------------------------------------------------------------------------------------------------
@@ -624,7 +631,8 @@ classdef createPhantom < handle
 %             obj.gaussian2D.get_current_gauss2D(param_simu.id_seq, param_simu.f_simu);
 
             obj.data_scatt_moved = add_movement(obj.data_scatt_moved,offset, param_simu, obj.gaussian2D, obj.elasticDeformation, obj.data_img.CF); % scatteres map
-            if obj.param.segmentation_mask
+            
+            if obj.segmentation_mask
                 obj.seg_LI = add_movement(obj.seg_LI_ref, offset, param_simu, obj.gaussian2D, obj.elasticDeformation, obj.data_img.CF); % segmentation (LI)
                 obj.seg_MA = add_movement(obj.seg_MA_ref, offset, param_simu, obj.gaussian2D, obj.elasticDeformation, obj.data_img.CF); % segmentation (MA)
             end

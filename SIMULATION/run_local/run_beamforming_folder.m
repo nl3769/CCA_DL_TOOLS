@@ -9,13 +9,13 @@ addpath(fullfile('..', 'mtl_cores/'));
 addpath(fullfile('..', 'mtl_utils'));
 
 % --- path to results
-path_res01='/home/laine/cluster/PROJECTS_IO/SIMULATION/test_new_probe/l115v';
+path_res01='/home/laine/cluster/PROJECTS_IO/SIMULATION/IMAGENET_STA';
 patients = list_files(path_res01);
 
 
-for idp=1:1:length(patients)
+for idp=6:1:length(patients)
 %parfor idp=21:1:length(patients)
-    files = list_files(fullfile(path_res01, patients{idp}));
+    files = list_files(fullfile(path_res01, patients{idp}))
     
     for id=1:1:length(files)
         pres_ = fullfile(path_res01, patients{idp}, files{id});

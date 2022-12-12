@@ -5,10 +5,10 @@ run(fullfile('..', 'mtl_utils', 'add_path.m'));
 addpath(fullfile('..', 'mtl_cores'))
 
 % --- generate several sets of parameters according to the desired parameters.
-pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/MCMASTER/CROPPED/CAMO_study_cropped/images';
+pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images';
 % pdatabase = '/home/laine/Documents/PROJECTS_IO/DATA/PERSONAL_IMAGES';
-pres = '/home/laine/Desktop';
-pparam = '/home/laine/Desktop/CCA_DL_TOOLS/SIMULATION/parameters/set_parameters_template.json';
+pres = '/home/laine/MK_PHANTOM_TEST';
+pparam = '/home/laine/Documents/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/parameters/set_parameters_template.json';
 info = '';
 fnames = load_fnames(pdatabase);
 
