@@ -4,17 +4,16 @@ function warpped_image()
     clearvars;
     clc;
 
-    pI0     = "/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/MOTION/n01440764_tench/n01440764_tench_id_001_FIELD/bmode_result/RF/dicom_n01440764_tench_phantom_id_001_FIELD_bmode.png";
-    pI1     = "/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/MOTION/n01440764_tench/n01440764_tench_id_002_FIELD/bmode_result/RF/dicom_n01440764_tench_phantom_id_002_FIELD_bmode.png";
-    pOF     = "/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/MOTION/n01440764_tench/n01440764_tench_id_002_FIELD/phantom/OF_1_2.nii";
-    pparam  = "/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/MOTION/n01440764_tench/n01440764_tench_id_001_FIELD/phantom/image_information.mat";
+    pI0     = "/home/laine/Desktop/MotionEstimationDataBaseAnalysisV2/tech_010/tech_010_id_001_FIELD/bmode_result/results/dicom_tech_010_phantom_id_001_FIELD_bmode.png";
+    pI1     = "/home/laine/Desktop/MotionEstimationDataBaseAnalysisV2/tech_010/tech_010_id_002_FIELD/bmode_result/results/dicom_tech_010_phantom_id_002_FIELD_bmode.png";
+    
+    pOF     = "/home/laine/Desktop/MotionEstimationDataBaseAnalysisV2/tech_010/tech_010_id_002_FIELD/phantom/OF_1_2.nii";
+    pparam  = "/home/laine/Desktop/MotionEstimationDataBaseAnalysisV2/tech_010/tech_010_id_002_FIELD/phantom/image_information.mat";
     
     x_start = 30;
     x_end   = 30;
     z_start = 40;
     z_end   = 40;
-
-  
 
     I0 = imread(pI0);
     I1 = imread(pI1);
@@ -22,11 +21,11 @@ function warpped_image()
 
     param = load(pparam);
     CF = param.image.CF;
-    zstart = 3e-3;
+    zstart = 2*3e-3;
+%     zstart = 0;
     OF = adapt_flow(I0, OF, CF, zstart);
 
     Iw = warpped(I0, OF);
-    
     
 %     I0 = crop(I0, x_start, x_end, z_start, z_end);
 %     I1 = crop(I1, x_start, x_end, z_start, z_end);

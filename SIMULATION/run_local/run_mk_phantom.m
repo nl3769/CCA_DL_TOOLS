@@ -7,7 +7,7 @@ addpath(fullfile('..', 'mtl_cores'))
 % --- generate several sets of parameters according to the desired parameters.
 pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images';
 % pdatabase = '/home/laine/Documents/PROJECTS_IO/DATA/PERSONAL_IMAGES';
-pres = '/home/laine/MK_PHANTOM_TEST';
+pres = '/home/laine/Desktop/MotionEstimationDataBaseAnalysisV2';
 pparam = '/home/laine/Documents/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/parameters/set_parameters_template.json';
 info = '';
 fnames = load_fnames(pdatabase);

@@ -758,20 +758,6 @@ classdef createPhantom < handle
                 
                 scatt_ref_real = obj.scatt_pos_ref{1}; % get the position of the original grid (reference for motion)
                 scatt_ref_moved = obj.scatt_pos_ref{2}; % we apply motion on a bigger grid to avoid edge issues
-%                 nb_scatt = size(scatt_ref_moved.x_scatt, 1);
-%                 x_scatt = scatt_ref_moved.x_scatt;
-%                 z_scatt = scatt_ref_moved.z_scatt;
-%                 for i=1:obj.param.nb_slices
-%                     % --- compute y-position 
-%                     pos = i * obj.param.slice_spacing;
-%                     % --- do it twice for +/- pos
-%                     y_scatt_1 = ones(nb_scatt, 1) * pos;                
-%                     y_scatt_2 = -y_scatt_1 ;
-%                     % --- get new values
-%                     scatt_ref_moved.x_scatt = [scatt_ref_moved.x_scatt; x_scatt; x_scatt];
-%                     scatt_ref_moved.y_scatt = [scatt_ref_moved.y_scatt; y_scatt_1; y_scatt_2];
-%                     scatt_ref_moved.z_scatt = [scatt_ref_moved.z_scatt; z_scatt; z_scatt];
-%                 end
                 
                 % --- offset
                 offset_rot = [obj.x_offset_rot, obj.y_offset_rot, obj.z_offset_rot];
@@ -805,23 +791,16 @@ classdef createPhantom < handle
                 diff = Pos_1-Pos_0;
                 
                 % --- displacement displacement field in meter
-                % -- compute grid to get the displacement field in the
-                
-                % - scatterers position
-%                 x_org = linspace(min(obj.scatt_pos_ref{2}.x_scatt), max(obj.scatt_pos_ref{2}.x_scatt), size(obj.scatt_pos_ref{2}.x_scatt, 1));
-%                 z_org = linspace(min(obj.scatt_pos_ref{2}.z_scatt), max(obj.scatt_pos_ref{2}.z_scatt), size(obj.scatt_pos_ref{2}.z_scatt, 1));
                 x_q = scatt_ref_real.x_scatt';
                 y_q = scatt_ref_real.y_scatt';
                 z_q = scatt_ref_real.z_scatt';
-
-%                 diff = reshape(diff,[obj.data_img.height * 2 obj.data_img.width *2  3]); % because the gruid is twice bigger in x and z
                 displacement_field = zeros([obj.data_img.height obj.data_img.width 3]);
                 val = diff(:,1);
-                interpolant_x=scatteredInterpolant(scatt_ref_moved.x_scatt, scatt_ref_moved.z_scatt, val(:), 'linear');
+                interpolant_x = scatteredInterpolant(scatt_ref_moved.x_scatt, scatt_ref_moved.z_scatt, val(:), 'linear');
                 val = diff(:,2);
-                interpolant_y=scatteredInterpolant(scatt_ref_moved.x_scatt, scatt_ref_moved.z_scatt, val(:), 'linear');
+                interpolant_y = scatteredInterpolant(scatt_ref_moved.x_scatt, scatt_ref_moved.z_scatt, val(:), 'linear');
                 val = diff(:,3);
-                interpolant_z=scatteredInterpolant(scatt_ref_moved.x_scatt, scatt_ref_moved.z_scatt, val(:), 'linear');
+                interpolant_z = scatteredInterpolant(scatt_ref_moved.x_scatt, scatt_ref_moved.z_scatt, val(:), 'linear');
                 
                 x_val = interpolant_x(x_q, z_q);
                 y_val = interpolant_y(x_q, z_q);
@@ -905,10 +884,10 @@ classdef createPhantom < handle
         % ----------------------------------------------------------------------------------------------------------------------
         function phantom_tmp(obj)
             
-            k=5;   
+            k=3;   
             
-            z_pos=linspace(obj.data_scatt.z_max * 0.3, obj.data_scatt.z_max * 0.7, k);
-            x_pos=linspace(obj.data_scatt.x_min * 0.5, obj.data_scatt.x_max * 0.5, k);
+            z_pos=linspace(obj.data_scatt.z_max * 0.2, obj.data_scatt.z_max * 0.9, k);
+            x_pos=linspace(obj.data_scatt.x_min * 0.6, obj.data_scatt.x_max * 0.6, k);
 %             obj.data_scatt.x_min = obj.data_scatt.x_min * 0.5;
 %             obj.data_scatt.x_max = obj.data_scatt.x_max * 0.5;
 
@@ -932,13 +911,6 @@ classdef createPhantom < handle
 %                     end
                 end
             end
-            
-
-%             obj.data_scatt.y_scatt = [0; 0];
-%             obj.data_scatt.z_scatt = [obj.data_scatt.z_max * 0.5; obj.data_scatt.z_max];
-%             obj.data_scatt.x_scatt = [0; 0];
-%             obj.data_scatt.RC_scatt = [1; 0]; 
-                        
 
             obj.data_scatt.z_scatt = obj.data_scatt.z_scatt; %+obj.param.shift;
             obj.data_scatt.depth_of_focus = max(obj.data_scatt.z_scatt);

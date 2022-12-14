@@ -36,8 +36,8 @@ function fct_run_mk_phantom(varargin)
     phantom = createPhantom(pres_, get_extension(dname), [1,0,1,0]);
     phantom.get_image(); 
     phantom.get_scatteres_from_img(); 
-    phantom.extrusion(true); 
-% %     phantom.phantom_tmp();   
+%     phantom.extrusion(true); 
+    phantom.phantom_tmp();   
     phantom.init_position(parameters.param.nb_images);
     phantom.remove_top_region(parameters.param.remove_top_region);
     substr=fct_get_substr_id_seq(phantom.id_seq);
@@ -58,6 +58,7 @@ function fct_run_mk_phantom(varargin)
     pLI=fullfile(str_, strcat(patient_name, "_IFC3_A1.txt"));
     pMA=fullfile(str_, strcat(patient_name, "_IFC4_A1.txt"));
     phantom.get_seg(pLI, pMA)
+    
     % --- generate scatteres
     for id_img = 1:1:parameters.param.nb_images
         

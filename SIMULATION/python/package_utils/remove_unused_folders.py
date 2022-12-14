@@ -33,9 +33,9 @@ def remove_RF_file(folder, sub_folders, fname):
 # ----------------------------------------------------------------------------------------------------------------------
 def main():
 
-    folder = '/home/laine/HDD/PROJECTS_IO/SIMULATION/IMAGENET_STA'
+    folder = '/home/laine/Desktop/ELISABETH'
     sub_folders = 'bmode_result'
-    rm_folder = 'RF'
+    rm_folder = 'results'
     remove_RF_folder(folder, sub_folders, rm_folder)
 
     fname = 'RF_raw_data.mat'

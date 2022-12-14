@@ -107,7 +107,6 @@ classdef imageReconstruction < handle
             
             % --- get time matrix from pixel to element
             time_matrix = get_time_matrix_scanline_based(height, obj.sub_probe.Nelements, dz, obj.sub_probe.pitch, obj.param.c, 0);
-%             time_matrix = MEX_TOF_SLB(obj.sub_probe.pitch, obj.sub_probe.Nelements, height, dz, obj.param.c);
             % --- compute delay matrix and apodization coefficients
             Tx_delay_matrix = fct_get_tx_delay(dz, height, obj.param.Nactive, obj.probe.pitch, obj.phantom.depth_of_focus);
             apod_window = fct_get_apod_SL(dz, obj.probe.pitch, height, obj.param.fnumber, obj.param.Nactive, 'adaptative');
@@ -245,7 +244,7 @@ classdef imageReconstruction < handle
             obj.bmode = abs(obj.IQ); % real envelope
             % --- apply gamma correction
             obj.bmode = obj.bmode - min(obj.bmode(:)); %/max(obj.bmode(:));
-            obj.bmode = obj.bmode / max(obj.bmode(:)) * 255;
+            obj.bmode = obj.bmode / max(obj.bmode(:));
             obj.bmode = obj.bmode.^(obj.param.gamma);
             % --- apply image adjustement
             obj.bmode = obj.bmode/max(obj.bmode(:));
@@ -269,37 +268,49 @@ classdef imageReconstruction < handle
         % ------------------------------------------------------------------
         function save_beamformed_data(obj)
             % Save bmode image image with the dimension of the phantom
-
+            
+            
+            % --- SAVE IN SILICO IMAGE WITH PHYSICAL DIMENSION
             % --- path to save the IQ signal
-            rpath=fullfile(obj.path_res, [obj.param.phantom_name '_BF.png']);                                        
+            rpath=fullfile(obj.path_res, [obj.param.phantom_name '_in_silico_dimension.png']);                                        
 
             % --- compute the dimension of the image
             dim=size(obj.bmode);
             x_disp=linspace(obj.x_display(1), obj.x_display(2), dim(2));
             z_disp=linspace(obj.z_display(1), obj.z_display(2), dim(1));
-            
-            % --- add depth of focus
-            DF=obj.phantom.depth_of_focus-obj.param.shift;
-            
+                        
             % --- save the image
             f=figure('visible', 'off');
-            imagesc(x_disp*1e3, z_disp*1e3, abs(obj.IQ)); 
-            hold on
-            line([obj.x_display(1)*1e3, obj.x_display(1)*1e3*0.95], [DF*1e3, DF*1e3], 'Color', 'r', 'LineWidth', 1)
-            line([obj.x_display(2)*1e3*0.95, obj.x_display(2)*1e3], [DF*1e3, DF*1e3], 'Color', 'r', 'LineWidth', 1)
-            hold off 
+            imagesc(x_disp*1e3, z_disp*1e3, obj.bmode); 
             colormap gray;
             colorbar;
-%             axis image
-            title('BF signals')
+            axis image
+            title('bmode image')
             xlabel('width in mm')
             ylabel('height in mm')
             saveas(f, rpath);
             
-            % --- save signals in .nii file
-            IQ = obj.IQ;
-            niftiwrite(IQ, fullfile(obj.path_res, 'IQ_data.nii'));
+            % --- SAVE IN VIVO IMAGE WITH PHYSICAL DIMENSION
+            % --- path to save the in vivo signal
+            rpath=fullfile(obj.path_res, [obj.param.phantom_name '_in_vivo_dimension.png']);                                        
+        
+            % --- compute the dimension of the image
+            dim=size(obj.in_vivo);                        
+            % --- save the image
+            f=figure('visible', 'off');
+            imagesc(x_disp*1e3, z_disp*1e3, obj.in_vivo); 
+            colormap gray;
+            colorbar;
+            axis image
+            title('bmode image')
+            xlabel('width in mm')
+            ylabel('height in mm')
+            saveas(f, rpath);
             
+            % --- SAVE RF SIGNAL
+            RF = obj.RF_final;
+            rpath=fullfile(obj.path_res, [obj.param.phantom_name '_RF_data.mat']);  
+            save(rpath, 'RF');
         end
         
         % ------------------------------------------------------------------
@@ -316,28 +327,27 @@ classdef imageReconstruction < handle
             dim=size(obj.bmode);
             x_disp=linspace(obj.x_display(1), obj.x_display(2), dim(2));
             z_disp=linspace(obj.z_display(1), obj.z_display(2), dim(1));
-            
-            % --- add depth of focus
-            DF=obj.phantom.depth_of_focus-obj.param.shift;
-            
+                        
             % --- save the image
-%             f=figure('visible', 'off');
-            f=figure();
-            imagesc(x_disp*1e3, z_disp*1e3, obj.bmode); 
-            hold on
-            if scatt
-                plot(obj.phantom.x_scatt*1e3, obj.phantom.z_scatt*1e3, 'go','MarkerSize',10)
+%             f=figure('visible', 'off');<
+            debug = false;
+            if debug 
+                f=figure();
+                imagesc(x_disp*1e3, z_disp*1e3, obj.bmode); 
+                hold on
+                if scatt
+                    plot(obj.phantom.x_scatt*1e3, obj.phantom.z_scatt*1e3, 'go','MarkerSize',10)
+                end
+                line([obj.x_display(1)*1e3,obj.x_display(1)*1e3*0.95],[DF*1e3, DF*1e3],'Color','r','LineWidth',1)
+                line([obj.x_display(2)*1e3*0.95,obj.x_display(2)*1e3],[DF*1e3, DF*1e3],'Color','r','LineWidth',1)
+                hold off 
+    %             axis image
+                colormap gray;
+                title('Bmode image')
+                xlabel('width in mm')
+                ylabel('height in mm')
+                saveas(f, pres_);
             end
-            line([obj.x_display(1)*1e3,obj.x_display(1)*1e3*0.95],[DF*1e3, DF*1e3],'Color','r','LineWidth',1)
-            line([obj.x_display(2)*1e3*0.95,obj.x_display(2)*1e3],[DF*1e3, DF*1e3],'Color','r','LineWidth',1)
-            hold off 
-%             axis image
-            colormap gray;
-            title('Bmode image')
-            xlabel('width in mm')
-            ylabel('height in mm')
-            saveas(f, pres_);
-            
             % --- we save the image
             pres_sim=fullfile(obj.path_res, [obj.param.phantom_name '_bmode.png']);
 
@@ -375,10 +385,6 @@ classdef imageReconstruction < handle
                                     
             % --- interpolation
             [x_img  z_img] = meshgrid(x_img, z_img);
-            if ~obj.param.dynamic_focusing
-                obj.bmode = imresize(obj.bmode, size(obj.x_bmode));
-            end
-            
             obj.in_vivo=interp2(x_img, z_img, double(obj.image.image), obj.x_bmode, obj.z_bmode - obj.param.shift, 'makima', 0);
             
             % --- remove edge effect: high intensity on the borders
@@ -411,12 +417,8 @@ classdef imageReconstruction < handle
             dz = obj.probe.c/(2*obj.probe.fs);
             addpath(fullfile('..', 'mtl_synthetic_aperture'))
             % --- get image information
-            [X_img_bf, Z_img_bf, X_RF, Z_RF, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
-%             lambda = obj.probe.c/obj.probe.fc;             
-%             xAxis = -5e-3:lambda/20:5e-3;
-%             zAxis = (5e-3:lambda/20:20e-3) + obj.param.shift;
-%             [X_img,Z_img] = meshgrid(xAxis,zAxis);
-%             Y_img = zeros(size(X_img));
+%             [X_img_bf, Z_img_bf, X_RF, Z_RF, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
+            [X_img_bf, Z_img_bf, X_RF, Z_RF, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D_elisabeth(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
             [n_points_z, n_points_x] = size(X_img_bf);
             obj.low_res_image = zeros([n_points_z n_points_x obj.probe.Nelements]);
             % --- get probe position elements
@@ -424,16 +426,16 @@ classdef imageReconstruction < handle
             probe_pos_x = linspace(-probe_width/2, probe_width/2, obj.probe.Nelements);
             probe_pos_z = zeros(1, obj.probe.Nelements);
             % --- apodization window
-            apod = false;
-            if apod
+            set_apod = false;
+            if set_apod
                 apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_adaptative', 5, dz, t_offset);
-                apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_full', 0.2, dz);
+%                 apodization = fct_get_apodization([nb_sample, n_rcv], obj.param.Nactive, obj.probe.pitch, 'hanning_full', 0.2, dz);
                 apodization = fct_interpolation(apodization, X_RF, Z_RF, X_img_bf, Z_img_bf);
             else
                 apodization = ones( [n_points_z, n_points_x obj.probe.Nelements]);
             end
             % --- define the CUDA module and kernel
-            obj.param.input_bf = "IQ";
+            obj.param.input_bf = "RF";
             if isfield(obj.param, "input_bf") && obj.param.input_bf == "IQ" 
                 cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bin', 'bfFullLowResImgIQ.ptx');
                 cuda_kernel_name = 'bf_low_res_images';
@@ -577,27 +579,7 @@ classdef imageReconstruction < handle
             figure;
             imagesc(20*log10(env),[-50 0])
             colormap gray
-
-%             % --- compounding
-%             switch compounding
-%                 case 'DAS'
-%                     obj.RF_final = sum(obj.low_res_image, 3);
-%                 case 'DMAS'
-% %                     low_res_image_ = abs(obj.low_res_image);
-%                     low_res_image_ = obj.low_res_image; 
-%                     for id_col = 1:size(low_res_image_, 2)
-%                         % --- preserve dimensionality
-%                         cols_ = low_res_image_(:,id_col,:);
-%                         % --- compute yDMAS
-%                         col_1 = sum(cols_, 3);
-%                         col_1 = col_1.^2;
-%                         col_2 = cols_.^2;
-%                         col_2 = sum(col_2, 3);         
-%                         % --- store result
-%                         y_DMAS = col_1-col_2;
-%                         obj.RF_final(:, id_col) = y_DMAS;
-%                     end
-%             end
+            
             obj.RF_final = bf_image;
             figure()
             imagesc(20*log10(abs(hilbert(obj.RF_final)))+40)

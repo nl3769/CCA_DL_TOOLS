@@ -11,7 +11,7 @@ end
 %%%%%%% RUM SIMULATION FOR ONE PHANTOM AND ONE SET OF PARAMETERS %%%%%%% 
 
 % --- path to data
-path = '/home/laine/Desktop/SIMUS_TEST/CAMO01_image1_simus';
+path = '/home/laine/Desktop/MotionEstimationDataBaseAnalysisV2/tech_010';
 frame = list_files(path);
 
 for idp=1:1:length(frame)
@@ -36,8 +36,8 @@ for idp=1:1:length(frame)
         tx = nb_tx;
     end
     
-    %parfor id_tx=1:1:tx
-    for id_tx=1:1:tx
+    parfor id_tx=1:1:tx
+%     for id_tx=1:1:tx
         % --- run simulation
         fct_run_wave_propagation(fullfile(path_data, 'parameters', parameters_folder{1}), fullfile(path_data, 'phantom', phantom_names{1}), id_tx);
     
