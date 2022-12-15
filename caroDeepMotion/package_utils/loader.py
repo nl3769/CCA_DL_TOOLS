@@ -1,17 +1,19 @@
-from mat4py                 import loadmat
 from PIL                    import Image
 from PIL                    import ImageOps
 import nibabel              as nib
 import pickle               as pkl
 import numpy                as np
+import scipy.io             as io
 
 # ----------------------------------------------------------------------------------------------------------------------
 def load_mat(fname: str):
     """Load .mat file. """
+    data = io.loadmat(fname)
+    # data = loadmat(fname)
+    keys = list(data.keys())
+    keys = [key for key in keys if '__' not in key]
 
-    data = loadmat(fname)
-
-    return data
+    return data, keys
 
 # ----------------------------------------------------------------------------------------------------------------------
 def load_image(fname: str):

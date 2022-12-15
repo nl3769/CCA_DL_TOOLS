@@ -6,14 +6,16 @@
 import argparse
 import importlib
 import os
+from tqdm                                   import tqdm
 from package_database.databasePreparation   import databasePreparation
 from icecream                               import ic
 
 # -----------------------------------------------------------------------------------------------------------------------
-def prepare_dataset(p, PDATA, simulation):
-    for simu in simulation[80:]:
+def prepare_dataset(p, simulation):
+    pdata = p.PDATA
+    for simu in simulation:
         ic(simu)
-        p.PDATA = os.path.join(PDATA, simu)
+        p.PDATA = os.path.join(pdata, simu)
         dataPreparation = databasePreparation(p)
         dataPreparation()
 
@@ -34,8 +36,7 @@ def main():
     # --- launch process
     simulation = os.listdir(p.PDATA)
     simulation.sort()
-    PDATA = p.PDATA
-    prepare_dataset(p, PDATA, simulation)
+    prepare_dataset(p, simulation)
 
 # -----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":

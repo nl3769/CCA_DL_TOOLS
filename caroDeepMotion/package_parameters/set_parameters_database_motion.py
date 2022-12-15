@@ -12,17 +12,18 @@ import package_utils.fold_handler                       as fh
 def setParameters():
 
     p = Parameters(
-        PDATA           = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/PREPAREDDATA/V_00',   # PATH TO LOAD DATA
-        PRES            = '/home/laine/cluster/PROJECTS_IO/CARODEEPMOTION/DATABASEMOTION',      # PATH TO SAVE DATABASE
-        ROI_WIDTH       = 5e-3,                                                                 # SIZE OF THE ROI WIDTH
-        PIXEL_WIDTH     = 256,                                                                  # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW (IT IS EQUAL TO ROI_WIDTH)
-        PIXEL_HEIGHT    = 256,                                                                  # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW
-        SHIFT_X         = 128,                                                                   # X SHIFT TO GENERATE DATASET
-        SHIFT_Z         = 64                                                                    # Z SHIFT TO GENERATE DATASET
+        PDATA           = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/PREPAREDDATA/IMAGENET_SAMPLE',          # PATH TO LOAD DATA
+        PRES            = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/DATABASEMOTION/IMAGETNET_SAMPLE',       # PATH TO SAVE DATABASE
+        ROI_WIDTH       = 5e-3,                                                                                     # SIZE OF THE ROI WIDTH
+        PIXEL_WIDTH     = 256,                                                                                      # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW (IT IS EQUAL TO ROI_WIDTH)
+        PIXEL_HEIGHT    = 256,                                                                                      # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW
+        SHIFT_X         = 128,                                                                                      # X SHIFT TO GENERATE DATASET
+        SHIFT_Z         = 64                                                                                        # Z SHIFT TO GENERATE DATASET
         )
 
     pparam = os.path.join(p.PRES, 'backup_parameters')
     fh.create_dir(pparam)
+
     # --- Print all attributes in the console
     attrs = vars(p)
     print('----------------------------------------------------------------')

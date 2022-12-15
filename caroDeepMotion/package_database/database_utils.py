@@ -4,6 +4,7 @@
 '''
 
 import os
+import math
 import json
 import matplotlib.pyplot                    as plt
 import numpy                                as np
@@ -59,12 +60,14 @@ def get_path(path_data, pairs, id):
 def get_seg(fname, key):
     """ Load the segmentation. """
 
-    data = ld.loadmat(fname)
-    seg = data[key]['seg']
-    seg = np.array(seg)
-    seg[seg < 0] = 0
-    seg = np.nan_to_num(seg, nan=0)
-    seg = seg.squeeze()
+    data, keys = ld.load_mat(fname)
+    if key in keys:
+        seg = np.squeeze(data[key]['seg'][0,0])
+        seg[seg < 0] = 0
+        seg = np.nan_to_num(seg, nan=0)
+        seg = seg.squeeze()
+    else:
+        seg = None
 
     return seg
 
@@ -72,9 +75,11 @@ def get_seg(fname, key):
 def get_CF(fname):
     """ Load the pixel size of the image. """
 
-    data = ld.loadmat(fname)
-    CF = data['image']['CF']
-    height, width = data['image']['height'], data['image']['width']
+    data, keys = ld.load_mat(fname)
+    CF = data['image']['CF'][0, 0][0, 0]
+    height = data['image']['height'][0, 0][0, 0]
+    width = data['image']['width'][0, 0][0, 0]
+
     return CF, (height, width)
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -111,15 +116,15 @@ def get_interpolation_factor(oCF, roi_width, width_pixel):
 def load_data(path):
     """ Load data located in path directory. """
 
+    zstart = get_param_value(path['parameters'], 'remove_top_region') * 2
     I1 = get_image(path['I1'])
     I2 = get_image(path['I2'])
     OF = get_flow(path['flow'])
-    LI1 = get_seg(path['LI1'], 'LI_val')
-    LI2 = get_seg(path['LI2'], 'LI_val')
-    MA1 = get_seg(path['MA1'], 'MA_val')
-    MA2 = get_seg(path['MA2'], 'MA_val')
+    LI1 = get_seg(path['LI1'], 'LI_val') - zstart
+    LI2 = get_seg(path['LI2'], 'LI_val') - zstart
+    MA1 = get_seg(path['MA1'], 'MA_val') - zstart
+    MA2 = get_seg(path['MA2'], 'MA_val') - zstart
     CF, seg_dim = get_CF(path['CF'])
-    zstart = get_zstart(path['parameters'])
 
     return I1, I2, OF, LI1, LI2, MA1, MA2, CF, seg_dim, zstart
 
@@ -147,6 +152,7 @@ def load_prepared_data(paths):
     MA = ld.load_pickle(paths['path_MA'])
     OF = ld.load_pickle(paths['path_field'])
     seq = ld.load_pickle(paths['path_image'])
+
     with open(paths['image_information'], 'r') as f:
         CF = float(f.read())
 
@@ -277,8 +283,15 @@ def preprocessing_prepared_data(I1, I2, OF, LI1, LI2,  MA1, MA2, roi_width, pixe
     MA1 *= zcoef
     LI2 *= zcoef
     MA2 *= zcoef
-    LI1, MA1 = seg_interpoland(LI1, MA1, Fdim)
-    LI2, MA2 = seg_interpoland(LI2, MA2, Fdim)
+
+    non_zeros = np.where(LI1 > 0)[0]
+    if non_zeros.any():
+        LI1, MA1 = seg_interpoland(LI1, MA1, Fdim)
+        LI2, MA2 = seg_interpoland(LI2, MA2, Fdim)
+    else:
+        LI1, MA1 = None, None
+        LI2, MA2 = None, None
+
     # --- modify optical flow magnitude
     OF_[..., 0] *= Fdim[0] / Odim[0]
     OF_[..., 2] *= Fdim[1] / Odim[1]
@@ -293,8 +306,13 @@ def data_preparation_preprocessing(I1, I2, OF, LI1, LI2,  MA1, MA2, pairs, CF, z
     # --- check if dimension are consistent
     rd.check_image_dim(I1, I2, pairs)
     # --- adapt segmentation to image dimension
-    LI1, MA1 = adapt_segmentation(LI1, MA1, Odim)
-    LI2, MA2 = adapt_segmentation(LI2, MA2, Odim)
+    non_zeros = np.where(LI1 > 0)[0]
+    if non_zeros.any():
+        LI1, MA1 = adapt_segmentation(LI1, MA1, Odim)
+        LI2, MA2 = adapt_segmentation(LI2, MA2, Odim)
+    else:
+        LI2, MA2 = None, None
+
     # --- adapt optical flow dimension
     OF = adapt_optical_flow(OF, Odim, zstart, CF)
 
@@ -334,9 +352,11 @@ def compute_real_CF(Odim, Fdim, CF_init):
 # ----------------------------------------------------------------------------------------------------------------------
 def mean_pos(LI, MA):
     """ Compute avergae position between the LI and MA interface. """
-
-    mean = LI + MA
-    mean = mean / 2
+    if LI is not None:
+        mean = LI + MA
+        mean = mean / 2
+    else:
+        mean = None
 
     return mean
 
@@ -427,19 +447,24 @@ def get_roi_borders(LI1, LI2, MA1, MA2):
     """ Get roi borders. """
 
     roi_left, roi_right = [], []
-    roi_left.append(LI1.nonzero()[0][0])
-    roi_left.append(LI2.nonzero()[0][0])
-    roi_left.append(MA1.nonzero()[0][0])
-    roi_left.append(MA2.nonzero()[0][0])
+    if LI1 is not None:
+        roi_left.append(LI1.nonzero()[0][0])
+        roi_left.append(LI2.nonzero()[0][0])
+        roi_left.append(MA1.nonzero()[0][0])
+        roi_left.append(MA2.nonzero()[0][0])
 
-    roi_right.append(LI1.nonzero()[0][-1])
-    roi_right.append(LI2.nonzero()[0][-1])
-    roi_right.append(MA1.nonzero()[0][-1])
-    roi_right.append(MA2.nonzero()[0][-1])
+        roi_right.append(LI1.nonzero()[0][-1])
+        roi_right.append(LI2.nonzero()[0][-1])
+        roi_right.append(MA1.nonzero()[0][-1])
+        roi_right.append(MA2.nonzero()[0][-1])
 
-    roi = {
-        "left": max(roi_left) + 10,
-        "right": min(roi_right) - 10}
+        roi = {
+            "left": max(roi_left) + 10,
+            "right": min(roi_right) - 10}
+    else:
+        roi = {
+            "left": None,
+            "right": None}
 
     return roi
 
@@ -450,11 +475,10 @@ def image_interpoland(I, interp_factor):
     if len(I.shape) == 3:
         I = I.transpose(2,0,1)
 
-    I = sp.image_interp_x(I, interp_factor)
-    I = sp.image_interp_y(I, interp_factor)
+    I = sp.image_interp_factor(I, interp_factor)
 
     if len(I.shape) == 3:
-        I = I.transpose(2,0,1)
+        I = I.transpose(2, 0, 1)
 
     return I
 
@@ -495,58 +519,112 @@ def get_cropped_coordinates_cubs(roi_borders, pos, shift_x, shift_z, roi_width, 
     return coordinates
 
 # ----------------------------------------------------------------------------------------------------------------------
-def get_cropped_coordinates(roi_borders, pos1, pos2, shift_x, shift_z, roi_width, roi_height):
-    """ Compute position to get window. """
+def get_rnd_patches(roi_width, roi_height, shift_x, shift_z, dim_img, substr, coordinates):
 
-    nb_points = roi_borders['right'] - roi_borders['left']
-    x = np.linspace(roi_borders['left'], roi_borders['right'], nb_points+1, dtype=int)
-    pos = (pos1 + pos2) / 2
+    pos_x = []
+    condition = True
+    incr = 0
+    while condition:
+        pos_x.append(incr*shift_x)
+        if ((incr + 1) * shift_x + roi_width) > (dim_img[1] - roi_width):
+            pos_x.append(dim_img[1] - roi_width - 1)
+            condition = False
+        incr+=1
 
+    pos_z = []
+    condition = True
+    incr = 0
+    while condition:
+        pos_z.append(incr*shift_z)
+        if ((incr + 1) * shift_z + roi_height) > (dim_img[0] - roi_height):
+            pos_z.append(dim_img[0] - roi_height - 1)
+            condition = False
+        incr += 1
 
+    pos_x = np.asarray(pos_x)
+    pos_z = np.asarray(pos_z)
 
-    coordinates = {}
-    substr = 'pos_'
+    [X, Z] = np.meshgrid(pos_x, pos_z)
+    id_patch = 1
+    for id_x in range(X.shape[1]):
+        for id_z in range(X.shape[0]):
+            coordinates[substr + str(id_patch)] = (X[id_z][id_x], Z[id_z][id_x])
+            id_patch += 1
+
+# ----------------------------------------------------------------------------------------------------------------------
+def get_patch_carotid(pos, roi_height, coordinates, shift_z, x, shift_x, roi_width, roi_borders, dim_img):
+
     criterium = True
-    id = 0
     patch_id = 0
-    while criterium:
+    id = 0
+    substr = 'pos_'
+    default_pos = False
 
+    while criterium:
         xc = x[id]
         zc0 = int(round(pos[xc] - roi_height / 2))
         zc1 = zc0 - shift_z
         zc2 = zc0 + shift_z
 
-        if zc0 > 0:
+        if (zc0 + roi_height) < dim_img[0]:
             coordinates[substr + str(patch_id) + '_0'] = (xc, zc0)
-        if zc1 > 0:
+        else:
+            default_pos = True
+        if (zc1 + roi_height) < dim_img[0]:
             coordinates[substr + str(patch_id) + '_1'] = (xc, zc1)
-        if zc2 > 0:
+        else:
+            default_pos = True
+        if (zc2 + roi_height) < dim_img[0]:
             coordinates[substr + str(patch_id) + '_2'] = (xc, zc2)
+        else:
+            default_pos = True
+
+        if default_pos:
+            coordinates[substr + str(patch_id) + '_0'] = (xc, dim_img[0] - roi_height-1)
+            default_pos = False
 
         id += shift_x
         patch_id += 1
 
         # --- check criterium
-        if x[id] + roi_width > roi_borders['right']:
+        if x[id] + roi_width >= roi_borders['right']:
             criterium = False
 
+# ----------------------------------------------------------------------------------------------------------------------
+def get_cropped_coordinates(roi_borders, pos1, pos2, shift_x, shift_z, roi_width, roi_height, dim_img):
+    """ Compute position to get window. """
+
+    if pos1 is not None:
+        nb_points = roi_borders['right'] - roi_borders['left']
+        x = np.linspace(roi_borders['left'], roi_borders['right'], nb_points+1, dtype=int)
+        pos = (pos1 + pos2) / 2
+    else:
+        pos = None
+
+    coordinates = {}
+    substr = 'pos_'
+
+    if pos is not None:
+        get_patch_carotid(pos, roi_height, coordinates, shift_z, x, shift_x, roi_width, roi_borders, dim_img)
+    else:
+        get_rnd_patches(roi_width, roi_height, shift_x, shift_z, dim_img, substr, coordinates)
 
     return coordinates
 
 # ----------------------------------------------------------------------------------------------------------------------
-def get_zstart(fname):
+def get_param_value(fname, key):
     """ Get zstart. """
 
     # TODO: fname should not be a list
     extension = fname[0].split('.')[-1]
     if extension == "mat":
         data = ld.loadmat(fname)
-        zstart = data['p']['remove_top_region']
+        zstart = data['p'][key]
 
     elif extension == "json":
         with open(fname[0], 'r') as f:
             data = json.load(f)
-        zstart = data['remove_top_region']
+        zstart = data[key]
 
     return zstart
 
@@ -568,9 +646,10 @@ def data_extraction_cubs(LI, MA, I, coordinates, pixel_width, pixel_height):
 
         mask[LI_:MA_, id] = 255
 
-    data = {'I': [],
-            'M': [],
-            'pname': []}
+    data = {
+        'I': [],
+        'M': [],
+        'pname': []}
 
     for id, key in enumerate(coordinates.keys()):
 
@@ -592,45 +671,51 @@ def data_extraction(LI1, LI2, MA1, MA2, I1, I2, OF, coordinates, pixel_width, pi
     """ Get patch. """
 
     # --- get roi
-    LI1c = np.nonzero(LI1)[0]
-    LI2c = np.nonzero(LI2)[0]
-    MA1c = np.nonzero(MA1)[0]
-    MA2c = np.nonzero(MA2)[0]
+    if LI1 is not None:
+        LI1c = np.nonzero(LI1)[0]
+        LI2c = np.nonzero(LI2)[0]
+        MA1c = np.nonzero(MA1)[0]
+        MA2c = np.nonzero(MA2)[0]
 
-    rd.check_segmentation_dim(LI1c, LI2c, MA1c, MA2c, pairs_name)
+        rd.check_segmentation_dim(LI1c, LI2c, MA1c, MA2c, pairs_name)
 
-    # --- mask creation
-    mask1 = np.zeros(I1.shape, dtype=np.uint8)
-    mask2 = np.zeros(I2.shape, dtype=np.uint8)
-    for i in range(LI1c.shape[0]):
+        # --- mask creation
+        mask1 = np.zeros(I1.shape, dtype=np.uint8)
+        mask2 = np.zeros(I2.shape, dtype=np.uint8)
+        for i in range(LI1c.shape[0]):
 
-        id = int(round(LI1c[i]))
-        LI1_ = int(LI1[id])
-        MA1_ = int(MA1[id])
-        LI2_ = int(LI2[id])
-        MA2_ = int(MA2[id])
+            id = int(round(LI1c[i]))
+            LI1_ = int(LI1[id])
+            MA1_ = int(MA1[id])
+            LI2_ = int(LI2[id])
+            MA2_ = int(MA2[id])
 
-        mask1[LI1_:MA1_, id] = 255
-        mask2[LI2_:MA2_, id] = 255
+            mask1[LI1_:MA1_, id] = 255
+            mask2[LI2_:MA2_, id] = 255
 
-    data = {'I1': [],
-            'M1': [],
-            'I2': [],
-            'M2': [],
-            'OF': [],
-            'pname': []}
+    data = {
+        'I1': [],
+        'M1': [],
+        'I2': [],
+        'M2': [],
+        'OF': [],
+        'pname': []}
 
     for id, key in enumerate(coordinates.keys()):
 
         x, z = coordinates[key]
-        if z+pixel_height < I1.shape[0] and x+pixel_width < I1.shape[1]:
-            # --- extract on I1/M1
+        if z+pixel_height <= int(I1.shape[0]) and x+pixel_width < int(I1.shape[1]):
+            # --- extract on I1/I2
             data['I1'].append(I1[z:z+pixel_height, x:x+pixel_width])
-            data['M1'].append(mask1[z:z + pixel_height, x:x + pixel_width])
-
-            # --- extract on I2/M2
             data['I2'].append(I2[z:z + pixel_height, x:x + pixel_width])
-            data['M2'].append(mask2[z:z + pixel_height, x:x + pixel_width])
+
+            if LI1 is not None:
+                # --- extract on M1/M2
+                data['M1'].append(mask1[z:z + pixel_height, x:x + pixel_width])
+                data['M2'].append(mask2[z:z + pixel_height, x:x + pixel_width])
+            else:
+                data['M1'].append(np.ones(data['I1'][0].shape))
+                data['M2'].append(np.ones(data['I2'][0].shape))
 
             # --- extract on OF
             data['OF'].append(OF[z:z + pixel_height, x:x + pixel_width, :])
@@ -659,22 +744,22 @@ def adapt_seg_borders_cubs(LI, MA, roi_borders):
     return LI, MA
 
 # ----------------------------------------------------------------------------------------------------------------------
-def adapt_seg_borders(LI1, LI2, MA1, MA2, roi_borders):
+def adapt_seg_borders(LI1, LI2, MA1, MA2, roi_borders, width):
     """ Adapt segmentation -> fit with 0 values strictly lower than the then border and strictly higher than the right border. """
 
-    width = LI1.shape[0]
+    if LI1 is not None:
+        set_zero_left = np.arange(0, roi_borders['left'])
+        set_zero_right = np.arange(roi_borders['right'], LI1.shape[0])
 
-    for i in range(0, roi_borders['left']):
-        LI1[i] = 0
-        LI2[i] = 0
-        MA1[i] = 0
-        MA2[i] = 0
+        LI1[set_zero_left] = 0
+        LI2[set_zero_left] = 0
+        MA1[set_zero_left] = 0
+        MA2[set_zero_left] = 0
 
-    for i in range(roi_borders['right'], width):
-        LI1[i] = 0
-        LI2[i] = 0
-        MA1[i] = 0
-        MA2[i] = 0
+        LI1[set_zero_right] = 0
+        LI2[set_zero_right] = 0
+        MA1[set_zero_right] = 0
+        MA2[set_zero_right] = 0
 
     return LI1, LI2, MA1, MA2
 
@@ -725,7 +810,7 @@ def save_data(data, CF, pres, pname):
     """ Save data
     -> I1, I2: patch than contains the intima-media complex (.png format)
     -> M1, M2: masks of the IMC for segmentation task (.png format)
-    -> OF: displacment field between I1 and I2 (.nii format)
+    -> OF: displacment field between I1 and I2 (.pkl format)
     """
 
     psave = os.path.join(pres, pname)
@@ -739,7 +824,7 @@ def save_data(data, CF, pres, pname):
 
     # --- get numbe rof patches
     nb_patches = len(data[keys[0]])
-    debug = False
+    debug = True
 
     for id in range(nb_patches):
         for key in keys:
@@ -756,11 +841,14 @@ def save_data(data, CF, pres, pname):
                         I1 = data[key][id]
                     if 'I2' in key:
                         I2 = data[key][id]
+                    if 'OF' in key:
+                        motion = data[key][id]
+
         if debug == True:
             pres = os.path.join('/home/laine/Desktop/patch_res/', pname.split('/')[:1][0])
             fh.create_dir(pres)
-            debug_plot_patch(M1, I1, os.path.join(pres, data['pname'][id] + '_pos1.png'))
-            debug_plot_patch(M2, I2, os.path.join(pres, data['pname'][id] + '_pos2.png'))
+            debug_plot_patch_v2(M1, M2, I1, I2, np.linalg.norm(motion[..., ::2], axis=2), os.path.join(pres, data['pname'][id] + '.png'))
+            # debug_plot_patch(M2, I2, os.path.join(pres, data['pname'][id] + '_pos2.png'))
 
         with open(os.path.join(psave, "CF.txt"), "w") as f:
             for key in CF.keys():
@@ -790,6 +878,40 @@ def debug_plot_patch(M, I, pname):
     plt.close()
 
 # ----------------------------------------------------------------------------------------------------------------------
+def debug_plot_patch_v2(M1, M2, I1, I2, motion, pname):
+
+    plt.figure()
+    plt.subplot2grid((3, 2), (0, 0), colspan=1)
+    plt.imshow(I1, cmap='gray')
+    plt.colorbar()
+    plt.axis('off')
+    plt.subplot2grid((3, 2), (0, 1), colspan=1)
+    plt.imshow(M1, cmap='gray')
+    plt.colorbar()
+    plt.axis('off')
+
+    plt.subplot2grid((3, 2), (1, 0), colspan=1)
+    plt.imshow(I2, cmap='gray')
+    plt.colorbar()
+    plt.axis('off')
+    plt.subplot2grid((3, 2), (1, 1), colspan=1)
+    plt.imshow(M2, cmap='gray')
+    plt.colorbar()
+    plt.axis('off')
+
+    plt.subplot2grid((3, 2), (2, 0), colspan=1)
+    plt.imshow(I2 - I1, cmap='hot')
+    plt.colorbar()
+    plt.axis('off')
+    plt.subplot2grid((3, 2), (2, 1), colspan=1)
+    plt.imshow(motion, cmap='hot')
+    plt.colorbar()
+    plt.axis('off')
+
+    plt.savefig(pname)
+    plt.close()
+
+# ----------------------------------------------------------------------------------------------------------------------
 def save_data_preparation(I_seq, OF_seq, LI_seq, MA_seq, CF, pres, pname):
     """ Save data: TODO    """
 
@@ -810,13 +932,15 @@ def save_data_preparation(I_seq, OF_seq, LI_seq, MA_seq, CF, pres, pname):
     with open(os.path.join(pres, pname, "CF-" + pname + ".txt"), 'w') as f:
         f.write(str(CF))
 
-    # --- we also save a mat version to be used in matlab -> see later because data are saved twice
-    import scipy.io
-    fh.create_dir(os.path.join(pres, pname, 'mat_files'))
-    scipy.io.savemat(os.path.join(pres, pname, 'mat_files', "images-" + pname + ".mat"), {'data': I_seq})
-    scipy.io.savemat(os.path.join(pres, pname, 'mat_files', "displacement_field-" + pname + ".mat"), {'data': OF_seq})
-    scipy.io.savemat(os.path.join(pres, pname, 'mat_files', "LI-" + pname + ".mat"), {'data': LI_seq})
-    scipy.io.savemat(os.path.join(pres, pname, 'mat_files', "MA-" + pname + ".mat"), {'data': MA_seq})
+    # # --- we also save a mat version to be used in matlab -> see later because data are saved twice
+    saveMat = False
+    if saveMat:
+        import scipy.io
+        fh.create_dir(os.path.join(pres, pname, 'mat_files'))
+        scipy.io.savemat(os.path.join(pres, pname, 'mat_files', "images-" + pname + ".mat"), {'data': I_seq})
+        scipy.io.savemat(os.path.join(pres, pname, 'mat_files', "displacement_field-" + pname + ".mat"), {'data': OF_seq})
+        scipy.io.savemat(os.path.join(pres, pname, 'mat_files', "LI-" + pname + ".mat"), {'data': LI_seq})
+        scipy.io.savemat(os.path.join(pres, pname, 'mat_files', "MA-" + pname + ".mat"), {'data': MA_seq})
 
 # ----------------------------------------------------------------------------------------------------------------------
 def add_annotation(I, LI, MA):
@@ -848,13 +972,10 @@ def add_annotation(I, LI, MA):
     return I_a
 
 # ----------------------------------------------------------------------------------------------------------------------
-def mk_animation(pres, pname):
+def mk_animation(pres, pname, CF):
 
     with open(os.path.join(pres, pname, "images-" + pname + ".pkl"), 'rb') as f:
         I_seq = pkl.load(f)
-
-    with open(os.path.join(pres, pname, "displacement_field-" + pname + ".pkl"), 'rb') as f:
-        OF_seq = pkl.load(f)
 
     with open(os.path.join(pres, pname, "LI-" + pname + ".pkl"), 'rb') as f:
         LI_seq = pkl.load(f)
@@ -866,20 +987,23 @@ def mk_animation(pres, pname):
         OF = pkl.load(f)
 
 
-    for id_frame in range(I_seq.shape[-1]):
-        for i in range(I_seq.shape[1]):
-            if int(LI_seq[i, id_frame]) > 0:
-                I_seq[int(LI_seq[i, id_frame]), i, id_frame] = 255
-            if int(MA_seq[i, id_frame]) > 0:
-                I_seq[int(MA_seq[i, id_frame]), i, id_frame] = 255
+    if not math.isnan(LI_seq[0, 1]) and not math.isnan(MA_seq[0, 1]):
+        for id_frame in range(I_seq.shape[-1]):
+            for i in range(I_seq.shape[1]):
+                if int(LI_seq[i, id_frame]) > 0:
+                    I_seq[int(LI_seq[i, id_frame]), i, id_frame] = 255
+                if int(MA_seq[i, id_frame]) > 0:
+                    I_seq[int(MA_seq[i, id_frame]), i, id_frame] = 255
 
     images = []
     for id_seq in range(I_seq.shape[-1]):
-        images.append(I_seq[..., id_seq])
+        images.append(I_seq[..., id_seq].astype(np.uint8))
 
     io.mimsave(os.path.join(pres, pname, "sequence.gif"), images, fps=10)
 
     flow = []
     for id_seq in range(OF.shape[-1]):
-        flow.append(OF[..., id_seq])
+        motion = OF[..., id_seq].copy()
+        motion *= 255
+        flow.append(motion.astype(np.uint8))
     io.mimsave(os.path.join(pres, pname, "OF.gif"), flow, fps=10)

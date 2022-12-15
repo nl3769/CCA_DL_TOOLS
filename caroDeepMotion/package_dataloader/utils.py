@@ -19,19 +19,21 @@ def fetch_dataloader_flow(p):
         "pin_memory":   False,
         "shuffle":      True,
         "num_workers":  p.WORKERS,
-        "drop_last":    True
-        }
+        "drop_last":    True}
     args_validation = {
         "dataset":      val_dataloader,
         "batch_size":   p.BATCH_SIZE,
         "pin_memory":   False,
         "shuffle":      True,
         "num_workers":  1,
-        "drop_last":    True
-        }
+        "drop_last":    True}
 
-    loader_training = DataLoader(**args_training)
-    loader_validation = DataLoader(**args_validation)
+    if p.SYNTHETIC_DATASET:
+        loader_training = DataLoader(**args_training)
+        loader_validation = DataLoader(**args_validation)
+    else:
+        loader_training = DataLoader(**args_training)
+        loader_validation = None
 
     return loader_training, loader_validation
 

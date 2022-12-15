@@ -39,8 +39,8 @@ def compute_diff(arr1, arr2, CF, common_support, opponent):
         if patient in arr2.keys():
             diff = {}
             diff[patient] = {}
-            # idx = compute_intersection(arr1[patient]['LI_id'], arr2[patient]['LI_id'], arr1[patient]['MA_id'], arr2[patient]['MA_id']) # if we want to compare on bigger support but there is no sense do to it for fair comparison
-            idx = common_support[patient]
+            idx = compute_intersection(arr1[patient]['LI_id'], arr2[patient]['LI_id'], arr1[patient]['MA_id'], arr2[patient]['MA_id']) # if we want to compare on bigger support but there is no sense do to it for fair comparison
+            # idx = common_support[patient]
             if idx is not None:
                 debug = False
                 if debug:

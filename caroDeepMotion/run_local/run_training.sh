@@ -1,7 +1,6 @@
 #!/bin/bash
 
-source ~/anaconda3/etc/profile.d/conda.sh
-conda activate pytorch
+source ~/venv/pytorch/bin/activate
 
 WD=/home/laine/Documents/REPO/CCA_DL_TOOLS/caroDeepFlow
 cd $WD

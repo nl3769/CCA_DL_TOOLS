@@ -36,11 +36,11 @@ class databaseHandler():
         # --- we get pairs of images
         pairs = []
         seq, OF, LI, MA, CF = dbu.load_prepared_data(self.path_data)
-        seq_length = seq.shape[-1]
+        [height_seq, width_seq, nb_frame] = seq.shape
         pname = self.parameters.PDATA.split('/')[-1]
 
         # --- set seq ID to save results
-        for id in range(1, seq_length):
+        for id in range(1, nb_frame):
 
             if id < 10:
                 p0 = pname + "_00" + str(id)
@@ -58,7 +58,7 @@ class databaseHandler():
 
             pairs.append([p0, p1])
 
-        for id in tqdm(range(0, (seq_length-1))):
+        for id in range(0, (nb_frame-1)):
 
             # --- get size of the original image
             LI1 = LI[..., id].copy()
@@ -79,8 +79,7 @@ class databaseHandler():
                 'MA2'         : MA2,
                 'roi_width'   : self.parameters.ROI_WIDTH,
                 'pixel_width' : self.parameters.PIXEL_WIDTH,
-                'CF'          : CF
-            }
+                'CF'          : CF}
 
             I1, I2, OF12, LI1, LI2, MA1, MA2, rCF = dbu.preprocessing_prepared_data(**args_preprocessing)
 
@@ -88,7 +87,7 @@ class databaseHandler():
             roi_borders = dbu.get_roi_borders(LI1, LI2, MA1, MA2)
 
             # --- adapt segmentation to borders
-            LI1, LI2, MA1, MA2 = dbu.adapt_seg_borders(LI1, LI2, MA1, MA2, roi_borders)
+            LI1, LI2, MA1, MA2 = dbu.adapt_seg_borders(LI1, LI2, MA1, MA2, roi_borders, width_seq)
 
             # --- compute position for cropping
             mean1 = dbu.mean_pos(LI1, MA1)
@@ -100,7 +99,9 @@ class databaseHandler():
                 "shift_x"       : self.parameters.SHIFT_X,
                 "shift_z"       : self.parameters.SHIFT_Z,
                 "roi_width"     : self.parameters.PIXEL_WIDTH,
-                "roi_height"    : self.parameters.PIXEL_HEIGHT}
+                "roi_height"    : self.parameters.PIXEL_HEIGHT,
+                "dim_img"       : I1.shape}
+
             coordinates = dbu.get_cropped_coordinates(**args_coordinates)
 
             # --- extract data
@@ -115,8 +116,7 @@ class databaseHandler():
                 "coordinates"   : coordinates,
                 "pixel_width"   : self.parameters.PIXEL_WIDTH,
                 "pixel_height"  : self.parameters.PIXEL_HEIGHT,
-                "pairs_name"    : pairs[id]
-                }
+                "pairs_name"    : pairs[id]}
 
             data = dbu.data_extraction(**args_data_extraction)
             # --- save data

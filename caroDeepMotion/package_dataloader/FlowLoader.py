@@ -1,8 +1,8 @@
 import cv2
 from torch.utils.data           import        Dataset
-from PIL                        import Image
-import numpy                    as                     np
-import package_utils.loader     as      pul
+from PIL                        import        Image
+import numpy                    as            np
+import package_utils.loader     as            pul
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -39,8 +39,8 @@ class FlowDataloader(Dataset):
         I1 = np.mean(np.array(Image.open(pI1)), axis=-1)
         I2 = np.mean(np.array(Image.open(pI2)), axis=-1)
 
-        I1 = cv2.resize(I1, (128, 256), interpolation=cv2.INTER_LINEAR)
-        I2 = cv2.resize(I2, (128, 256), interpolation=cv2.INTER_LINEAR)
+        I1 = cv2.resize(I1, (256, 256), interpolation=cv2.INTER_LINEAR)
+        I2 = cv2.resize(I2, (256, 256), interpolation=cv2.INTER_LINEAR)
 
         I1 = np.expand_dims(I1, axis=0)
         I2 = np.expand_dims(I2, axis=0)
@@ -69,9 +69,9 @@ class FlowDataloader(Dataset):
                 # Reshape data into 3D array (columns, rows, bands)
                 # The reshape here is for visualization, the original code is (w,h,2)
                 OF = np.resize(data, (int(h), int(w), 2))
-                x_coef = 128 / OF.shape[0]
+                x_coef = 256 / OF.shape[0]
                 z_coef = 256 / OF.shape[1]
-                OF = cv2.resize(OF, (128, 256), interpolation=cv2.INTER_LINEAR)
+                OF = cv2.resize(OF, (256, 256), interpolation=cv2.INTER_LINEAR)
 
                 OF[..., 0] = OF[..., 0] * x_coef
                 OF[..., 1] = OF[..., 1] * z_coef

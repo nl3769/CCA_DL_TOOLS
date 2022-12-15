@@ -22,7 +22,7 @@ class Parameters:
         self.SET = SET
 
         self.PRESCSV = os.path.join(self.PRES, 'CVS')
-        self.PLOT = os.path.join(self.PRES, 'VIOLINPLOT')
+        self.PLOT = os.path.join(self.PRES, 'PLOT')
         self.PUNPROCESSED = os.path.join(self.PRES, 'UNPROCESSED_IMAGES')
 
         # --- create directory

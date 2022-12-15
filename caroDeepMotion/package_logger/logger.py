@@ -8,7 +8,6 @@ import torch
 import matplotlib.pyplot            as plt
 import numpy                        as np
 from torch.utils.tensorboard        import SummaryWriter
-import package_utils.fold_handler   as pufh
 
 class loggerClass():
 
@@ -314,7 +313,7 @@ class loggerClass():
     def plot_pred_flow(self, I1, I2, OF_gt, OF_pred, epoch_id, psave, set, fname):
         ftsize = 6
         plt.rcParams['text.usetex'] = True
-        plt.figure()
+        # plt.figure()
 
         # ------ IMAGE
         # -- I1

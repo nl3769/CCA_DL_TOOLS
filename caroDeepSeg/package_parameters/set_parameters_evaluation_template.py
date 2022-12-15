@@ -26,7 +26,8 @@ def setParameters():
             "Computerized-TMU_DE": "/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Computerized-TUM_DE",
             "Computerized-CREATIS_TF": "/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Computerized-CREATIS_TF",
             "Computerized-CREATIS_PH_v0": "/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Computerized-CREATIS_PH_v0",
-            "Computerized-CREATIS_PH_v1": "/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Computerized-CREATIS_PH_v1"
+            "Computerized-CREATIS_PH_v1": "/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Computerized-CREATIS_PH_v1",
+            "Computerized-CREATIS_PH_UNION_15_PXL": "/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Computerized-CREATIS_PH_UNION_15_PXL"
         },
         SET = 'clin+tech' # chose 'clin', 'tech' or 'clin+tech'
     )

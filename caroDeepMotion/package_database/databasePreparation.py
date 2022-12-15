@@ -39,7 +39,7 @@ class databasePreparation():
             p_res = os.path.join(self.parameters.PDATA, nframe)
 
             # --- get path
-            path_image = rd.get_fname(dir=p_res, sub_str='_bmode.png', fold=os.path.join('bmode_result', 'RF'))
+            path_image = rd.get_fname(dir=p_res, sub_str='_bmode.png', fold=os.path.join('bmode_result', 'results'))
             path_info = rd.get_fname(dir=p_res, sub_str='image_information', fold='phantom')
             path_LI = rd.get_fname(dir=p_res, sub_str='LI.', fold='phantom')
             path_MA = rd.get_fname(dir=p_res, sub_str='MA.', fold='phantom')
@@ -68,7 +68,7 @@ class databasePreparation():
             p1 = keys[id+1]
             pairs.append([p0, p1])
 
-        for id in tqdm(range(0, len(pairs))):
+        for id in range(0, len(pairs)):
 
             # --- get path
             path = dbu.get_path(self.path_data, pairs, id)
@@ -108,14 +108,15 @@ class databasePreparation():
 
             else:
                 I_seq[..., id+1] = I2
-                OF_seq[..., id]  = OF
-                LI_seq[:, id+1]  = LI2
-                MA_seq[:, id+1]  = MA2
+                OF_seq[..., id] = OF
+                LI_seq[:, id+1] = LI2
+                MA_seq[:, id+1] = MA2
 
 
             # folder = os.path.join(pairs[id][1].split('id')[0][:-1], 'id_' + substr)
         dbu.save_data_preparation(I_seq, OF_seq, LI_seq, MA_seq, CF, self.parameters.PRES, self.parameters.PDATA.split('/')[-1])
-        dbu.mk_animation(self.parameters.PRES, self.parameters.PDATA.split('/')[-1])
+        # dbu.mk_animation(self.parameters.PRES, self.parameters.PDATA.split('/')[-1], CF, start)
+        dbu.mk_animation(self.parameters.PRES, self.parameters.PDATA.split('/')[-1], CF)
 
         # dbu.save_data(data, rCF, self.parameters.PRES, folder)
 

@@ -19,9 +19,6 @@ class lossFlow():
         flow_loss = 0.0
 
         # --- exclude invalid pixels and extremely large diplacements
-        mag = torch.sum(flow_gt ** 2,
-                        dim=1).sqrt()  # sum as the resulting flow is the sum at each iteration, and get only the positive value
-
         for i in range(n_predictions):
             i_weight = gamma ** (n_predictions - i - 1)
             i_loss = (flow_preds[i] - flow_gt).abs()
@@ -30,10 +27,11 @@ class lossFlow():
         epe = torch.sum((flow_preds[-1] - flow_gt) ** 2, dim=1).sqrt()
         epe = epe.view(-1)
 
-        metrics = {'epe': epe.mean().item(),
-                   '1px': (epe < 1).float().mean().item(),
-                   '3px': (epe < 3).float().mean().item(),
-                   '5px': (epe < 5).float().mean().item()}
+        metrics = {
+            'epe': epe.mean().item(),
+            '1px': (epe < 1).float().mean().item(),
+            '3px': (epe < 3).float().mean().item(),
+            '5px': (epe < 5).float().mean().item()}
 
         return flow_loss, metrics
 

@@ -14,9 +14,10 @@ import package_dataloader.utils                 as pdlu
 import package_network.utils                    as pnu
 import package_loss.lossFlow                    as plll
 import package_logger.logger                    as plog
-import package_loop.trn_loop               as prtl
-import package_loop.val_loop             as prvl
+import package_loop.trn_loop                    as prtl
+import package_loop.val_loop                    as prvl
 import package_debug.visualisation              as pdv
+import package_utils.wandb_utils                as puwu
 
 ################################
 # --- RUN TRAINING ROUTINE --- #
@@ -37,7 +38,7 @@ def main():
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     else:
         device = 'cpu'
-    device = 'cpu'
+    # device = 'cpu'
     # --- load models
     netEncoder, netFlow = pnu.load_model_flow(p)
     netEncoder = netEncoder.to(device)
@@ -60,19 +61,26 @@ def main():
     # --- store optimizers/schedulers and optimizers
     networks = {
         "netEncoder": netEncoder,
-        "netFlow": netFlow
-    }
+        "netFlow": netFlow}
+
     optimizers = {
         "netEncoder": optimizerEncoder,
-        "netFlow": optimizerFlow
-    }
+        "netFlow": optimizerFlow}
+
     schedulers = {
         "netEncoder": schedulerEncoder,
-        "netFlow": schedulerFlow
-    }
+        "netFlow": schedulerFlow}
 
     # --- logger
     logger = plog.loggerClass(p, flowLoss.metrics.keys())
+
+    # --- config wandb
+    if p.USE_WANDB:
+        config = puwu.get_param_wandb(p)
+        wandb.init(project="caroDeepMotion", entity=p.ENTITY, dir=p.PATH_WANDB, config=config, name=p.EXPNAME)
+
+    wandb.log({
+        "lr": get_lr(optimizers["netEncoder"])})
 
     # --- loop
     for epoch in range(p.NB_EPOCH):
@@ -82,8 +90,32 @@ def main():
             prvl.val_loop_synth(p, networks, flowLoss, logger, validation_dataloader, epoch, device)
         
         else:
-            prtl.trn_loop_flow(p, networks, flowLoss, optimizers, schedulers, logger, training_dataloader, epoch, device)
-            prvl.val_loop_flow(p, networks, flowLoss, logger, validation_dataloader, epoch, device)
+            trn_flow_metrics, trn_flow_loss = prtl.trn_loop_flow(p, networks, flowLoss, optimizers, schedulers, logger, training_dataloader, epoch, device)
+            if validation_dataloader is not None:
+                val_flow_metrics, val_flow_loss = prvl.val_loop_flow(p, networks, flowLoss, logger, validation_dataloader, epoch, device)
+
+        if validation_dataloader is not None:
+            wandb.log({
+                "lr": get_lr(optimizers["netEncoder"]),
+                "trn_loss": trn_flow_loss,
+                "trn_epe": trn_flow_metrics['epe'],
+                "trn_epe_1_px": trn_flow_metrics['1px'],
+                "trn_epe_3_px": trn_flow_metrics['3px'],
+                "trn_epe_5_px": trn_flow_metrics['5px'],
+                "val_epe": val_flow_metrics['epe'],
+                "val_epe_1_px": val_flow_metrics['1px'],
+                "val_epe_3_px": val_flow_metrics['3px'],
+                "val_epe_5_px": val_flow_metrics['5px']
+            })
+        else:
+            wandb.log({
+                "lr": get_lr(optimizers["netEncoder"]),
+                "trn_loss": trn_flow_loss,
+                "trn_epe": trn_flow_metrics['epe'],
+                "trn_epe_1_px": trn_flow_metrics['1px'],
+                "trn_epe_3_px": trn_flow_metrics['3px'],
+                "trn_epe_5_px": trn_flow_metrics['5px']})
+
 
         logger.save_best_model(epoch, networks)
 
@@ -92,33 +124,37 @@ def main():
     logger.save_model_history()
 
 # ----------------------------------------------------------------------------------------------------------------------
-def config_wandb():
-    """ TODO """
-
-    config = {}
-    project_name = {}
-
-    return config, project_name
-
-# ----------------------------------------------------------------------------------------------------------------------
 def fetch_optimizer(p, model, n_step):
     """ Create the optimizer and learning rate scheduler. """
 
+    # # --- optimizer
+    # optimizer = optim.Adam(model.parameters(), lr=p.LEARNING_RATE)
+    #
+    # # --- schedular
+    # param = {
+    #     'max_lr': p.LEARNING_RATE,
+    #     'total_steps': n_step,
+    #     'epochs': p.NB_EPOCH,
+    #     'pct_start': 0.05,
+    #     'cycle_momentum': False,
+    #     'anneal_strategy': 'linear'}
+    # scheduler = optim.lr_scheduler.OneCycleLR(optimizer, **param)
+
+    """ Create the optimizer and learning rate scheduler. """
+
     # --- optimizer
-    optimizer = optim.Adam(model.parameters(), lr=p.LEARNING_RATE)
+    beta1, beta2 = 0.9, 0.999
+    optimizer = optim.Adam(model.parameters(), lr=p.LEARNING_RATE, betas=(beta1, beta2))
 
     # --- schedular
-    param = {
-        'max_lr': p.LEARNING_RATE,
-        'total_steps': n_step,
-        'epochs': p.NB_EPOCH,
-        'pct_start': 0.05,
-        'cycle_momentum': False,
-        'anneal_strategy': 'linear'
-    }
-    scheduler = optim.lr_scheduler.OneCycleLR(optimizer, **param)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.99)
 
     return optimizer, scheduler
+
+# ----------------------------------------------------------------------------------------------------------------------
+def get_lr(optimizer):
+    for param_group in optimizer.param_groups:
+        return param_group['lr']
 
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':

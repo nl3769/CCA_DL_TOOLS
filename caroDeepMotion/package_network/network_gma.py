@@ -10,8 +10,7 @@ class RelPosEmb(nn.Module):
     def __init__(
         self,
         max_pos_size,
-        dim_head
-        ):
+        dim_head):
 
         super().__init__()
         

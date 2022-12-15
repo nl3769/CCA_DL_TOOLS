@@ -9,6 +9,7 @@ class Parameters:
         PDATA,
         PRES,
         PSPLIT,
+        MAGNITUDE_MAGNITUDE,
         LEARNING_RATE,
         BATCH_SIZE,
         NB_EPOCH,
@@ -25,22 +26,22 @@ class Parameters:
         POSITION_AND_CONTENT,
         NUM_HEAD,
         ADVENTICIA_DIM,
-        USER,
+        ENTITY,
         EXPNAME,
         DEVICE,
         RESTORE_CHECKPOINT,
         SYNTHETIC_DATASET,
+        USE_WANDB,
         KERNEL_SIZE,
         PADDING,
-        USE_BIAS,
-        NGF,
-        NB_LAYERS
+        USE_BIAS
 ):
         
         self.MODEL_NAME                         = MODEL_NAME
         self.PDATA                              = PDATA
         self.PRES                               = PRES
         self.PSPLIT                             = PSPLIT
+        self.MAGNITUDE_MAGNITUDE                = MAGNITUDE_MAGNITUDE
         self.LEARNING_RATE                      = LEARNING_RATE
         self.BATCH_SIZE                         = BATCH_SIZE
         self.NB_EPOCH                           = NB_EPOCH
@@ -57,22 +58,23 @@ class Parameters:
         self.POSITION_AND_CONTENT               = POSITION_AND_CONTENT
         self.NUM_HEAD                           = NUM_HEAD
         self.ADVENTICIA_DIM                     = ADVENTICIA_DIM
-        self.USER                               = USER
+        self.ENTITY                             = ENTITY
         self.EXPNAME                            = EXPNAME
         self.DEVICE                             = DEVICE
         self.RESTORE_CHECKPOINT                 = RESTORE_CHECKPOINT
         self.SYNTHETIC_DATASET                  = SYNTHETIC_DATASET
+        self.USE_WANDB                          = USE_WANDB
         self.KERNEL_SIZE                        = KERNEL_SIZE
         self.PADDING                            = PADDING
         self.USE_BIAS                           = USE_BIAS
-        self.NGF                                = NGF
-        self.NB_LAYERS                          = NB_LAYERS
+
         self.PATH_RANDOM_PRED_TRN               = os.path.join(self.PRES, 'training_pred')
         self.PATH_PRINT_MODEL                   = os.path.join(self.PRES, 'print_model')
         self.PATH_SAVE_MODEL                    = os.path.join(self.PRES, 'model')
         self.PATH_MODEL_HISTORY                 = os.path.join(self.PRES, 'training_history')
         self.PATH_SAVE_FIGURE                   = os.path.join(self.PRES, 'training_figure')
         self.PATH_SAVE_PRED_TRAINING            = os.path.join(self.PRES, 'training_pred')
+        self.PATH_WANDB                         = os.path.join(self.PRES, 'wandb')
 
         # --- create directories
         fh.create_dir(self.PATH_RANDOM_PRED_TRN)
@@ -81,3 +83,4 @@ class Parameters:
         fh.create_dir(self.PATH_MODEL_HISTORY)
         fh.create_dir(self.PATH_SAVE_FIGURE)
         fh.create_dir(self.PATH_SAVE_PRED_TRAINING)
+        fh.create_dir(self.PATH_WANDB)

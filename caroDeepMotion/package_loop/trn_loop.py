@@ -27,8 +27,10 @@ def trn_loop_flow(param, networks, flowLoss, optimizers, scheduler, logger, load
     save = True
 
     for i_batch, (I1, I2, OF, fname) in enumerate(tqdm(loader, ascii=True, desc=f'TRAINING - Epoch id.: {id_epoch}')):
+
         # --- load data
         I1, I2, OF = I1.to(device).float(), I2.to(device).float(), OF.to(device).float()
+
         ##########################
         # --- TRAIN NETWORKS --- #
         ##########################
@@ -47,9 +49,6 @@ def trn_loop_flow(param, networks, flowLoss, optimizers, scheduler, logger, load
 
         optimizers["netEncoder"].step()
         optimizers["netFlow"].step()
-
-        scheduler["netEncoder"].step()
-        scheduler["netFlow"].step()
 
         ##################
         # --- LOGGER --- #
@@ -86,11 +85,15 @@ def trn_loop_flow(param, networks, flowLoss, optimizers, scheduler, logger, load
     full_loss = np.mean(full_loss)
 
     # --- update
-    logger.add_loss_flow(flow_loss_,        set='training')
-    logger.add_metrics_flow(flow_metrics_,  set='training')
-    logger.add_loss_full(full_loss,         set='training')
+    logger.add_loss_flow(flow_loss_, set='training')
+    logger.add_metrics_flow(flow_metrics_, set='training')
+    logger.add_loss_full(full_loss, set='training')
 
-# ----------------------------------------------------------------------------------------------------------------------
+    # --- update loss
+    scheduler["netEncoder"].step()
+    scheduler["netFlow"].step()
+
+    return flow_metrics_, flow_loss_
 
 # ----------------------------------------------------------------------------------------------------------------------
 def trn_loop_synth(param, networks, flowLoss, optimizers, scheduler, logger, loader, id_epoch, device):
