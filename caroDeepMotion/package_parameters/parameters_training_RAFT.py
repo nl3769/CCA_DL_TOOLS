@@ -9,7 +9,7 @@ class Parameters:
         PDATA,
         PRES,
         PSPLIT,
-        MAGNITUDE_MAGNITUDE,
+        MAGNITUDE_MOTION,
         LEARNING_RATE,
         BATCH_SIZE,
         NB_EPOCH,
@@ -41,7 +41,7 @@ class Parameters:
         self.PDATA                              = PDATA
         self.PRES                               = PRES
         self.PSPLIT                             = PSPLIT
-        self.MAGNITUDE_MAGNITUDE                = MAGNITUDE_MAGNITUDE
+        self.MAGNITUDE_MOTION                	= MAGNITUDE_MOTION
         self.LEARNING_RATE                      = LEARNING_RATE
         self.BATCH_SIZE                         = BATCH_SIZE
         self.NB_EPOCH                           = NB_EPOCH

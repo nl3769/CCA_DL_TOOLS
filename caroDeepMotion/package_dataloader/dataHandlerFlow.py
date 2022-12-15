@@ -28,7 +28,7 @@ class dataHandlerFlowFlyingChair(FlowDataloader):
 
         if set != 'validation':
             files = os.listdir(param.PSPLIT)
-            mag = str(param.MAGNITUDE_MAGNITUDE)
+            mag = str(param.MAGNITUDE_MOTION)
             img_fname = [key for key in files if 'images' in key and mag in key][0]
             motion_fname = [key for key in files if 'motion' in key and mag in key][0]
 
