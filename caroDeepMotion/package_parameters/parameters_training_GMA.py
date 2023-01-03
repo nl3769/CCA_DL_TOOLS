@@ -43,6 +43,9 @@ class Parameters:
         self.PDATA                              = PDATA
         self.PRES                               = PRES
         self.PSPLIT                             = PSPLIT
+        self.PDATA                              = PDATA
+        self.PRES                               = PRES
+        self.PSPLIT                             = PSPLIT
         self.LEARNING_RATE                      = LEARNING_RATE
         self.BATCH_SIZE                         = BATCH_SIZE
         self.NB_EPOCH                           = NB_EPOCH

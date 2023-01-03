@@ -162,9 +162,10 @@ class BasicUpdateBlock(nn.Module):
         self.gru = SepConvGRU(hidden_dim=hidden_dim, input_dim=128 + hidden_dim)
         self.flow_head = FlowHead(hidden_dim, hidden_dim=256)
 
-        self.mask = nn.Sequential(nn.Conv2d(128, 256, 3, padding=1),
-                                  nn.ReLU(inplace=True),
-                                  nn.Conv2d(256, 64 * 9, 1, padding=0))  # 64 = 8*8 -> et on multiplie par 9 pour otbenir 9 coefficient pour chaque pixel
+        self.mask = nn.Sequential(
+            nn.Conv2d(128, 256, 3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(256, 64 * 9, 1, padding=0))  # 64 = 8*8 -> et on multiplie par 9 pour otbenir 9 coefficient pour chaque pixel
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     def forward(self, net, inp, corr, flow):

@@ -43,7 +43,7 @@ class motionDataloader(Dataset):
     # ------------------------------------------------------------------------------------------------------------------
     def read_img(self, index):
         """ Read images and flow from files. """
-
+        # print(self.image_list[index][0] + "\n")
         I1 = pul.load_pickle(self.image_list[index][0])
         I2 = pul.load_pickle(self.image_list[index][1])
         M1 = pul.load_pickle(self.mask_list[index][0])

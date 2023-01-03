@@ -6,18 +6,51 @@
 import argparse
 import importlib
 import os
-from tqdm                                   import tqdm
+import numpy                                as np
 from package_database.databasePreparation   import databasePreparation
 from icecream                               import ic
+from multiprocessing                        import Process
+
+# -----------------------------------------------------------------------------------------------------------------------
+def call(dataPreparation):
+    dataPreparation()
 
 # -----------------------------------------------------------------------------------------------------------------------
 def prepare_dataset(p, simulation):
     pdata = p.PDATA
-    for simu in simulation:
-        ic(simu)
+    # simulation = simulation[326:]
+
+    # --- split data for multiprocessing
+    nb_process = 8
+    id_step = 0
+    nb_step = int(np.floor(len(simulation) / nb_process))
+
+    for id in range(nb_step):
+        process = []
+        for id_rel, simu in enumerate(simulation[id_step*nb_process:id_step*nb_process+nb_process]):
+            print(str(id * nb_process + id_rel) + ' | ' + simu )
+            p.PDATA = os.path.join(pdata, simu)
+            dataPreparation = databasePreparation(p)
+            pc = Process(target=call, args=(dataPreparation,))
+            process.append(pc)
+            pc.start()
+
+        for i in process:
+            i.join()
+
+        id_step += 1
+
+    process = []
+    for id_rel, simu in enumerate(simulation[id_step * nb_process:]):
+        print(str(nb_step * nb_process + id_rel) + ' | ' + simu)
         p.PDATA = os.path.join(pdata, simu)
         dataPreparation = databasePreparation(p)
-        dataPreparation()
+        pc = Process(target=call, args=(dataPreparation,))
+        process.append(pc)
+        pc.start()
+
+    for i in process:
+        i.join()
 
 # -----------------------------------------------------------------------------------------------------------------------
 def main():

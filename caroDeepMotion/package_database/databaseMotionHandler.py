@@ -127,7 +127,7 @@ class databaseHandler():
             else:
                 substr = "00" + str(id + 1)
             folder = os.path.join(pname, 'id_' + substr)
-            dbu.save_data(data, rCF, self.parameters.PRES, folder)
+            dbu.save_data(data, rCF, self.parameters.PRES, folder, (self.parameters.PIXEL_HEIGHT, self.parameters.PIXEL_HEIGHT))
 
     # ------------------------------------------------------------------------------------------------------------------
     def __call__(self):

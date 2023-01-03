@@ -12,12 +12,12 @@ import package_utils.fold_handler                       as fh
 def setParameters():
 
     p = Parameters(
-        PRES = '/home/laine/Desktop/segmentation_results',
-        PA1 = '/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Manual-A1',
-        PA1BIS = '/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Manual-A1s',
-        PA2 =  '/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Manual-A2',
-        PCF = '/home/laine/Documents/PROJECTS_IO/DATA/CUBS/CF',
-        PMETHODS = {
+        PRES='/home/laine/Desktop/segmentation_results',
+        PA1='/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Manual-A1',
+        PA1BIS='/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Manual-A1s',
+        PA2='/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Manual-A2',
+        PCF='/home/laine/Documents/PROJECTS_IO/DATA/CUBS/CF',
+        PMETHODS={
             "Computerized-UCY_CY": "/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Computerized-UCY_CY",
             "Computerized-CNR_I": "/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Computerized-CNR_IT",
             "Computerized-INESTEC_PT": "/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Computerized-INESCTEC_PT",
@@ -29,7 +29,7 @@ def setParameters():
             "Computerized-CREATIS_PH_v1": "/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Computerized-CREATIS_PH_v1",
             "Computerized-CREATIS_PH_UNION_15_PXL": "/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Computerized-CREATIS_PH_UNION_15_PXL"
         },
-        SET = 'clin+tech' # chose 'clin', 'tech' or 'clin+tech'
+        SET=['tech', 'clin+tech', 'clin']  # chose 'clin', 'tech' or 'clin+tech'
     )
 
     pparam = os.path.join(p.PRES, 'backup_parameters')
@@ -38,9 +38,7 @@ def setParameters():
     # --- Print all attributes in the console
     attrs = vars(p)
     print('----------------------------------------------------------------')
-    print('----------------------------------------------------------------')
     print('\n'.join("%s: %s" % item for item in attrs.items()))
-    print('----------------------------------------------------------------')
     print('----------------------------------------------------------------')
 
     # --- Save a backup of the parameters so it can be tracked on Git, without requiring to be adapted by from other contributors

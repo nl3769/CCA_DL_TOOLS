@@ -3,11 +3,12 @@ function damienGarcia_speckleTracking(varargin)
     % --- get parameters
     switch nargin
       case 5
-        pseq    = varargin{1};
-        pmotion = varargin{2};
-        pLI     = varargin{3};
-        pMA     = varargin{4};
-        pCF     = varargin{5};  
+        pI1 = varargin{1};
+        pI2 = varargin{2};
+        pmotion = varargin{3};
+        pCF = varargin{4};  
+        pparam = varargin{5};
+        
     otherwise
         error('Problem with parameters (fct_run_mk_phantom)')
     end
@@ -16,12 +17,18 @@ function damienGarcia_speckleTracking(varargin)
     run(fullfile('..', 'mtl_utils', 'add_path.m'));
     
     % --- get seq
-    seq         = load(pseq).data;
-    motion_gt   = load(pmotion).data;
-    LI          = load(pLI).data;
-    MA          = load(pMA).data;
-
+    I1 = imread(pI1);
+    I2 = imread(pI2);
+    seq = cat(3, I1, I2);
+    motion_gt = niftiread(pmotion);
     nb_frame = size(seq, 3);
+    
+    img_info = load(pCF);
+    cf = img_info.image.CF;
+    
+    param = fct_load_param(pparam);
+    z_start = 2*param.remove_top_region;
+    motion_gt = adapt_flow(I1, motion_gt, cf, z_start);
     
     for id=1:1:nb_frame-1
         I = cat(3, seq(:,:,id), seq(:,:,id+1));
@@ -173,4 +180,33 @@ function example_from_must()
     hold off
     title('Motion field (in pix) by speckle tracking')
     axis equal off ij
+end
+
+% -------------------------------------------------------------------------
+function [param]=fct_load_param(path_param)
+    
+    str = fileread(path_param);
+    param = jsondecode(str);
+        
+end
+   
+% -------------------------------------------------------------------------
+function OF_out = adapt_flow(I, flow, CF, z_start)
+    
+    [height_I, width_I] = size(I);
+    [height_OF_, width_OF_, ~] = size(flow);
+
+    width_roi = linspace(-width_I/2*CF, width_I/2*CF, width_I);
+%     height_roi = linspace(0, height_I*CF, height_I) + z_start;
+    height_roi = linspace(z_start, height_I*CF+z_start, height_I);
+    width_OF = linspace(-width_OF_/2 * CF, width_OF_/2 * CF, width_OF_);
+    height_OF = linspace(0, height_OF_ * CF, height_OF_); 
+    
+    [X,Y]   = meshgrid(width_OF, height_OF);
+    [Xq,Yq] = meshgrid(width_roi ,height_roi);
+    
+    OF_out = zeros(height_I, width_I, 3);
+    OF_out(:,:,1) = interp2(X, Y, flow(:,:,1), Xq, Yq);
+    OF_out(:,:,2) = interp2(X, Y, flow(:,:,2), Xq, Yq);
+    OF_out(:,:,3) = interp2(X, Y, flow(:,:,3), Xq, Yq);
 end

@@ -38,10 +38,10 @@ def split_data(pdata, pres, training_part, validation_part, testing_part):
 if __name__ == '__main__':
 
     # --- VARIABLES DECLARATION
-    pdata = '/home/laine/PROJECTS_IO/CARODEEPMOTION/DATABASEMOTION'
-    pres = '/home/laine/PROJECTS_IO/CARODEEPMOTION/SPLIDATA'
+    pdata = '/home/laine/Desktop/database_training_IMAGENET_10_PX'
+    pres = '/run/media/laine/DISK/PROJECTS_IO/MOTION/IN_SILICO/REAL_DATA/SPLIDATA'
     training_part = 0.7
-    validation_part = 0.2
+    validation_part = 0.1
     testing_part = 0.2
 
     # --- split data into training/validation/testing part

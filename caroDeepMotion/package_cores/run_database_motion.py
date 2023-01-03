@@ -6,17 +6,50 @@
 import argparse
 import importlib
 import os
+import numpy                                        as np
 from package_database.databaseMotionHandler         import databaseHandler
 from icecream                                       import ic
+from multiprocessing                                import Process
+
+# -----------------------------------------------------------------------------------------------------------------------
+def call(dataHandler):
+    dataHandler()
 
 # -----------------------------------------------------------------------------------------------------------------------
 def create_dataset(p, PDATA, simulation):
-    for simu in simulation:
-        # simu = simulation[5]
-        ic(simu)
-        p.PDATA = os.path.join(PDATA, simu)
+
+    pdata = p.PDATA
+    # simulation = simulation[326:]
+
+    # --- split data for multiprocessing
+    # nb_process = 8
+    nb_process = 10
+    id_step = 0
+    nb_step = int(np.floor(len(simulation) / nb_process))
+
+    for id in range(nb_step):
+        process = []
+        for id_rel, simu in enumerate(simulation[id_step*nb_process:id_step*nb_process+nb_process]):
+            print(str(id * nb_process + id_rel) + ' | ' + simu )
+            p.PDATA = os.path.join(pdata, simu)
+            dataHandler = databaseHandler(p)
+            pc = Process(target=call, args=(dataHandler,))
+            process.append(pc)
+            pc.start()
+
+        for i in process:
+            i.join()
+
+        id_step += 1
+
+    process = []
+    for id_rel, simu in enumerate(simulation[id_step * nb_process:]):
+        print(str(nb_step * nb_process + id_rel) + ' | ' + simu)
+        p.PDATA = os.path.join(pdata, simu)
         dataHandler = databaseHandler(p)
-        dataHandler()
+        pc = Process(target=call, args=(dataHandler,))
+        process.append(pc)
+        pc.start()
 
 # -----------------------------------------------------------------------------------------------------------------------
 def main():

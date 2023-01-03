@@ -7,6 +7,7 @@ import argparse
 import importlib
 from package_visualization.databaseVisualization import databaseVisualization
 
+# ----------------------------------------------------------------------------------------------------------------------
 def main():
 
     # --- using a parser with set_parameters.py allows us to package_core several processes with different set_parameters.py on the cluster
@@ -16,13 +17,12 @@ def main():
 
     arg = vars(my_parser.parse_args())
     param = importlib.import_module('package_parameters.' + arg['Parameters'].split('.')[0])
-
     # --- get parameters
     p = param.setParameters()
-
     # --- launch process
     dataVisualization = databaseVisualization(p)
     dataVisualization()
 
+# ----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
     main()

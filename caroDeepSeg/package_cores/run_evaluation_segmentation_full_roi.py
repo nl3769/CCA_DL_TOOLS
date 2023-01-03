@@ -14,16 +14,19 @@ def main():
     param = importlib.import_module('package_parameters.' + arg['Parameters'].split('.')[0])
     p = param.setParameters()
 
-    eval = evaluationHandler(p)
+    sets = p.SET
 
-    keys = ['A1bis', 'A2'] + list(eval.annotation_methods.keys())
+    for set in sets:
 
-    for key in keys:
-        eval.get_diff(key)
-
-    eval.write_metrics_to_cvs(p.PRESCSV, p.SET + '_')
-    eval.mk_plot_seaborn(p.PLOT, p.SET + '_')
-    eval.write_unprocessed_images(p.PUNPROCESSED)
+        p.SET = set
+        eval=evaluationHandler(p)
+        eval.get_hausdorff()
+        eval.get_PDM()
+        eval.compute_bias_pdm()
+        eval.get_diff()
+        eval.write_metrics_to_cvs(p.PRESCSV, p.SET + '_')
+        eval.mk_plot_seaborn(p.PLOT, p.SET + '_')
+        eval.write_unprocessed_images(p.PUNPROCESSED, p.SET)
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":

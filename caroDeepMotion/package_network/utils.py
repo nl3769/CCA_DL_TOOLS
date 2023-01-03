@@ -29,13 +29,16 @@ def initialize_weights(m):
       nn.init.constant_(m.bias.data, 0)
 
 # ----------------------------------------------------------------------------------------------------------------------
-def get_path_models(pres, keys):
+def get_path_models(pres, keys, substr=None):
     """ Get models name.
     Args:
         TODO
     Returns:
         TODO
     """
+
+    if substr is None:
+        substr='val'
 
     models_name = {}
     if os.path.exists(pres):
@@ -44,7 +47,7 @@ def get_path_models(pres, keys):
         if len(models)>0:
             for key in keys:
                 for model in models:
-                    if model.find(key) != -1 and model.find("val") != -1:
+                    if model.find(key) != -1 and model.find(substr) != -1:
                         models_name[key] = os.path.join(pres, model)
         else:
             models_name = None
@@ -77,7 +80,7 @@ def load_model_flow(param):
     # -----------------------
 
     keys = ['netEncoder', 'netFlow']
-    models_name = get_path_models(os.path.join(param.PRES, 'model'), keys)
+    models_name = get_path_models(os.path.join(param.PRES, 'model'), keys, 'train')
 
     if param.RESTORE_CHECKPOINT:
         if models_name is not None:

@@ -8,7 +8,8 @@ function display_motion(Dx, Dz, id_x, id_z, name)
 
         h = quiver(id_z(1:2:end,1:2:end),id_x(1:2:end,1:2:end),...
             Dz(1:2:end,1:2:end),Dx(1:2:end,1:2:end),2);
-        
+
+
         hold off
         set(h,'LineWidth',1.5)
         axis equal ij tight

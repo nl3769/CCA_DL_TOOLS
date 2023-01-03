@@ -39,7 +39,7 @@ class Parameters:
         
         self.MODEL_NAME                         = MODEL_NAME
         self.PDATA                              = PDATA
-        self.PRES                               = PRES
+        self.PRES                               = os.path.join(PRES, EXPNAME)
         self.PSPLIT                             = PSPLIT
         self.MAGNITUDE_MOTION                	= MAGNITUDE_MOTION
         self.LEARNING_RATE                      = LEARNING_RATE

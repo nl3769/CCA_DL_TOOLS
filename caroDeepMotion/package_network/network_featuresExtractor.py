@@ -8,8 +8,7 @@ class ResidualBlock(nn.Module):
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, in_planes, planes, norm_fn='group', stride=1):
         super(ResidualBlock, self).__init__()
-        # print(f'{in_planes = }')
-        # print(f'{planes = }')
+
         self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=3, padding=1, stride=stride)
         self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, padding=1)
         self.relu = nn.ReLU(inplace=True)

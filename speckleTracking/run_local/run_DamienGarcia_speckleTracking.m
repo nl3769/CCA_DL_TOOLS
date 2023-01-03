@@ -4,24 +4,29 @@ clearvars;
 addpath(fullfile('..', 'mtl_cores'))
 run(fullfile('..', 'mtl_utils', 'add_path.m'));
 
-%test1()
-test2()
-%test3()
+test1()
+% test2()
+% test3()
 
 
 % -------------------------------------------------------------------------
 function test1()
 
-    pdata   = '/home/laine/Desktop/DATA_PREPARATION/tech_001';
-    pseq    = fullfile(pdata, 'mat_files', 'images-tech_001.mat');
-    pmotion = fullfile(pdata, 'mat_files', 'displacement_field-tech_001.mat');
-    pLI     = fullfile(pdata, 'mat_files', 'LI-tech_001.mat');
-    pMA     = fullfile(pdata, 'mat_files', 'MA-tech_001.mat');
-    pCF     = fullfile(pdata, 'CF-tech_001.txt');
+%     pdata = '/home/laine/HDD/PROJECTS_IO/SIMULATION/IMAGENET/n01440764_tench';
+%     pI1 = fullfile(pdata, 'n01440764_tench_id_001_FIELD_3D/bmode_result/results/dicom_n01440764_tench_phantom_id_001_FIELD_3D_bmode.png');
+%     pI2 = fullfile(pdata, 'n01440764_tench_id_002_FIELD_3D/bmode_result/results/dicom_n01440764_tench_phantom_id_002_FIELD_3D_bmode.png');
+%     pmotion = fullfile(pdata, 'n01440764_tench_id_002_FIELD_3D/phantom/OF_1_2.nii');
+%     pCF = fullfile(pdata, 'n01440764_tench_id_002_FIELD_3D/phantom/image_information.mat');
+%     pparam = fullfile(pdata, 'n01440764_tench_id_002_FIELD_3D/parameters/parameters.json');
     
+    pdata = '/home/laine/HDD/PROJECTS_IO/SIMULATION/IMAGENET/n02123394_Persian_cat';
+    pI1 = fullfile(pdata, 'n02123394_Persian_cat_id_001_FIELD_3D/bmode_result/results/dicom_n02123394_Persian_cat_phantom_id_001_FIELD_3D_bmode.png');
+    pI2 = fullfile(pdata, 'n02123394_Persian_cat_id_002_FIELD_3D/bmode_result/results/dicom_n02123394_Persian_cat_phantom_id_002_FIELD_3D_bmode.png');
+    pmotion = fullfile(pdata, 'n02123394_Persian_cat_id_002_FIELD_3D/phantom/OF_1_2.nii');
+    pCF = fullfile(pdata, 'n02123394_Persian_cat_id_002_FIELD_3D/phantom/image_information.mat');
+    pparam = fullfile(pdata, 'n02123394_Persian_cat_id_002_FIELD_3D/parameters/parameters.json');
     
-    
-    damienGarcia_speckleTracking(pseq, pmotion, pLI, pMA, pCF)
+    damienGarcia_speckleTracking(pI1, pI2, pmotion, pCF, pparam)
 
 end
 
@@ -147,13 +152,12 @@ function test3()
     hold off
     legend('I1','I2')
     
-        
     % --- compute df
-    param           = [];
+    param = [];
 %     param.winsize   = [32 32; 16 16; 9 9; 5 5];         % size fo the rgion
-    param.winsize   = [64 64; 32 32 ; 16 16; 8 8; 5 5];                        % size fo the rgion
-    param.iminc     = 1;                                % image increment
-    [Dz_pred, Dx_pred, id_z, id_x]   = sptrack(cat(3, I1, I2), param);      % called function from MUST
+    param.winsize = [64 64; 32 32 ; 16 16; 8 8; 5 5; 3 3];                        % size fo the rgion
+    param.iminc = 1;                                % image increment
+    [Dz_pred, Dx_pred, id_z, id_x] = sptrack(cat(3, I1, I2), param);      % called function from MUST
     
     % --- display results
     display_motion(Dz_pred, Dx_pred, id_z, id_x, 'DG');

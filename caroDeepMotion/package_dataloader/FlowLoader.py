@@ -69,8 +69,8 @@ class FlowDataloader(Dataset):
                 # Reshape data into 3D array (columns, rows, bands)
                 # The reshape here is for visualization, the original code is (w,h,2)
                 OF = np.resize(data, (int(h), int(w), 2))
-                x_coef = 256 / OF.shape[0]
-                z_coef = 256 / OF.shape[1]
+                z_coef = 256 / OF.shape[0]
+                x_coef = 256 / OF.shape[1]
                 OF = cv2.resize(OF, (256, 256), interpolation=cv2.INTER_LINEAR)
 
                 OF[..., 0] = OF[..., 0] * x_coef

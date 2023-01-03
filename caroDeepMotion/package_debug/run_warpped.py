@@ -56,9 +56,9 @@ def warpped_showcase(I1, I2, OF, Z_warpped, pres, roi=[10, -10, 10, -10]):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def warpped_full_image():
-    pseq = '/home/laine/Desktop/MotionEstimationDataBaseAnalysis/motion_analysis/PREPARED_DATA/sample_grid/images-sample_grid.pkl'
-    pmotion = '/home/laine/Desktop/MotionEstimationDataBaseAnalysis/motion_analysis/PREPARED_DATA/sample_grid/displacement_field-sample_grid.pkl'
-    pcf = '/home/laine/Desktop/MotionEstimationDataBaseAnalysis/motion_analysis/PREPARED_DATA/sample_grid/CF-sample_grid.txt'
+    pseq = '/home/laine/Desktop/MotionAnalysis/prepared_data/tech_001/images-tech_001.pkl'
+    pmotion = '/home/laine/Desktop/MotionAnalysis/prepared_data/tech_001/displacement_field-tech_001.pkl'
+    pcf = '/home/laine/Desktop/MotionAnalysis/prepared_data/tech_001/CF-tech_001.txt'
 
     pres = '/home/laine/Desktop/diff.png'
 
@@ -72,7 +72,7 @@ def warpped_full_image():
 # ----------------------------------------------------------------------------------------------------------------------
 def warpped_patches():
 
-    pdata = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/DATABASEMOTION/IMAGETNET_SAMPLE'
+    pdata = '/home/laine/Desktop/MotionAnalysis/database/'
     list_sub_str = os.listdir(pdata)
     if 'backup_parameters' in list_sub_str:
         list_sub_str.remove('backup_parameters')
@@ -90,7 +90,7 @@ def warpped_patches():
                 pmotion = os.path.join(pdata, iname, idx, 'OF', key) # '/home/laine/Desktop/DATABASE_MOTION/sample_grid/id_001/OF/' + key
                 pcf = os.path.join(pdata, iname, idx, 'CF.txt')
 
-                pres = '/home/laine/Desktop/motion_analysis/' + iname + '_' + idx + '_' + key + '.png'
+                pres = '/home/laine/Desktop/MotionAnalysis/motion_analysis/patches/' + iname + '_' + idx + '_' + key + '.png'
 
                 seq0 = pul.load_pickle(pseq0)
                 seq1 = pul.load_pickle(pseq1)
@@ -111,5 +111,5 @@ def warpped_patches():
 if __name__=='__main__':
 
     warpped_patches()
-
+    # warpped_full_image()
 # ----------------------------------------------------------------------------------------------------------------------

@@ -806,7 +806,7 @@ def save_data_cubs(data, CF, pres, pname):
                 f.write(key + " " + str(CF[key]) + '\n')
 
 # ----------------------------------------------------------------------------------------------------------------------
-def save_data(data, CF, pres, pname):
+def save_data(data, CF, pres, pname, dim):
     """ Save data
     -> I1, I2: patch than contains the intima-media complex (.png format)
     -> M1, M2: masks of the IMC for segmentation task (.png format)
@@ -822,15 +822,30 @@ def save_data(data, CF, pres, pname):
         if 'pname' not in key:
             fh.create_dir(os.path.join(psave, key))
 
-    # --- get numbe rof patches
+    # --- get number of patches
     nb_patches = len(data[keys[0]])
-    debug = True
+    debug = False
 
     for id in range(nb_patches):
+        bak_pres = []
+        condition = True
         for key in keys:
             if key != 'pname':
+
                 psave_ = os.path.join(psave, key, data['pname'][id] + ".pkl")
+                bak_pres.append(psave_)
                 ps.write_pickle(data[key][id], psave_)
+                dim_ = data[key][id].shape
+                if len(dim_) == 3:
+                    dim_ = dim_[:-1]
+
+                if dim_ != dim:
+                    condition = False
+
+        if condition == False:
+            for path in bak_pres:
+                print('remove: ', path)
+                os.remove(path)
 
                 if debug == True:
                     if 'M1' in key:

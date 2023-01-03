@@ -21,7 +21,7 @@ def image_interp_factor(I, factor):
     width_q = round(width * factor)
 
     I = Image.fromarray(I)
-    im1 = I.resize((height_q, width_q))
+    im1 = I.resize((width_q, height_q))
     im1 = np.array(im1)
 
     return im1
