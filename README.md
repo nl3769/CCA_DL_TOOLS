@@ -21,7 +21,7 @@ The functions to run are in **SIMULATION/run_local**. It contains several functi
 * run_simulation.m
 * run_beamforming.m
 
-### run_mk_phantom.m
+### SIMULATION/run_local/run_mk_phantom.m
 This function takes as input the path to the database (path to the images), the path to save the phantom, the path to the simulation parameter (.json file) and some additional information (extra_info) to write in the name of the saved file.
 
 The output of this function is structured as follow:
@@ -30,6 +30,17 @@ The output of this function is structured as follow:
 * path_res/img_name/img_name_id_001_extra_info/phantom: save the phantom in .mat format
 * path_res/img_name/img_name_id_001_extra_info/raw_data: path save the raw data during simulation
 
+### SIMULATION/run_local/run_simulation.m
+This function has to be run after once the phantom is created. Then it takes as argument the path to the phantom, the path to the parameters and the id of the transmitted element. Then the function writes the radiofrequency signal in path_res/img_name/img_name_id_001_extra_info/raw_data/_raw.
+
+### SIMULATION/run_local/run_beamforming.m
+This function has to be run after once the phantom is created. Then it load the radio frequency signal and the beamforming is performed on GPU.
+
+#### How tu run on GPU?
+To run the beamforming on GPU, first check your GPU's architecture. For linux user, run in a terminal:
+'''sh
+nvidia-smi -q | grep Architecture
+'''
 
 ## run the code locally
 
