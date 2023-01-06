@@ -9,9 +9,9 @@ The following REPO provides codes for the following topics:
 
 # SIMULATION
 
-# caroDeepMotion
-
 # caroDeepSeg
+
+# caroDeepMotion
 
 # speckleTracking
 
