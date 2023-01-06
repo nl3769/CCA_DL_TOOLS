@@ -5,28 +5,3 @@ The following REPO provides codes for the following topics:
 * speckleTracking
 * textureImprovment
 
-
-
-########################
-#### caroDeepMotion ####
-########################
-
-Contains code for motion estimation of the common carotid artery (CCA)
-
-####################
-#### SIMULATION ####
-####################
-
-Contains the code for realistic simulation of the CCA
-
-###########################
-#### textureImprovment ####
-###########################
-
-Contain the code to improve the texture of simulated images. Based on GAN architecture, a project based on diffusion network is in progress.
-
-#####################
-#### caroDeepSeg ####
-#####################
-
-Contains code to get to compare segmentation method of the CCA and the compression of the CCA. It also apply GAN post processing and generate sequence in nifty format based on simulation results.
