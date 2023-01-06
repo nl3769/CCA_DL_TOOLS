@@ -2,14 +2,10 @@
 @Author  :   <Nolann Lainé>
 @Contact :   <nolann.laine@outlook.fr>
 '''
+
 import os
-
-import torch
-
 import numpy                                as np
-import package_utils.pytorch_processing     as pupp
 
-from medpy.metric.binary                    import dc, hd
 from tqdm                                   import tqdm
 
 # ----------------------------------------------------------------------------------------------------------------------

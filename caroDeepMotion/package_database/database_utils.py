@@ -16,7 +16,6 @@ import package_utils.saver                  as ps
 import pickle                               as pkl
 import imageio                              as io
 
-from tqdm                                   import tqdm
 from icecream                               import ic
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -259,23 +258,18 @@ def preprocessing_prepared_data(I1, I2, OF, LI1, LI2,  MA1, MA2, roi_width, pixe
 
     # --- get interpolation factor and real pixel size of the interpolated image
     interp_factor = get_interpolation_factor(CF, roi_width, pixel_width)
-
     # --- get size of original image
     Odim = I1.shape
-
     # --- interpolate image
     I1 = image_interpoland(I1, interp_factor)
     I2 = image_interpoland(I2, interp_factor)
-
     # --- get size of the interpolated image
     Fdim = I1.shape
-
     # --- interpolate flow
     OF_ = np.zeros(Fdim + (3,))
     OF_[..., 0] = image_interpoland(OF[...,0], interp_factor)
     OF_[..., 1] = image_interpoland(OF[..., 1], interp_factor)
     OF_[..., 2] = image_interpoland(OF[..., 2], interp_factor)
-
     # ---  get the real pixel size after interpolation
     rCF, zcoef = compute_real_CF(Odim, Fdim, CF)
     # --- adapt segmentation after interpolation
@@ -283,7 +277,7 @@ def preprocessing_prepared_data(I1, I2, OF, LI1, LI2,  MA1, MA2, roi_width, pixe
     MA1 *= zcoef
     LI2 *= zcoef
     MA2 *= zcoef
-
+    # --- check if LI/MA exist else we do not interpolate the interfaces
     non_zeros = np.where(LI1 > 0)[0]
     if non_zeros.any():
         LI1, MA1 = seg_interpoland(LI1, MA1, Fdim)
@@ -291,7 +285,6 @@ def preprocessing_prepared_data(I1, I2, OF, LI1, LI2,  MA1, MA2, roi_width, pixe
     else:
         LI1, MA1 = None, None
         LI2, MA2 = None, None
-
     # --- modify optical flow magnitude
     OF_[..., 0] *= Fdim[0] / Odim[0]
     OF_[..., 2] *= Fdim[1] / Odim[1]
@@ -928,26 +921,26 @@ def debug_plot_patch_v2(M1, M2, I1, I2, motion, pname):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def save_data_preparation(I_seq, OF_seq, LI_seq, MA_seq, CF, pres, pname):
-    """ Save data: TODO    """
+    """ Save data in pickle format. It saves images, boundaries (LI and MA), calibration factor (CF: pixel size), and the displacement field. """
 
     fh.create_dir(os.path.join(pres, pname))
-
+    # --- save images
     with open(os.path.join(pres, pname, "images-" + pname + ".pkl"), 'wb') as f:
         pkl.dump(I_seq, f)
-
+    # --- save displacement field
     with open(os.path.join(pres, pname, "displacement_field-" + pname + ".pkl"), 'wb') as f:
         pkl.dump(OF_seq, f)
-
+    # --- save LI boundary
     with open(os.path.join(pres, pname, "LI-" + pname + ".pkl"), 'wb') as f:
         pkl.dump(LI_seq, f)
-
+    # --- save MA boundary
     with open(os.path.join(pres, pname, "MA-" + pname + ".pkl"), 'wb') as f:
         pkl.dump(MA_seq, f)
-
+    # --- save calibration factor
     with open(os.path.join(pres, pname, "CF-" + pname + ".txt"), 'w') as f:
         f.write(str(CF))
 
-    # # --- we also save a mat version to be used in matlab -> see later because data are saved twice
+    # # --- we can save a mat version to be used in matlab -> Set saveMat to True if you need.
     saveMat = False
     if saveMat:
         import scipy.io
@@ -959,7 +952,7 @@ def save_data_preparation(I_seq, OF_seq, LI_seq, MA_seq, CF, pres, pname):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def add_annotation(I, LI, MA):
-
+    """ For debugging purposes only. This function adds boundaries to the images. """
     nbi = len(I)
     I_a = []
 
@@ -1021,4 +1014,7 @@ def mk_animation(pres, pname, CF):
         motion = OF[..., id_seq].copy()
         motion *= 255
         flow.append(motion.astype(np.uint8))
+
     io.mimsave(os.path.join(pres, pname, "OF.gif"), flow, fps=10)
+
+# ----------------------------------------------------------------------------------------------------------------------

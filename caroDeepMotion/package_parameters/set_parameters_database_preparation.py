@@ -14,8 +14,9 @@ import package_utils.fold_handler                           as fh
 def setParameters():
 
     p = Parameters(
-        PDATA           = '/home/laine/HDD/PROJECTS_IO/SIMULATION/IMAGENET',                # PATH TO LOAD DATA
-        PRES            = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/PREPAREDDATA/IMAGENET_SAMPLE',             # PATH TO SAVE DATABASE
+        PDATA           = '/home/laine/HDD/PROJECTS_IO/SIMULATION/IMAGENET',      # PATH TO LOAD DATA
+        # PRES            = '/run/media/laine/DISK/PROJECTS_IO/MOTION/IN_SILICO/REAL_DATA/prepared_data_IMAGENET_00',             # PATH TO SAVE DATABASE
+        PRES            = '/home/laine/Desktop/prepared_data_IMAGENET_00',             # PATH TO SAVE DATABASE
         )
 
     pparam = os.path.join(p.PRES, 'backup_parameters')

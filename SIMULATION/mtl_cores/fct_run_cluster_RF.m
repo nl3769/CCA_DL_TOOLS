@@ -20,7 +20,7 @@ function [RF_signals, nb_tx] = fct_run_cluster_RF(pres)
 % 
 %     save(path_raw_data, 'raw_data', '-v7.3'); % flag '-v7.3' to store data larger than 2Go
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
 end
 

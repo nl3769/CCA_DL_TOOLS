@@ -22,7 +22,6 @@ class dataHandler(motionDataloader):
 
     def __init__(self, param, set):
         super(dataHandler, self).__init__(param)
-
         fsplit = os.listdir(param.PSPLIT)
         fsplit = [key for key in fsplit if set in key]
         with open(os.path.join(param.PSPLIT, fsplit[0]), 'r') as f:
@@ -55,6 +54,7 @@ class dataHandler(motionDataloader):
                     self.flow_list.append([pOF])
                     self.CF_list.append([pCF])
 
+         # --- reduce the amount of data for faster training -> for debugging purpose only
         # self.image_list = self.image_list[::100]
         # self.mask_list = self.mask_list[::100]
         # self.flow_list = self.flow_list[::100]

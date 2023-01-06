@@ -417,8 +417,8 @@ classdef imageReconstruction < handle
             dz = obj.probe.c/(2*obj.probe.fs);
             addpath(fullfile('..', 'mtl_synthetic_aperture'))
             % --- get image information
-%             [X_img_bf, Z_img_bf, X_RF, Z_RF, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
-            [X_img_bf, Z_img_bf, X_RF, Z_RF, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D_elisabeth(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
+            [X_img_bf, Z_img_bf, X_RF, Z_RF, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
+%             [X_img_bf, Z_img_bf, X_RF, Z_RF, obj.x_display, obj.z_display, n_pts_x, n_pts_z] = fct_get_grid_2D_elisabeth(obj.phantom, obj.image, obj.probe, [nb_sample, n_rcv], dz, obj.param);
             [n_points_z, n_points_x] = size(X_img_bf);
             obj.low_res_image = zeros([n_points_z n_points_x obj.probe.Nelements]);
             % --- get probe position elements
@@ -435,7 +435,7 @@ classdef imageReconstruction < handle
                 apodization = ones( [n_points_z, n_points_x obj.probe.Nelements]);
             end
             % --- define the CUDA module and kernel
-            obj.param.input_bf = "RF";
+            obj.param.input_bf = "IQ";
             if isfield(obj.param, "input_bf") && obj.param.input_bf == "IQ" 
                 cuda_module_path_and_file_name = fullfile('..', 'cuda', 'bin', 'bfFullLowResImgIQ.ptx');
                 cuda_kernel_name = 'bf_low_res_images';
@@ -476,13 +476,10 @@ classdef imageReconstruction < handle
             % --- call kernel            
             if isfield(obj.param, "input_bf") && obj.param.input_bf == "IQ"
                 
-%                 Iiq = permute(Iiq,[1 3 2]) ;
-%                 Riq = permute(Riq,[1 3 2]) ;
                 [IlowRes, RlowRes] = feval(cuda_kernel, Iiq, Riq, probe_pos_x, probe_pos_z, nb_rx, nb_sample, imageW, imageH, c, fs, apodization, pos_x_img, pos_z_img, -time_offset, IlowRes, RlowRes);
                 % --- gather the output back from GPU to CPU
                 IlowRes = gather(IlowRes);
                 RlowRes = gather(RlowRes);
-%                 obj.low_res_image = RlowRes + IlowRes*1i;
                 obj.low_res_image = RlowRes + IlowRes*1i;
             else
                 obj.low_res_image = feval(cuda_kernel, obj.low_res_image, RF_signals, probe_pos_x, probe_pos_z, nb_rx, nb_sample, imageW, imageH, c, fs, apodization, pos_x_img, pos_z_img, -time_offset);

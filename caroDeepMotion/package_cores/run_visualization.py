@@ -25,4 +25,6 @@ def main():
 
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
+    """ Plot images with the motion estimation and different metrcis. """
+
     main()

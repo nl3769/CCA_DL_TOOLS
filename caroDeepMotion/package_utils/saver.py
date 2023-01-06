@@ -20,7 +20,7 @@ def write_nifty(I, pres):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def write_pickle(data, pres):
-    """Write image in .nii format. """
+    """Write image in .pkl format. """
 
     with open(pres, 'wb') as f:
         pkl.dump(data, f)

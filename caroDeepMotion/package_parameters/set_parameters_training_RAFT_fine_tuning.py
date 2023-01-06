@@ -13,13 +13,13 @@ def setParameters():
     p = Parameters(
         MODEL_NAME                  = 'raft',                                                                            # chose gma or raft
         PDATA                       = '/home/laine/Documents/PROJECTS_IO/DATA/OPTICAL_FLOW/FlyingChairs/data',                 # PATH TO LOAD DATA
-        PRES                        = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/NETMOTION/RAFT_pretraining_00',  # PATH TO SAVE TRAINING RESULTS
+        PRES                        = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/NETMOTION/RAFT_PRETRAINED_FLYINGCHAIR_10_PX_FINE_TUNING_tmp',  # PATH TO SAVE TRAINING RESULTS
         PSPLIT                      = '/home/laine/Documents/PROJECTS_IO/DATA/OPTICAL_FLOW/FlyingChairs/correct_patients',
-        MAGNITUDE_MAGNITUDE         = 10,
+        MAGNITUDE_MOTION            = 10,
         LEARNING_RATE               = 0.01,
         BATCH_SIZE                  = 8,                                                                                 # size of a batch
         NB_EPOCH                    = 500,
-        VALIDATION                  = False,
+        VALIDATION                  = True,
         DROPOUT                     = 0.0,                                                                               # dropout during training
         GAMMA                       = 0.8,                                                                               # see later what it is
         ADD_NOISE                   = False,                                                                             # see later what it is
@@ -36,8 +36,8 @@ def setParameters():
         EXPNAME                     = 'RAFT_PRETRAINED_FLYINGCHAIR_10_PX',
         DEVICE                      = 'cuda',                                                                            # cuda/cpu
         RESTORE_CHECKPOINT          = True,
-        SYNTHETIC_DATASET           = False,                                                                             # train on generated database (True)
-        USE_WANDB                   = True,
+        SYNTHETIC_DATASET           = True,                                                                             # train on generated database (True)
+        USE_WANDB                   = False,
         # --- If feature is split, then chose parameters for Unet
         KERNEL_SIZE                 = (3, 3),
         PADDING                     = (1, 1),

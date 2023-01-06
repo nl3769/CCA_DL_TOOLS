@@ -16,16 +16,10 @@ class gifMaker():
 
         self.parameters = p
         self.path_data = {}
-    # ------------------------------------------------------------------------------------------------------------------
 
+    # ------------------------------------------------------------------------------------------------------------------
     def get_patients(self):
         """ Store path in dictionnary to load patient informations. """
-
-        # required_keys -> patient_name/seq_id/path_image/path
-        #                -> patient_name/seq_id/path_flow/path
-        #                -> patient_name/seq_id/path_seg_LI/path
-        #                -> patient_name/seq_id/path_seg_LA/path
-        #                -> patient_name/seq_id/path_info/path
 
         patients_name = sorted(os.listdir(self.parameters.PDATA))
 
@@ -58,13 +52,10 @@ class gifMaker():
 
         # --- we get sequence of images
         seq = list(self.path_data.keys())
-
         # --- get path
         path = dbu.get_path_GIF(self.path_data, seq, id)
-
         # --- load data
         I, LI, MA, CF, seg_dim, z_start = dbu.load_data_GIF(path)
-
         # --- get size of the original image
         args_preprocessing = {'I': I,
                               'LI': LI,
@@ -80,7 +71,8 @@ class gifMaker():
     def __call__(self):
 
         self.get_patients()
-        # self.create_database()
         self.make_gif()
 
     # ------------------------------------------------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------------------------------------------------

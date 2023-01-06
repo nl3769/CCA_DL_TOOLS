@@ -4,6 +4,6 @@ close all;
 run(fullfile('..', 'mtl_utils', 'add_path.m'));
 
 pdata = "/home/laine/HDD/PROJECTS_IO/SIMULATION/IMAGENET";
-pres = "/home/laine/Desktop/test_DZ_01";
+pres = "/home/laine/Documents/PROJECTS_IO/MOTION/BASELINE/DG_METHOD";
 
 run_DG_method(pdata, pres)

@@ -884,7 +884,7 @@ classdef createPhantom < handle
         % ----------------------------------------------------------------------------------------------------------------------
         function phantom_tmp(obj)
             
-            k=3;   
+            k=5;   
             
             z_pos=linspace(obj.data_scatt.z_max * 0.2, obj.data_scatt.z_max * 0.9, k);
             x_pos=linspace(obj.data_scatt.x_min * 0.6, obj.data_scatt.x_max * 0.6, k);

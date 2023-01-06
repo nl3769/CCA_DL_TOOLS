@@ -8,7 +8,6 @@ import importlib
 import os
 import numpy                                        as np
 from package_database.databaseMotionHandler         import databaseHandler
-from icecream                                       import ic
 from multiprocessing                                import Process
 
 # -----------------------------------------------------------------------------------------------------------------------
@@ -16,14 +15,11 @@ def call(dataHandler):
     dataHandler()
 
 # -----------------------------------------------------------------------------------------------------------------------
-def create_dataset(p, PDATA, simulation):
+def create_dataset(p, simulation):
 
     pdata = p.PDATA
-    # simulation = simulation[326:]
-
     # --- split data for multiprocessing
-    # nb_process = 8
-    nb_process = 10
+    nb_process = 8
     id_step = 0
     nb_step = int(np.floor(len(simulation) / nb_process))
 
@@ -68,9 +64,7 @@ def main():
     if 'backup_parameters' in simulation:
         simulation.remove('backup_parameters')
     simulation.sort()
-
-    PDATA = p.PDATA
-    create_dataset(p, PDATA, simulation)
+    create_dataset(p, simulation)
 
 # -----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":

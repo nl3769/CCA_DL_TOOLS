@@ -12,13 +12,13 @@ import package_utils.fold_handler                       as fh
 def setParameters():
 
     p = Parameters(
-        PDATA           = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/PREPAREDDATA/IMAGENET_SAMPLE',          # PATH TO LOAD DATA
-        PRES            = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/DATABASEMOTION/IMAGETNET_SAMPLE',       # PATH TO SAVE DATABASE
-        ROI_WIDTH       = 5e-3,                                                                                     # SIZE OF THE ROI WIDTH
-        PIXEL_WIDTH     = 256,                                                                                      # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW (IT IS EQUAL TO ROI_WIDTH)
-        PIXEL_HEIGHT    = 256,                                                                                      # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW
-        SHIFT_X         = 128,                                                                                      # X SHIFT TO GENERATE DATASET
-        SHIFT_Z         = 64                                                                                        # Z SHIFT TO GENERATE DATASET
+        PDATA           = '/home/laine/DISK/PROJECTS_IO/MOTION/IN_SILICO/REAL_DATA/prepared_data_IMAGENET',                                           # PATH TO LOAD DATA
+        PRES            = '/home/laine/DISK/PROJECTS_IO/MOTION/IN_SILICO/REAL_DATA/database_training_IMAGENET_01',    # PATH TO SAVE DATABASE
+        ROI_WIDTH       = 5e-3,                                                                                         # SIZE OF THE ROI WIDTH
+        PIXEL_WIDTH     = 256,                                                                                          # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW (IT IS EQUAL TO ROI_WIDTH)
+        PIXEL_HEIGHT    = 256,                                                                                          # NUMBER OF PIXEL IN X DIRECTION OF THE SLIDING WINDOW
+        SHIFT_X         = 192,                                                                                          # X SHIFT TO GENERATE DATASET
+        SHIFT_Z         = 192                                                                                            # Z SHIFT TO GENERATE DATASET
         )
 
     pparam = os.path.join(p.PRES, 'backup_parameters')

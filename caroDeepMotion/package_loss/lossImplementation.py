@@ -14,7 +14,6 @@ class Dice(nn.Module):
         # --- flatten label and prediction tensors
         inputs = inputs.contiguous().view(-1)
         targets = targets.contiguous().view(-1)
-
         intersection = (inputs * targets).sum()
         dice = (2 * intersection + smooth) / (inputs.sum() + targets.sum() + smooth)
 

@@ -11,7 +11,7 @@ addpath(fullfile('..', 'mtl_utils'));
 % --- path to results
 % path_res = '/home/laine/HDD/PROJECTS_IO/SIMULATION/SEQ_MEIBURGER_V1/tech_001/';
 % path_res = '/home/laine/HDD/PROJECTS_IO/SIMULATION/MEIBURGER_1_FRAME/tech_008';
-path_res = '/home/laine/Desktop/MotionEstimationDataBaseAnalysisV2/tech_010';
+path_res = '/home/laine/HDD/PROJECTS_IO/SIMULATION/IMAGENET_STA/n02747177_ashcan';
 % path_res='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/POINT_SCATTERES/sta_field/';
 % path_res='/home/laine/Documents/PROJECTS_IO/SIMULATION/DEBUG/STA/POOR_DENSITY/n01496331_electric_ray/';
 

@@ -18,13 +18,10 @@ def call(dataPreparation):
 # -----------------------------------------------------------------------------------------------------------------------
 def prepare_dataset(p, simulation):
     pdata = p.PDATA
-    # simulation = simulation[326:]
-
     # --- split data for multiprocessing
     nb_process = 8
     id_step = 0
     nb_step = int(np.floor(len(simulation) / nb_process))
-
     for id in range(nb_step):
         process = []
         for id_rel, simu in enumerate(simulation[id_step*nb_process:id_step*nb_process+nb_process]):

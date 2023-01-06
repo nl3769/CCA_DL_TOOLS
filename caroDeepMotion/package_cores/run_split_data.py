@@ -30,7 +30,6 @@ def split_data(pdata, pres, training_part, validation_part, testing_part):
     for key in split.keys():
         with open(os.path.join(pres, key + ".txt"), 'w') as f:
             for patient in split[key]:
-                # ppatient = os.path.join(pdata, patient)
                 f.write(patient + "\n")
 
 
@@ -38,8 +37,8 @@ def split_data(pdata, pres, training_part, validation_part, testing_part):
 if __name__ == '__main__':
 
     # --- VARIABLES DECLARATION
-    pdata = '/home/laine/Desktop/database_training_IMAGENET_10_PX'
-    pres = '/run/media/laine/DISK/PROJECTS_IO/MOTION/IN_SILICO/REAL_DATA/SPLIDATA'
+    pdata = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/DATABASEMOTION/IMAGETNET_SAMPLE'
+    pres = '/home/laine/Documents/PROJECTS_IO/CARODEEPMOTION/SPLITDATA'
     training_part = 0.7
     validation_part = 0.1
     testing_part = 0.2

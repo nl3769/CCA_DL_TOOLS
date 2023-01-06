@@ -15,11 +15,8 @@ def setParameters():
         PDATA                       = '/home/laine/cluster/PROJECTS_IO/CARODEEPMOTION/DATABASEMOTION',            # PATH TO LOAD DATA
         PRES                        = '/home/laine/cluster/PROJECTS_IO/CARODEEPMOTION/NETMOTION/GMA_pretraining_00',          # PATH TO SAVE TRAINING RESULTS
         PSPLIT                      = '/home/laine/cluster/PROJECTS_IO/CARODEEPMOTION/SPLITDATA',
-        PDATA                       = '/home/laine/PROJECTS_IO/CARODEEPMOTION/DATABASEMOTION',            # PATH TO LOAD DATA
-        PRES                        = '/home/laine/PROJECTS_IO/CARODEEPMOTION/NETMOTION/GMA_pretraining_00',          # PATH TO SAVE TRAINING RESULTS
-        PSPLIT                      = '/home/laine/PROJECTS_IO/CARODEEPMOTION/SPLITDATA',
-        LEARNING_RATE               = 0.0001,
-        BATCH_SIZE                  = 4,                                                                        # size of a batch
+        LEARNING_RATE               = 0.001,
+        BATCH_SIZE                  = 1,                                                                        # size of a batch
         NB_EPOCH                    = 500,
         VALIDATION                  = True,
         DROPOUT                     = 0.0,                                                                      # dropout during training

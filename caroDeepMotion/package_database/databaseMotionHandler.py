@@ -25,10 +25,10 @@ class databaseHandler():
 
         pname = self.parameters.PDATA.split('/')[-1]
         self.path_data['image_information'] = os.path.join(self.parameters.PDATA, 'CF-' + pname + ".txt")
-        self.path_data['path_image']        = os.path.join(self.parameters.PDATA, 'images-' + pname + ".pkl")
-        self.path_data['path_field']        = os.path.join(self.parameters.PDATA, 'displacement_field-' + pname + ".pkl")
-        self.path_data['path_LI']           = os.path.join(self.parameters.PDATA, 'LI-' + pname + ".pkl")
-        self.path_data['path_MA']           = os.path.join(self.parameters.PDATA, 'MA-' + pname + ".pkl")
+        self.path_data['path_image'] = os.path.join(self.parameters.PDATA, 'images-' + pname + ".pkl")
+        self.path_data['path_field'] = os.path.join(self.parameters.PDATA, 'displacement_field-' + pname + ".pkl")
+        self.path_data['path_LI'] = os.path.join(self.parameters.PDATA, 'LI-' + pname + ".pkl")
+        self.path_data['path_MA'] = os.path.join(self.parameters.PDATA, 'MA-' + pname + ".pkl")
 
     # ------------------------------------------------------------------------------------------------------------------
     def create_database(self):
@@ -36,12 +36,12 @@ class databaseHandler():
         # --- we get pairs of images
         pairs = []
         seq, OF, LI, MA, CF = dbu.load_prepared_data(self.path_data)
-        [height_seq, width_seq, nb_frame] = seq.shape
+        [_, width_seq, nb_frame] = seq.shape
         pname = self.parameters.PDATA.split('/')[-1]
 
         # --- set seq ID to save results
         for id in range(1, nb_frame):
-
+            # --- adapt the name if there are too many patches
             if id < 10:
                 p0 = pname + "_00" + str(id)
             elif id < 100:
@@ -59,16 +59,12 @@ class databaseHandler():
             pairs.append([p0, p1])
 
         for id in range(0, (nb_frame-1)):
-
             # --- get size of the original image
-            LI1 = LI[..., id].copy()
-            LI2 = LI[..., id+1].copy()
-            MA1 = MA[..., id].copy()
-            MA2 = MA[..., id + 1].copy()
-            I1 = seq[..., id].copy()
-            I2 = seq[..., id + 1].copy()
+            LI1, LI2 = LI[..., id].copy(), LI[..., id+1].copy()
+            MA1, MA2 = MA[..., id].copy(), MA[..., id + 1].copy()
+            I1, I2 = seq[..., id].copy(), seq[..., id + 1].copy()
             OF_ = OF[..., id].copy()
-
+            # --- preprocess data
             args_preprocessing = {
                 'I1'          : I1,
                 'I2'          : I2,
@@ -80,18 +76,15 @@ class databaseHandler():
                 'roi_width'   : self.parameters.ROI_WIDTH,
                 'pixel_width' : self.parameters.PIXEL_WIDTH,
                 'CF'          : CF}
-
             I1, I2, OF12, LI1, LI2, MA1, MA2, rCF = dbu.preprocessing_prepared_data(**args_preprocessing)
-
             # --- get borders
             roi_borders = dbu.get_roi_borders(LI1, LI2, MA1, MA2)
-
             # --- adapt segmentation to borders
             LI1, LI2, MA1, MA2 = dbu.adapt_seg_borders(LI1, LI2, MA1, MA2, roi_borders, width_seq)
-
             # --- compute position for cropping
             mean1 = dbu.mean_pos(LI1, MA1)
             mean2 = dbu.mean_pos(LI2, MA2)
+            # --- get the cropping coordinates
             args_coordinates = {
                 "roi_borders"   : roi_borders,
                 "pos1"          : mean1,
@@ -101,9 +94,7 @@ class databaseHandler():
                 "roi_width"     : self.parameters.PIXEL_WIDTH,
                 "roi_height"    : self.parameters.PIXEL_HEIGHT,
                 "dim_img"       : I1.shape}
-
             coordinates = dbu.get_cropped_coordinates(**args_coordinates)
-
             # --- extract data
             args_data_extraction = {
                 "LI1"           : LI1,
@@ -117,9 +108,8 @@ class databaseHandler():
                 "pixel_width"   : self.parameters.PIXEL_WIDTH,
                 "pixel_height"  : self.parameters.PIXEL_HEIGHT,
                 "pairs_name"    : pairs[id]}
-
             data = dbu.data_extraction(**args_data_extraction)
-            # --- save data
+            # --- adapt the name if there are too many patches and save data
             if id+1 >= 100:
                 substr = str(id + 1)
             elif id+1 >= 10:

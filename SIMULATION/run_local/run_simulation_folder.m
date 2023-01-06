@@ -11,7 +11,7 @@ end
 %%%%%%% RUM SIMULATION FOR ONE PHANTOM AND ONE SET OF PARAMETERS %%%%%%% 
 
 % --- path to data
-path = '/home/laine/Desktop/MotionEstimationDataBaseAnalysisV2/tech_010';
+path = '/home/laine/HDD/PROJECTS_IO/SIMULATION/IMAGENET_STA/n02747177_ashcan';
 frame = list_files(path);
 
 for idp=1:1:length(frame)

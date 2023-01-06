@@ -2,7 +2,6 @@ import os
 import random
 import numpy as np
 
-import package_debug.visualisation                  as dbv
 import package_utils.motion_handler                   as pufh
 import package_utils.loader                         as pl
 import package_visualization.make_figure            as pvmf
@@ -50,7 +49,6 @@ class databaseVisualization():
             # --- get file name
             patient[files[id]] = {}
             for key in subfolder:
-
                 if "I" in key:
                     patient[files[id]][key] = os.path.join(pres_, key, npatch.split('.')[0] + ".pkl")
                 elif "M" in key:
@@ -90,6 +88,7 @@ class databaseVisualization():
     # ------------------------------------------------------------------------------------------------------------------
 
     def __call__(self):
-
         self.patient = self.get_patient(self.subfolder, self.parameters.PDATA)
         self.visualization(self.patient, self.subfolder, self.parameters.PRES)
+
+# ----------------------------------------------------------------------------------------------------------------------

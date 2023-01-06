@@ -8,12 +8,7 @@ from package_network.network_encoder                import NetEncoder
 
 # ----------------------------------------------------------------------------------------------------------------------
 def initialize_weights(m):
-    """ Weights intialization.
-    Args:
-        TODO
-    Returns:
-        TODO
-    """
+    """ Weights intialization. """
 
     if isinstance(m, nn.Conv2d):
       nn.init.kaiming_uniform_(m.weight.data,nonlinearity='relu')
@@ -30,12 +25,7 @@ def initialize_weights(m):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def get_path_models(pres, keys, substr=None):
-    """ Get models name.
-    Args:
-        TODO
-    Returns:
-        TODO
-    """
+    """ Get models name. """
 
     if substr is None:
         substr='val'
@@ -58,12 +48,7 @@ def get_path_models(pres, keys, substr=None):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def load_model_flow(param):
-    """ Load models with associated weights.
-    Args:
-        TODO
-    Returns:
-        TODO
-    """
+    """ Load models with associated weights. """
 
     # ---------------------
     # ---- LOAD MODELS ----
@@ -80,7 +65,7 @@ def load_model_flow(param):
     # -----------------------
 
     keys = ['netEncoder', 'netFlow']
-    models_name = get_path_models(os.path.join(param.PRES, 'model'), keys, 'train')
+    models_name = get_path_models(os.path.join(param.PRES, 'model'), keys, 'val')
 
     if param.RESTORE_CHECKPOINT:
         if models_name is not None:
@@ -96,91 +81,8 @@ def load_model_flow(param):
     return netEncoder, netFlow
 
 # ----------------------------------------------------------------------------------------------------------------------
-def load_model(param):
-    """ Load models with associated weights.
-    Args:
-        TODO
-    Returns:
-        TODO
-    """
-
-    # ---- load models
-    netEncoder  = NetEncoder(param)
-    netSeg      = dilatedUnet(
-        input_nc        = 2,
-        output_nc       = 2,
-        n_layers        = param.NB_LAYERS,
-        ngf             = param.NGF,
-        kernel_size     = param.KERNEL_SIZE,
-        padding         = param.PADDING,
-        use_bias        = param.USE_BIAS
-        )
-    if param.MODEL_NAME == 'raft': 
-        netFlow = RAFT_NetFlow(param)
-    elif param.MODEL_NAME == 'gma':
-        netFlow = GMA_NetFlow(param)
-
-    # --- adapth weights
-    keys = ['netEncoder', 'netSeg', 'netFlow']
-    models_name = get_path_models(param.PRES, keys)
-    if param.RESTORE_CHECKPOINT:
-        if models_name is not None:
-            for model_name in models_name.keys():
-                if model_name == keys[0]:
-                    netEncoder.load_state_dict(torch.load(models_name[model_name]))
-                elif model_name == keys[1]:
-                    netSeg.load_state_dict(torch.load(models_name[model_name]))
-                elif model_name == keys[2]:
-                    netFlow.load_state_dict(torch.load(models_name[model_name]))
-    else:
-        netEncoder.apply(initialize_weights)
-        netSeg.apply(initialize_weights)
-        netFlow.apply(initialize_weights)
-
-    return netEncoder, netSeg, netFlow
-
-# ----------------------------------------------------------------------------------------------------------------------
-def load_model_seg(param):
-    """ Load models with associated weights.
-
-    Args:
-        param (metaclass): contains all project parameters.
-
-    Returns:
-        netSeg (metaclass): network for segmentation.
-    """
-
-    netSeg = dilatedUnet(
-        input_nc        = 1,
-        output_nc       = 1,
-        n_layers        = param.NB_LAYERS,
-        ngf             = param.NGF,
-        kernel_size     = param.KERNEL_SIZE,
-        padding         = param.PADDING,
-        use_bias        = param.USE_BIAS,
-        dropout         = param.DROPOUT
-    )
-
-    # --- adapt weights
-    keys = ['netSeg']
-    models_name = get_path_models(param.PATH_SAVE_MODEL, keys)
-
-    # --- if exist, load pretrained weights of the model
-    if param.RESTORE_CHECKPOINT and models_name != None:
-        netSeg.load_state_dict(torch.load(models_name[keys[0]]))
-    else:
-        netSeg.apply(initialize_weights)
-
-    return netSeg
-
-# ----------------------------------------------------------------------------------------------------------------------
 def save_print(model, path, mname):
-   """ Save model architecture and number of parameters.
-        Args:
-            TODO
-        Returns:
-            TODO
-   """
+   """ Save model architecture and number of parameters. """
 
    with open(os.path.join(path, mname + '.txt'), 'w') as f:
        print(model, file=f)
@@ -192,11 +94,8 @@ def save_print(model, path, mname):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def count_parameters(model):
-   """ Count the number of parameters in the model.
-       Args:
-        TODO
-    Returns:
-        TODO
-   """
+   """ Count the number of parameters in the model. """
 
    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+# ----------------------------------------------------------------------------------------------------------------------

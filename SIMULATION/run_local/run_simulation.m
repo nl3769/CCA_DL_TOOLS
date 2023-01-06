@@ -12,7 +12,7 @@ end
 %%%%%%% RUN SIMULATION %%%%%%% 
 
 % --- path to data
-path_data='/home/laine/Desktop/CAMO03_image2/CAMO03_image2_id_001_FIELD';
+path_data='/home/laine/HDD/PROJECTS_IO/SIMULATION/IMAGENET_STA/n02747177_ashcan';
 % --- get phantom name
 phantom_folder = fct_list_ext_files(path_data, 'mat', 'phantom');
 phantom_names = fct_detect_sub_str(phantom_folder, 'dicom');

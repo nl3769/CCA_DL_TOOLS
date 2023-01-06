@@ -29,7 +29,7 @@ def setParameters():
             "Computerized-CREATIS_PH_v1": "/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Computerized-CREATIS_PH_v1",
             "Computerized-CREATIS_PH_UNION_15_PXL": "/home/laine/Documents/PROJECTS_IO/DATA/CUBS/LIMA-Profiles-interpolated/Computerized-CREATIS_PH_UNION_15_PXL"
         },
-        SET=['tech', 'clin+tech', 'clin']  # chose 'clin', 'tech' or 'clin+tech'
+        SET=['clin', 'tech', 'clin+tech']
     )
 
     pparam = os.path.join(p.PRES, 'backup_parameters')

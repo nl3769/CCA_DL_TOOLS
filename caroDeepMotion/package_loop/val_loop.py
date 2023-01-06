@@ -70,7 +70,6 @@ def val_loop_flow(param, networks, flowLoss, logger, loader, id_epoch, device):
     logger.add_loss_flow(flow_loss_, set='validation')
     logger.add_metrics_flow(flow_metrics_, set='validation')
 
-
 # ----------------------------------------------------------------------------------------------------------------------
 def val_loop_synth(param, networks, flowLoss, logger, loader, id_epoch, device):
 
@@ -84,8 +83,7 @@ def val_loop_synth(param, networks, flowLoss, logger, loader, id_epoch, device):
     networks["netEncoder"].eval()
     networks["netFlow"].eval()
 
-    for i_batch, (I1, I2, M1, M2, OF, CF, fname) in enumerate(
-            tqdm(loader, ascii=True, desc=f'VALIDATION - Epoch id.: {id_epoch}')):
+    for i_batch, (I1, I2, M1, M2, OF, CF, fname) in enumerate(tqdm(loader, ascii=True, desc=f'VALIDATION - Epoch id.: {id_epoch}')):
 
         # --- load data
         I1, I2, M1, M2, OF = I1.to(device).float(), I2.to(device).float(), M1.to(device).float(), M2.to(device).float(), OF.to(device).float()
@@ -103,14 +101,14 @@ def val_loop_synth(param, networks, flowLoss, logger, loader, id_epoch, device):
         flow_loss_.append(flow_loss.cpu().detach().numpy())
         [flow_metrics_[key].append(flow_metrics[key]) for key in flow_metrics.keys()]
 
-        if save == True:
+        if save:
             OF_pred = flow_pred[-1].cpu().detach().numpy()
             OF_gt = OF.cpu().detach().numpy()
             OF_pred, OF_gt = OF_pred[0, ], OF_gt[0, ]
             I1_, I2_ = I1.cpu().detach().numpy(), I2.cpu().detach().numpy()
-            I1_, I2_ = I1_[0, 0,], I2_[0, 0,]
+            I1_, I2_ = I1_[0, 0, ], I2_[0, 0, ]
             logger.plot_pred_flow(I1_, I2_, OF_gt, OF_pred, id_epoch, param.PATH_SAVE_PRED_TRAINING, "val", fname[0])
-            save = False
+            # save = False
 
     #############################
     # --- SAVE LOSS/METRICS --- #
@@ -127,3 +125,5 @@ def val_loop_synth(param, networks, flowLoss, logger, loader, id_epoch, device):
     logger.add_metrics_flow(flow_metrics_, set='validation')
 
     return flow_metrics_, flow_loss_
+
+# ----------------------------------------------------------------------------------------------------------------------

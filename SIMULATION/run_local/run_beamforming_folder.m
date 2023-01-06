@@ -9,11 +9,10 @@ addpath(fullfile('..', 'mtl_cores/'));
 addpath(fullfile('..', 'mtl_utils'));
 
 % --- path to results
-path_res01='/home/laine/cluster/PROJECTS_IO/SIMULATION/IMAGENET_STA';
+path_res01='/home/laine/HDD/PROJECTS_IO/SIMULATION/IMAGENET_STA/n02747177_ashcan';
 patients = list_files(path_res01);
 
-
-for idp=6:1:length(patients)
+for idp=1:1:length(patients)
 %parfor idp=21:1:length(patients)
     files = list_files(fullfile(path_res01, patients{idp}))
     
