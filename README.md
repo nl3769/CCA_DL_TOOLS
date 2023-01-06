@@ -38,9 +38,9 @@ This function has to be run after once the phantom is created. Then it load the 
 
 #### How tu run on GPU?
 To run the beamforming on GPU, first check your GPU's architecture. For linux user, run in a terminal:
-'''sh
+```sh
 nvidia-smi -q | grep Architecture
-'''
+```
 
 ## run the code locally
 
