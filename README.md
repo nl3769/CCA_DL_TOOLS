@@ -45,12 +45,21 @@ Then you have to compile the '*.cu*' locating in SIMULATION/cuda/*.cu. For this,
 ```sh
 bash compile_PASCAL.sh
 ```
-
 You can easily create a new compile.sh for a different architecture by modidying the sm_xy number by looking in the following [link](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-compilation).
 
 ## run the code on cluster
 
-The cluster use *PBS Scheduler*. Once your logged to the cluster, each function is handle by python scripts in *SIMULATION/run_cluster/*
+The cluster uses *PBS Scheduler*. Once your logged to the cluster, each function is handle by python scripts in *SIMULATION/run_cluster/*. 
+
+### SIMULATION/run_cluster/run_CLUSTER_mk_phantom.py
+
+Change the parameters in *run_CLUSTER_mk_phantom.py*, and it will make the phantom for each images in the datase. It can *TIFF*, *JPEG*, *DICOM*.
+
+### SIMULATION/run_cluster/run_mk_phantom.m
+
+
+
+### SIMULATION/run_cluster/run_mk_phantom.m
 
 
 # caroDeepSeg
