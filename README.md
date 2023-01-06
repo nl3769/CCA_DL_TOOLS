@@ -21,7 +21,7 @@ The functions to run are in *SIMULATION/run_local*. It contains several function
 * run_simulation.m
 * run_beamforming.m
 
-#### <u> SIMULATION/run_local/run_mk_phantom.m</u>
+#### SIMULATION/run_local/run_mk_phantom.m
 This function call the another function *mtl_cores/fct_run_mk_phantom* which takes as input the path to the database (path to the images), the path to save the phantom, the path to the simulation parameter (.json file) and some additional information (extra_info) to write in the name of the saved file.
 
 The output is structured as follow:
@@ -30,10 +30,10 @@ The output is structured as follow:
 * path_res/img_name/img_name_id_001_extra_info/phantom: save the phantom in .mat format
 * path_res/img_name/img_name_id_001_extra_info/raw_data: path save the raw data during simulation
 
-#### <u> SIMULATION/run_local/run_simulation.m</u>
+#### SIMULATION/run_local/run_simulation.m
 This function has to be run after once the phantom is created. It calls the function *mtl_cores/fct_run_wave_propagation.m*. This one takes as argument the path to the phantom, the path to the parameters and the id of the transmitted element. Then the function writes the radiofrequency signal in path_res/img_name/img_name_id_001_extra_info/raw_data/_raw. 
 
-#### <u> SIMULATION/run_local/run_beamforming.m </u>
+#### SIMULATION/run_local/run_beamforming.m
 This function has to be run at the end. It calls the function *mtl_cores/fct_run_image_reconstruction.m*. The beamforming is performed on GPU.
 
 ##### How tu run on GPU?
