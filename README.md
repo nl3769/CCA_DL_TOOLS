@@ -7,7 +7,7 @@ The following REPO provides codes for the following topics:
 * speckleTracking
 * textureImprovment
 
-# SIMULATION
+## SIMULATION
 All this code run in *matlab* and *cuda*. For one simulation, the process is as follow:
 1. make phantom
 2. simulation
