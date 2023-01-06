@@ -16,19 +16,14 @@ class motionDataloader(Dataset):
         self.flow_list = []
         self.extra_info = []
 
-        # self.preprocessing = preProcessing(p)
-
     # ------------------------------------------------------------------------------------------------------------------
     def __getitem__(self, index):
         # --- modulo, to not be out of the array
         index = index % len(self.image_list)
-
         # --- read data
         I1, I2, M1, M2 = self.read_img(index)
         OF = self.read_OF(index)
-
         CF = self.get_CF(index)
-
         # --- get the name of the sequence
         name_ = self.image_list[index][0].split('/')[-4:]
         name = ''
@@ -43,25 +38,21 @@ class motionDataloader(Dataset):
     # ------------------------------------------------------------------------------------------------------------------
     def read_img(self, index):
         """ Read images and flow from files. """
-        # print(self.image_list[index][0] + "\n")
+
         I1 = pul.load_pickle(self.image_list[index][0])
         I2 = pul.load_pickle(self.image_list[index][1])
         M1 = pul.load_pickle(self.mask_list[index][0])
         M2 = pul.load_pickle(self.mask_list[index][1])
-
         # --- convert in float and add a dimension
         I1 = np.array(I1).astype(np.float32)[None, ...]
         I2 = np.array(I2).astype(np.float32)[None, ...]
         M1 = np.array(M1).astype(np.float32)[None, ...]
         M2 = np.array(M2).astype(np.float32)[None, ...]
-
         # --- normalization
         I1 -= I1.min()
         I1 /= I1.max()
-
         I2 -= I2.min()
         I2 /= I2.max()
-
         M1 /= M1.max()
         M2 /= M2.max()
 
@@ -86,16 +77,15 @@ class motionDataloader(Dataset):
 
         with open(self.CF_list[index][0], 'r') as f:
             CF = f.read()
-
         xCF = float(CF.split('\n')[0].split(' ')[-1])
         yCF = float(CF.split('\n')[1].split(' ')[-1])
-        CF = {"xCF": xCF,
-              "yCF": yCF}
+        CF = {"xCF": xCF, "yCF": yCF}
 
         return CF
 
     # ------------------------------------------------------------------------------------------------------------------
     def __rmul__(self, v):
+
         self.flow_list  = v * self.flow_list
         self.image_list = v * self.image_list
 

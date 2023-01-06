@@ -1,3 +1,8 @@
+'''
+@Author  :   <Nolann Lainé>
+@Contact :   <nolann.laine@outlook.fr>
+'''
+
 from PIL import Image
 
 import nibabel                              as nib
@@ -24,4 +29,3 @@ def write_pickle(data, pres):
 
     with open(pres, 'wb') as f:
         pkl.dump(data, f)
-

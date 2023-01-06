@@ -22,25 +22,16 @@ class loggerClass():
         self.total_steps = 0
 
         if keys_metrics_flow is not None:
-            self.loss_flow = {
-                'training': [],
-                'validation': []}
-            self.metrics_flow = {
-                'training': {},
-                'validation': {}}
+            self.loss_flow = {'training': [], 'validation': []}
+            self.metrics_flow = {'training': {}, 'validation': {}}
 
             for key in self.metrics_flow.keys():
                 for key_metrics in keys_metrics_flow:
                     self.metrics_flow[key][key_metrics] = []
 
         self.validation_loss = {}
-        self.history_model = {
-            'trn_based': [],
-            'val_based': []}
-
-        self.history_loss = {
-            'trn_based': [],
-            'val_based': []}
+        self.history_model = {'trn_based': [], 'val_based': []}
+        self.history_loss = {'trn_based': [], 'val_based': []}
 
         self.writer = None
 

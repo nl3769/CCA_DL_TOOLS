@@ -16,7 +16,6 @@ import package_loss.lossFlow                    as plll
 import package_logger.logger                    as plog
 import package_loop.trn_loop                    as prtl
 import package_loop.val_loop                    as prvl
-import package_debug.visualisation              as pdv
 import package_utils.wandb_utils                as puwu
 
 ################################
@@ -50,16 +49,10 @@ def main():
     optimizerFlow, schedulerFlow = fetch_optimizer(p, netFlow, n_step=math.ceil(len(training_dataloader.dataset.image_list) / p.BATCH_SIZE) * p.NB_EPOCH)
     # --- losses
     flowLoss = plll.lossFlow()
-    # --- store optimizers/schedulers and optimizers
-    networks = {
-        "netEncoder": netEncoder,
-        "netFlow": netFlow}
-    optimizers = {
-        "netEncoder": optimizerEncoder,
-        "netFlow": optimizerFlow}
-    schedulers = {
-        "netEncoder": schedulerEncoder,
-        "netFlow": schedulerFlow}
+    # --- store optimizers/schedulers
+    networks = {"netEncoder": netEncoder, "netFlow": netFlow}
+    optimizers = {"netEncoder": optimizerEncoder, "netFlow": optimizerFlow}
+    schedulers = {"netEncoder": schedulerEncoder, "netFlow": schedulerFlow}
     # --- logger
     logger = plog.loggerClass(p, flowLoss.metrics.keys())
     # --- config wandb
@@ -69,17 +62,14 @@ def main():
         wandb.log({"lr": get_lr(optimizers["netEncoder"])})
     # --- loop
     for epoch in range(p.NB_EPOCH):
-
         # trn_flow_metrics, trn_flow_loss = trn_flow_metrics, trn_flow_loss = prtl.trn_loop_flow(p, networks, flowLoss, optimizers, schedulers, logger, training_dataloader, epoch, device)
         if p.SYNTHETIC_DATASET:
             trn_flow_metrics, trn_flow_loss = prtl.trn_loop_synth(p, networks, flowLoss, optimizers, schedulers, logger, training_dataloader, epoch, device)
             val_flow_metrics, val_flow_loss = prvl.val_loop_synth(p, networks, flowLoss, logger, validation_dataloader, epoch, device)
-
         else:
             trn_flow_metrics, trn_flow_loss = prtl.trn_loop_flow(p, networks, flowLoss, optimizers, schedulers, logger, training_dataloader, epoch, device)
             if validation_dataloader is not None:
                 val_flow_metrics, val_flow_loss = prvl.val_loop_flow(p, networks, flowLoss, logger, validation_dataloader, epoch, device)
-
         if validation_dataloader is not None and p.USE_WANDB == True:
             wandb.log({
                 "lr": get_lr(optimizers["netEncoder"]),
@@ -100,11 +90,8 @@ def main():
                 "trn_epe_1_px": trn_flow_metrics['1px'],
                 "trn_epe_3_px": trn_flow_metrics['3px'],
                 "trn_epe_5_px": trn_flow_metrics['5px']})
-
-
         logger.save_best_model(epoch, networks)
         logger.update_history_loss()
-
     logger.plot_loss()
     logger.plot_metrics()
     logger.save_model_history()
@@ -115,7 +102,6 @@ def fetch_optimizer(p, model, n_step):
 
     # --- optimizer
     optimizer = optim.Adam(model.parameters(), lr=p.LEARNING_RATE)
-
     # --- schedular
     param = {
         'max_lr': p.LEARNING_RATE,
@@ -125,9 +111,6 @@ def fetch_optimizer(p, model, n_step):
         'cycle_momentum': False,
         'anneal_strategy': 'linear'}
     scheduler = optim.lr_scheduler.OneCycleLR(optimizer, **param)
-
-    """ Create the optimizer and learning rate scheduler. """
-
     # # --- optimizer
     # beta1, beta2 = 0.9, 0.999
     # optimizer = optim.Adam(model.parameters(), lr=p.LEARNING_RATE, betas=(beta1, beta2))
@@ -139,6 +122,7 @@ def fetch_optimizer(p, model, n_step):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def get_lr(optimizer):
+
     for param_group in optimizer.param_groups:
         return param_group['lr']
 

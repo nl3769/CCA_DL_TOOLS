@@ -4,7 +4,7 @@ import matplotlib.pyplot    as plt
 import pickle               as pkl
 import numpy                as np
 
-
+# ----------------------------------------------------------------------------------------------------------------------
 def get_fnames(pdata, files, substr):
     fnames = []
 
@@ -15,6 +15,7 @@ def get_fnames(pdata, files, substr):
 
     return fnames
 
+# ----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
 
     pdata = "/home/laine/Desktop/pts_tracking_pht/CAMO01_image1/"
@@ -35,3 +36,5 @@ if __name__ == "__main__":
     pres = '/home/laine/Desktop/motion.pkl'
     with open(pres, 'wb') as f:
         pkl.dump(motion_pkl, f)
+
+# ----------------------------------------------------------------------------------------------------------------------

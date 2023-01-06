@@ -42,7 +42,6 @@ class predictionClassIMC():
         patches = self.patch_preprocessing(patches=patches)
         patches = np.expand_dims(patches, axis=1)
         patches = torch.from_numpy(patches).float()
-
         # --- Prediction
         inference = torch.zeros((1,) + (patches.shape[1],) + (patches.shape[2],) + (patches.shape[3],)).to(self.device)
         masks = torch.zeros(patches.shape)
@@ -50,9 +49,7 @@ class predictionClassIMC():
             inference[0, ] = patches[id_batch, ]
             inference = inference.to(self.device)
             masks[id_batch, ] = self.model(inference).detach().to('cpu')
-
         self.predicted_masks = masks.detach().numpy().copy()
-
         # --- reassemble patches
         self.build_maps(prediction=self.predicted_masks, id=id, pos=pos)
 
@@ -66,13 +63,10 @@ class predictionClassIMC():
             pos_ = patch_["(x, y)"]
             pred_[pos_[1] - pos['min']:(pos_[1] - pos['min'] + self.patch_height), pos_[0]:pos_[0] + self.patch_width] = pred_[pos_[1] - pos['min']:pos_[1] - pos['min'] + self.patch_height, pos_[0]:pos_[0] + self.patch_width] + prediction[i, 0, :, :]
             overlay_[pos_[1] - pos['min']:pos_[1] - pos['min'] + self.patch_height, pos_[0]:pos_[0] + self.patch_width] = overlay_[pos_[1] - pos['min']:pos_[1] - pos['min'] + self.patch_height, pos_[0]: pos_[0] + self.patch_width] + np.ones((self.patch_height, self.patch_width))
-
         overlay_[overlay_ == 0] = 1
         pred_ = pred_ / overlay_
-
         self.map_overlay[str(id)] = {"prediction": overlay_.copy(), "offset": pos['min']}
         self.map_prediction[str(id)] = {"prediction": pred_.copy(), "offset": pos['min']}
-
         # --- for display only
         self.final_mask_org = np.zeros(self.dim[1:])
         mask_tmp_height = pred_.shape[0]

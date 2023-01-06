@@ -1,7 +1,13 @@
+'''
+@Author  :   <Nolann Lainé>
+@Contact :   <nolann.laine@outlook.fr>
+'''
+
 import os
 import shutil
 import sys
 
+# ----------------------------------------------------------------------------------------------------------------------
 class dataSetBuilder:
 
     def __init__(self, info):

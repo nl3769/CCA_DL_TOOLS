@@ -7,7 +7,7 @@ function [ima_fil]=fct_bilateral_filtering(img, sigma_i, sigma_s, neighbour, ite
     
     for k=1:1:iteration
         % --- update image
-        if k>1, img=ima_fil; end;
+        if k>1, img=ima_fil; end
         
         % --- loop over x
         for x=1:1:XX

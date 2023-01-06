@@ -1,10 +1,12 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import torch
-import imageio as iio
-from torch.utils.data import Dataset
+'''
+@Author  :   <Nolann Lainé>
+@Contact :   <nolann.laine@outlook.fr>
+'''
 
-from package_dataloader.preProcessing import preProcessing
+import imageio                          as iio
+from torch.utils.data                   import Dataset
+
+from package_dataloader.preProcessing   import preProcessing
 
 
 class GANDataSet(Dataset):

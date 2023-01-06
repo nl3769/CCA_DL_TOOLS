@@ -3,10 +3,7 @@
 @Contact :   <nolann.laine@outlook.fr>
 '''
 
-import torch
 import numpy                                as np
-import package_utils.pytorch_processing     as pupp
-
 from tqdm                                   import tqdm
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -27,24 +24,19 @@ def trn_loop_seg(param, networks, segLoss, optimizers, scheduler, logger, loader
 
         # --- load data
         I1, M1 = I1.to(device), M1.to(device)
-
         ##########################
         # --- TRAIN NETWORKS --- #
         ##########################
-
         optimizers["netSeg"].zero_grad()
         M1_pred = networks["netSeg"](I1)
         seg_loss, seg_metrics = segLoss(M1_pred, M1)
         seg_loss.backward()
         optimizers["netSeg"].step()
-
         ##################
         # --- LOGGER --- #
         ##################
-
         seg_loss_.append(seg_loss.cpu().detach().numpy())
         [seg_metrics_[key].append(seg_metrics[key].cpu().detach().numpy()) for key in seg_metrics.keys()]
-
         if save == True:
             # --- save one random image
             I1 = I1[0, ].cpu().detach().numpy().squeeze()
@@ -52,11 +44,9 @@ def trn_loop_seg(param, networks, segLoss, optimizers, scheduler, logger, loader
             M1_pred = M1_pred[0, ].cpu().detach().numpy().squeeze()
             logger.plot1Seg(I1, M1, M1_pred, param.PATH_RANDOM_PRED_TRN, 'trn_' + str(id_epoch) + "_" + fname[0])
             save = False
-
     ###############################
     # --- SAVE LOSSES/METRICS --- #
     ###############################
-
     # --- segmentation branch
     seg_loss_ = np.array(seg_loss_)
     seg_loss_ = np.mean(seg_loss_)

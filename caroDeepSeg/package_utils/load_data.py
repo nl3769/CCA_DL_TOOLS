@@ -22,7 +22,6 @@ def load_data(path: str, param):
         extension = 'dicom'
     else:
         extension = extension[-1]
-
     if path.split('/')[-1].split('_')[0] == 'LOI':
         LOI = True
     if extension == 'tiff' or extension == 'png':
@@ -35,19 +34,15 @@ def load_TIFF_image(path: str, param):
     seq = pul.load_image(path)
     if np.max(seq) == 1:
         seq = seq * 255
-
     path_spacing = os.path.join(param.PCF, path.split('/')[-1].split('.')[0] + "_CF.txt")
     CF_org = read_CF_directory(path_spacing)
-
     I_in = seq.copy()
-
     I_out, scale, CF = sequence_preprocessing(
         seq=np.expand_dims(seq, axis=0),
         width_roi_meter = param.ROI_WIDTH,
         width_roi_pixel = param.PIXEL_WIDTH,
         height_roi_pixel = param.PIXEL_HEIGHT,
-        CF = CF_org
-    )
+        CF = CF_org)
 
     return I_out, I_in, scale, CF, CF_org
 
@@ -58,7 +53,7 @@ def read_CF_directory(path: str):
 
     f = open(path, "r")
     val = f.readline().split(' \n')
-    
+
     # --- convert in meter
     return float(val[0]) * 1e-3
 
@@ -68,14 +63,11 @@ def sequence_preprocessing(seq: str, width_roi_meter: float, width_roi_pixel: in
 
     [nb_frame, height, width] = seq.shape
     CF_out = width_roi_meter/width_roi_pixel
-
     scale_x = (width_roi_pixel * CF) / width_roi_meter
     scale_y = (height_roi_pixel * CF) / (height_roi_pixel * CF_out)
-
     height_out = round(height * scale_y)
     width_out = round(width * scale_x)
     out = np.zeros((nb_frame, height_out, width_out))
-
     for i in range(nb_frame):
         out[i, :, :] = cv2.resize(seq[i, :, :].astype(np.float32), (width_out, height_out), interpolation=cv2.INTER_LINEAR)
 
@@ -112,6 +104,7 @@ def read_CF_file(path: str):
 
     f = open(path, "r")
     val = f.readline().split(' \n')
+
     return float(val[0]) / 1000
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -120,7 +113,6 @@ def load_annotation(path: str, patient: str, nameExpert: str):
 
     path_IFC3 = path + '/' + patient.split('.')[0] + "_IFC3_" + nameExpert + ".mat"
     path_IFC4 = path + '/' + patient.split('.')[0] + "_IFC4_" + nameExpert + ".mat"
-
     IFC3 = scipy.io.loadmat(path_IFC3)
     IFC3 = IFC3['seg']
     IFC4 = scipy.io.loadmat(path_IFC4)
@@ -137,6 +129,7 @@ def get_files(path: str):
         for entry in entries:
             if entry.is_file():
                 file.append(entry.name)
+
     return file
 
 # ----------------------------------------------------------------------------------------------------------------------

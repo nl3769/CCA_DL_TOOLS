@@ -1,8 +1,11 @@
+"""
+@Author  :   <Nolann Lainé>
+@Contact :   <nolann.laine@outlook.fr>
+"""
+
 import argparse
 import importlib
-import package_utils.fold_handler                   as fh
 from package_evaluation.evaluationHandler           import evaluationHandler
-
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 def main():
@@ -13,11 +16,9 @@ def main():
     arg = vars(my_parser.parse_args())
     param = importlib.import_module('package_parameters.' + arg['Parameters'].split('.')[0])
     p = param.setParameters()
-
     sets = p.SET
 
     for set in sets:
-
         p.SET = set
         eval=evaluationHandler(p)
         eval.get_hausdorff()
@@ -30,6 +31,9 @@ def main():
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
+    """
+    This function evaluates segmentation results based on CUBS database. It load results availale online (https://data.mendeley.com/datasets/m7ndn58sv6/1) 
+    """
     main()
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,15 +1,12 @@
-'''
+"""
 @Author  :   <Nolann Lainé>
 @Contact :   <nolann.laine@outlook.fr>
-'''
+"""
 
 import argparse
 import importlib
 import torch
-import math
-import random
 import wandb
-
 import torch.optim				                  as optim
 import package_dataloader.utils 		          as pdlu
 import package_network.utils 			          as pnu
@@ -26,7 +23,6 @@ import package_utils.wandb_utils                  as puwu
 
 # ----------------------------------------------------------------------------------------------------------------------
 def main():
-
     # --- get project parameters
     my_parser = argparse.ArgumentParser(description='Name of set_parameters_*.py')
     my_parser.add_argument('--Parameters', '-param', required=True, help='List of parameters required to execute the code.')
@@ -35,7 +31,6 @@ def main():
     p = param.setParameters()
     # --- device configuration
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    # device = 'cpu'
     # --- get dataloader
     trn_dataloader, val_dataloader, tst_dataloader = pdlu.fetch_dataloader_seg(p)
     # --- load models
@@ -47,7 +42,7 @@ def main():
     optimizer, scheduler = fetch_optimizer(p, netSeg)
     # --- loss
     segLoss = plls.lossSeg1Frame()
-    # --- store optimizers/schedulers and optimizers
+    # --- store optimizers/schedulers
     networks = {"netSeg": netSeg}
     optimizers = {"netSeg": optimizer}
     schedulers = {"netSeg": scheduler}
@@ -57,13 +52,11 @@ def main():
     if p.USE_WANDB:
         config = puwu.get_param_wandb(p)
         wandb.init(project="caroDeepSegPytorch", entity=p.ENTITY, dir=p.PATH_WANDB, config=config, name=p.EXPNAME)
-
     # --- trn/val loop
     for epoch in range(p.NB_EPOCH):
         loss_trn, metric_trn = trn.trn_loop_seg(p, networks, segLoss, optimizers, schedulers, logger, trn_dataloader, epoch, device)
         loss_val, metric_val = val.val_loop_seg(p, networks, segLoss, logger, val_dataloader, epoch, device)
         logger.save_best_model(epoch, networks)
-
         # --- Log information to wandb
         lr = get_lr(optimizer)
         if p.USE_WANDB:
@@ -75,15 +68,12 @@ def main():
                 "val_BCE": metric_trn['BCE_I1'],
                 "val_DICE": metric_trn['dice_I1'],
                 "learning_rate": lr})
-
         if logger.early_stop_id >= p.EARLY_STOP:
             print('EARLY STOP')
             break
-
     logger.plot_loss()
     logger.plot_metrics()
     logger.save_model_history()
-
     p.RESTORE_CHECKPOINT = True
     netSeg = pnu.load_model_seg(p)
     netSeg = netSeg.to(device)
@@ -92,7 +82,6 @@ def main():
     tst.tst_loop_seg(p, networks, segLoss, tst_dataloader, device, 'tst')
     tst.tst_loop_seg(p, networks, segLoss, trn_dataloader, device, 'trn')
 
-
 # ----------------------------------------------------------------------------------------------------------------------
 def fetch_optimizer(p, model):
     """ Create the optimizer and learning rate scheduler. """
@@ -100,7 +89,6 @@ def fetch_optimizer(p, model):
     # --- optimizer
     beta1, beta2 = 0.9, 0.999
     optimizer = optim.Adam(model.parameters(), lr=p.LEARNING_RATE, betas=(beta1, beta2))
-
     # --- schedular
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.95)
 
@@ -113,6 +101,9 @@ def get_lr(optimizer):
 
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
+    """
+    This function trains model.
+    """
     main()
 
 # ----------------------------------------------------------------------------------------------------------------------

@@ -1,9 +1,7 @@
-import matplotlib.pyplot as plt
+import matplotlib.pyplot        as plt
+import numpy                    as np
 
 # ----------------------------------------------------------------------------------------------------------------------
-import numpy as np
-
-
 def display_image(I, id_fig = None, title = None):
 
     id_fig = 0 is id_fig is None
@@ -20,18 +18,12 @@ def add_annotation(I, LI, MA, roi=None):
     I = np.repeat(I[..., np.newaxis], 3, axis=2)
 
     for id in range(ROI['left'], ROI['right']):
-
-        zli = int(round(LI[id]))
-        zma = int(round(MA[id]))
-
-        I[zli, id, 0] = 255
-        I[zli, id, 1] = 0
-        I[zli, id, 2] = 0
-
-        I[zma, id, 0] = 255
-        I[zma, id, 1] = 0
-        I[zma, id, 2] = 0
+        zli, zma = int(round(LI[id])), int(round(MA[id]))
+        I[zli, id, 0], I[zli, id, 1], I[zli, id, 2] = 255, 0, 0
+        I[zma, id, 0], I[zma, id, 1], I[zma, id, 2] = 255, 0, 0
 
     plt.figure()
     plt.imshow(I)
     plt.title("add annotation")
+
+# ----------------------------------------------------------------------------------------------------------------------

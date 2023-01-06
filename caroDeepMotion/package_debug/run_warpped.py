@@ -82,28 +82,19 @@ def warpped_patches():
         idx_name = os.listdir(os.path.join(os.path.join(pdata, iname)))
         for idx in idx_name:
             patch_name = os.listdir(os.path.join(pdata, iname, idx, 'I1'))
-
             for key in patch_name:
-
                 pseq0 = os.path.join(pdata, iname, idx, 'I1', key) # + key #'/home/laine/Desktop/DATABASE_MOTION/sample_grid/id_001/I1/' + key
                 pseq1 = os.path.join(pdata, iname, idx, 'I2', key)
                 pmotion = os.path.join(pdata, iname, idx, 'OF', key) # '/home/laine/Desktop/DATABASE_MOTION/sample_grid/id_001/OF/' + key
                 pcf = os.path.join(pdata, iname, idx, 'CF.txt')
-
                 pres = '/home/laine/Desktop/MotionAnalysis/motion_analysis/patches/' + iname + '_' + idx + '_' + key + '.png'
-
                 seq0 = pul.load_pickle(pseq0)
                 seq1 = pul.load_pickle(pseq1)
                 motion = pul.load_pickle(pmotion)
-
                 seq0 = np.expand_dims(seq0, axis=2)
                 seq1 = np.expand_dims(seq1, axis=2)
                 seq = np.concatenate((seq0, seq1), axis=2)
-
                 motion = np.expand_dims(motion, axis=3)
-
-                # cf = pur.read_txt(pcf)
-                # cf = float(cf[0].split(' ')[-1].split('\n')[0])
                 warpped = pufl.warpper(motion[..., 0], seq[..., 0])
                 warpped_showcase(seq[..., 0], seq[..., 1], motion[..., 0], warpped, pres, roi=[30, -30, 30, -30])
 
@@ -111,5 +102,5 @@ def warpped_patches():
 if __name__=='__main__':
 
     warpped_patches()
-    # warpped_full_image()
+
 # ----------------------------------------------------------------------------------------------------------------------

@@ -24,33 +24,23 @@ class databasePreparation():
     # ------------------------------------------------------------------------------------------------------------------
 
     def get_patients(self):
-        """ Store path in dictionnary to load patient informations. """
+        """ Store path in dictionary to load patient information. """
 
-        # required_keys -> patient_name/seq_id/path_image/path
-        #                -> patient_name/seq_id/path_flow/path
-        #                -> patient_name/seq_id/path_seg_LI/path
-        #                -> patient_name/seq_id/path_seg_LA/path
-        #                -> patient_name/seq_id/path_info/path
         frame_id = sorted(os.listdir(self.parameters.PDATA))
-
         for id, nframe in enumerate(frame_id):
-
-            self.path_data[nframe] = {}
-            p_res = os.path.join(self.parameters.PDATA, nframe)
-
+            self.path_data[nframe] = {} # dictionary to store path
+            p_res = os.path.join(self.parameters.PDATA, nframe) # path to data
             # --- get path
             path_image = rd.get_fname(dir=p_res, sub_str='_bmode.png', fold=os.path.join('bmode_result', 'results'))
             path_info = rd.get_fname(dir=p_res, sub_str='image_information', fold='phantom')
             path_LI = rd.get_fname(dir=p_res, sub_str='LI.', fold='phantom')
             path_MA = rd.get_fname(dir=p_res, sub_str='MA.', fold='phantom')
             path_parameters = rd.get_fname(dir=p_res, sub_str=['parameters.mat', 'parameters.json'], fold='parameters')
-
             if id > 0:
                 path_flow = rd.get_fname(dir=p_res, sub_str='OF_', fold='phantom')
                 self.path_data[nframe]['path_flow'] = path_flow
             else:
                 self.path_data[nframe]['path_flow'] = ''
-
             self.path_data[nframe]['image_information'] = path_info
             self.path_data[nframe]['path_image'] = path_image
             self.path_data[nframe]['path_LI'] = path_LI
@@ -59,7 +49,6 @@ class databasePreparation():
 
     # ------------------------------------------------------------------------------------------------------------------
     def create_database(self):
-
         # --- we get pairs of images
         pairs = []
         keys = list(self.path_data.keys())
@@ -67,15 +56,11 @@ class databasePreparation():
             p0 = keys[id]
             p1 = keys[id+1]
             pairs.append([p0, p1])
-
         for id in range(0, len(pairs)):
-
             # --- get path
             path = dbu.get_path(self.path_data, pairs, id)
-
             # --- load data
             I1, I2, OF, LI1, LI2, MA1, MA2, CF, seg_dim, z_start = dbu.load_data(path)
-
             # --- get size of the original image
             args_preprocessing = {
                 'I1'          : I1,
@@ -88,37 +73,22 @@ class databasePreparation():
                 'pairs'       : pairs[id],
                 'CF'          : CF,
                 'zstart'      : z_start}
-
             I1, I2, OF, LI1, LI2, MA1, MA2 = dbu.data_preparation_preprocessing(**args_preprocessing)
-
             if id == 0:
                 I_seq = np.zeros(I1.shape + (len(pairs) + 1,))
                 OF_seq = np.zeros(OF.shape + (len(pairs),))
                 LI_seq = np.zeros(LI1.shape + (len(pairs) + 1,))
                 MA_seq = np.zeros(MA1.shape + (len(pairs) + 1,))
-
-                I_seq[..., 0]  = I1
-                I_seq[..., 1]  = I2
+                I_seq[..., 0], I_seq[..., 1] = I1, I2
                 OF_seq[..., 0] = OF
-                LI_seq[:, 0]   = LI1
-                MA_seq[:, 0]   = MA1
-                LI_seq[:, 1]   = LI2
-                MA_seq[:, 1]   = MA2
-
-
+                LI_seq[:, 0], MA_seq[:, 0] = LI1, MA1
+                LI_seq[:, 1], MA_seq[:, 1] = LI2, MA2
             else:
                 I_seq[..., id+1] = I2
                 OF_seq[..., id] = OF
-                LI_seq[:, id+1] = LI2
-                MA_seq[:, id+1] = MA2
-
-
-            # folder = os.path.join(pairs[id][1].split('id')[0][:-1], 'id_' + substr)
+                LI_seq[:, id+1], MA_seq[:, id+1] = LI2, MA2
         dbu.save_data_preparation(I_seq, OF_seq, LI_seq, MA_seq, CF, self.parameters.PRES, self.parameters.PDATA.split('/')[-1])
-        # dbu.mk_animation(self.parameters.PRES, self.parameters.PDATA.split('/')[-1], CF, start)
-        dbu.mk_animation(self.parameters.PRES, self.parameters.PDATA.split('/')[-1], CF)
-
-        # dbu.save_data(data, rCF, self.parameters.PRES, folder)
+        dbu.mk_animation(self.parameters.PRES, self.parameters.PDATA.split('/')[-1], CF) # can be commented on, just for visual inspection
 
     # ------------------------------------------------------------------------------------------------------------------
     def __call__(self):

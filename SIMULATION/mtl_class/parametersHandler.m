@@ -10,21 +10,17 @@ classdef parametersHandler < handle
         function obj=parametersHandler(jname)
             % Constructor
             
-            % --- LOAD JSON
+            % --- load json file (parameters) 
             str = fileread(jname);
             obj.param = jsondecode(str);
             
-            % --- RELATIVE TO RESULTS
+            % --- relative to result: to be completed by method of the class by method of the class
             obj.param.path_data='';
             obj.param.path_res='';   
             obj.param.phantom_name='';
 
         
         end
-        
-        
-        % ------------------------------------------------------------------
-        % ----------------------- SET PARAMETERS ---------------------------
         % ------------------------------------------------------------------
         
         function set_pres(obj, path_res)
@@ -104,12 +100,9 @@ classdef parametersHandler < handle
         function set_fc(obj)
                % get random param and change it in .json file
             obj.param.fc = round(obj.param.fc(1) + (obj.param.fc(2) - obj.param.fc(1)) * rand(1,1), 1); 
-        end
-        
+        end      
         % ------------------------------------------------------------------
-        % ------------------------- UTILS ----------------------------------
-        % ------------------------------------------------------------------
-        
+  
         function create_directory(obj)
             % Create directory to store results.
             

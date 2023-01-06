@@ -22,7 +22,6 @@ class sequenceClassIMC():
         self.PATCH_HEIGHT = p.PIXEL_HEIGHT
         self.SHIFT_X = p.SHIFT_X
         self.SHIFT_Z = p.SHIFT_Z
-
         self.sequence, self.firstFrame, self.scale, self.CF, self.CF_org = load_data(path=path_seq, param=p)    # load data
         self.annotationClass = annotationClassIMC(
             dimension=self.sequence.shape,
@@ -36,14 +35,12 @@ class sequenceClassIMC():
             borders=self.annotationClass.borders_ROI,
             p=p,
             img=self.sequence[0, ])
-
         DEBUG = False
         if DEBUG:
             for id in range(self.annotationClass.borders['leftBorder'], self.annotationClass.borders['rightBorder']):
                 self.sequence[0, round(self.annotationClass.map_annotation[0, id, 0]), id] = 255
             plt.imshow(self.sequence[0, ])
             plt.show()
-
         self.patch = np.empty((self.PATCH_WIDTH, self.PATCH_HEIGHT), dtype=np.float32)
         self.step = 0
         self.current_frame = 0
@@ -61,24 +58,20 @@ class sequenceClassIMC():
             y_pos_list = []
             median = (self.annotationClass.map_annotation[frame_ID, :, 0] + self.annotationClass.map_annotation[frame_ID, :, 1]) / 2
             vertical_scanning = True
-
             # --- condition give the information if the frame is segmented
             while condition:
 
                 if self.step == 0:  # initialization step
                     x = self.initialization_step()
                     overlay_ = self.SHIFT_X
-
                 median_min = np.min(median[x:x+self.PATCH_WIDTH])
                 median_max = np.max(median[x:x+self.PATCH_WIDTH])
-
                 y_mean, _, _ = self.annotationClass.yPosition(
                     xLeft=x,
                     width=self.PATCH_WIDTH,
                     height=self.PATCH_HEIGHT,
                     map=self.annotationClass.map_annotation[frame_ID, ])
                 y_pos = y_mean
-
                 # --- by default, we take three patches for a given position x. If this is not enough, the number of patches is dynamically adjusted.
                 if self.PATCH_HEIGHT * 2 > (median_max - median_min):
                     self.predictionClass.patches.append({
@@ -87,9 +80,7 @@ class sequenceClassIMC():
                         "Step": self.step,
                         "Overlay": overlay_,
                         "(x, y)": (x, y_pos)})
-
                     y_pos_list.append(self.predictionClass.patches[-1]["(x, y)"][-1])
-
                     if y_mean - self.SHIFT_Z > int(self.PATCH_HEIGHT/2):
                         y_pos = y_mean + self.SHIFT_Z
                         patch_ = self.extract_patch(x, y_pos, image=self.sequence[frame_ID,])
@@ -101,7 +92,6 @@ class sequenceClassIMC():
                                 "Overlay": overlay_,
                                 "(x, y)": (x, y_pos)})
                             y_pos_list.append(self.predictionClass.patches[-1]["(x, y)"][-1])
-
                     if y_mean + int(self.PATCH_HEIGHT/2) < self.sequence.shape[1] - 1:
                         y_pos = y_mean - self.SHIFT_Z
                         patch_ = self.extract_patch(x, y_pos, image=self.sequence[frame_ID, ])
@@ -113,13 +103,10 @@ class sequenceClassIMC():
                                  "Overlay": overlay_,
                                  "(x, y)": (x, y_pos)})
                             y_pos_list.append(self.predictionClass.patches[-1]["(x, y)"][-1])
-                    # print(y_pos_list)
-
                 # --- if the condition is not verified, the artery wall is not fully considered and a vertical scan is applied
                 else:
                     y_inc = median_min - 128
                     while(vertical_scanning):
-
                         patch_ = self.extract_patch(x, round(y_inc), image=self.sequence[frame_ID, ])
                         if patch_.shape == (self.PATCH_WIDTH, self.PATCH_HEIGHT):
                             self.predictionClass.patches.append({
@@ -128,7 +115,6 @@ class sequenceClassIMC():
                                  "Step": self.step,
                                  "Overlay": overlay_,
                                  "(x, y)": (x, round(y_inc))})
-
                             y_inc += 32
                             y_pos_list.append(self.predictionClass.patches[-1]["(x, y)"][-1])
                         else:
@@ -137,24 +123,19 @@ class sequenceClassIMC():
                 vertical_scanning = True
                 if ((x + self.PATCH_WIDTH) == self.annotationClass.borders_ROI['rightBorder']):  # if we reach the last position (on the right)
                     condition = False
-
                 elif (x + self.SHIFT_X + self.PATCH_WIDTH) < (self.annotationClass.borders_ROI['rightBorder']):  # we move the patch from the left to the right with an overlay
                     x += self.SHIFT_X
                     overlay_ = self.SHIFT_X
-
                 else:
                     tmp = x + self.PATCH_WIDTH - self.annotationClass.borders_ROI['rightBorder']  # we adjust to reach the right border
                     x -= tmp
                     overlay_ = tmp
-
             condition = True
-
             min_y = min(y_pos_list)
             max_y = max(y_pos_list)
             self.predictionClass.prediction_masks(
                 id=frame_ID,
                 pos={"min": min_y, "max": max_y+self.PATCH_HEIGHT})
-
             mask_ = self.predictionClass.map_prediction[str(frame_ID)]["prediction"]
             t = time.time()
             mask_tmp = self.annotationClass.update_annotation(
@@ -166,7 +147,6 @@ class sequenceClassIMC():
             self.final_mask_after_post_processing[self.predictionClass.map_prediction[str(frame_ID)]["offset"]:self.predictionClass.map_prediction[str(frame_ID)]["offset"]+mask_tmp_height,:] = mask_tmp
             self.annotationClass.inter_contours(frame_ID, self.scale)
             postprocess_time = time.time() - t
-            # print('postprocess_time: ', postprocess_time)
 
         return postprocess_time
 

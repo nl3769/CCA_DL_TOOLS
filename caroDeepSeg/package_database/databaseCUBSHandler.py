@@ -27,7 +27,6 @@ class databaseHandler():
         pname = self.pimage.split('/')[-1].split('.')[0]
         self.path_data['image_information'] = os.path.join(self.parameters.PDATA, 'CF', pname + '_CF' + ".txt")
         self.path_data['path_image']        = self.pimage
-
         files = os.listdir(os.path.join(self.parameters.PDATA, 'CONTOURS', 'A1'))
         contours = [file for file in files if pname in file]
         self.path_data['path_LI'] = os.path.join(self.parameters.PDATA, 'CONTOURS', 'A1', [seg for seg in contours if 'IFC3' in seg][0])
@@ -39,7 +38,6 @@ class databaseHandler():
         # --- load data
         I, LI, MA, CF = dbu.load_cubs_data(self.path_data)
         pname = self.pimage.split('/')[-1]
-
         args_preprocessing = {
             'I'          : I,
             'LI'         : LI,
@@ -47,7 +45,6 @@ class databaseHandler():
             'roi_width'   : self.parameters.ROI_WIDTH,
             'pixel_width' : self.parameters.PIXEL_WIDTH,
             'CF'          : CF}
-
         I, LI, MA, rCF = dbu.preprocessing_prepared_data_cubs(**args_preprocessing)
         # --- get borders
         roi_borders = dbu.get_roi_borders_cubs(LI, MA)

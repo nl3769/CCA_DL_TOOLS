@@ -3,45 +3,34 @@ function fct_analysis(psave, pres_org, pres_sim, x_disp, z_disp)
     % --- load img
     I_org = load_image(pres_org);
     I_sim = load_image(pres_sim);
-    
     % --- adjust histogram
     I_org = fct_expand_histogram(I_org, 0, 255);
     I_sim = fct_expand_histogram(I_sim, 0, 255);
-
     % --- get dim
     [height_org, width_org] = size(I_org);
     [height_sim, width_sim] = size(I_sim);
-    
     x_axis = linspace(x_disp(1), x_disp(2), width_org) ;
     z_axis = linspace(z_disp(1), z_disp(2), height_org);
-
     % --- profil
     [x_prof_org, y_prof_org] = plot_profil(psave, round(height_org/2), round(width_org/2), I_org, 'original', x_axis, z_axis);
     [x_prof_sim, y_prof_sim] = plot_profil(psave, round(height_sim/2), round(width_sim/2), I_sim, 'simulation', x_axis, z_axis);
-    
     % --- cluster profil
     cluster_profil(x_prof_org, y_prof_org, x_prof_sim, y_prof_sim, psave, x_axis, z_axis);
-
     % --- plot histogram
     z_s = max(z_disp) * 0.6;
     dz =  abs(z_disp(1) - z_disp(2)) / 8; 
-    
     x_s = 0;
     dx =  abs(x_disp(1) - x_disp(2)) / 8; 
-    
     plot_histogram(I_org, x_s, dx, z_s, dz, psave, 'original', x_axis, z_axis);
     plot_histogram(I_sim, x_s, dx, z_s, dz, psave, 'simulation', x_axis, z_axis);
-    
     % --- mosaic
     fct_make_mosaic(I_org, I_sim, 10, psave);
     fct_make_mosaic(I_org, I_sim, 25, psave);
     fct_make_mosaic(I_org, I_sim, 50, psave);
     fct_make_mosaic(I_org, I_sim, 100, psave);
     fct_make_mosaic(I_org, I_sim, 150, psave);
-
     % --- image division
     divid_images(I_org, I_sim, psave, x_axis, z_axis)
-
     % --- image difference
     difference_images(I_org, I_sim, psave, x_axis, z_axis)
 end
@@ -50,21 +39,17 @@ end
 function [I] = load_image(pres)
     
     I = imread(pres);
-    
     if length(I) == 3
         rgb2gray(I);
     end
-
 end
 
 % -------------------------------------------------------------------------
 function [x_prof, y_prof] = plot_profil(pres, y_p, x_p, I, name, x_axis, z_axis)
         
     [height, width] = size(I);
-    
     x_prof = I(y_p, :);
     y_prof = I(:, x_p);
-
     f = figure('visible', 'off');
     % ---
     subplot(2,2,[1,2])
@@ -74,9 +59,6 @@ function [x_prof, y_prof] = plot_profil(pres, y_p, x_p, I, name, x_axis, z_axis)
     hold on;
     plot(zeros(length(z_axis), 1), z_axis*1e3, 'Color','red', 'linewidth', 1);
     plot(x_axis *1e3, mean(z_axis) * 1e3*ones(length(x_axis), 1), 'Color','green', 'linewidth', 1);
-%     line([x_p, x_p], [1 height], 'Color','red', 'linewidth', 1);
-%     line([1, width], [y_p y_p],'Color','green', 'linewidth', 1);
-    
     hold off;
     title(name)
     xlabel('width in mm')
@@ -93,9 +75,7 @@ function [x_prof, y_prof] = plot_profil(pres, y_p, x_p, I, name, x_axis, z_axis)
     title('horizontal profil')
     xlabel('width in mm')
     ylabel('gray level (0-255)')
-
     % --- save figure
-
     saveas(f, fullfile(pres, ['profile_' name '.png']));
     close(f)
 end
@@ -123,11 +103,9 @@ function cluster_profil(x_prof_org, y_prof_org, x_prof_sim, y_prof_sim, pres, x_
     xlabel('width in mm')
     ylabel('gray level (0-255)')
     sgtitle('horizontal profil')
-
     saveas(f, fullfile(pres, 'horizontal_profil.png'))
     close(f)
-
-        % ---- VERTICAL PROFIL
+    % ---- VERTICAL PROFIL
     f = figure('visible', 'off');
     % ---
     subplot(3,1,1)
@@ -148,7 +126,6 @@ function cluster_profil(x_prof_org, y_prof_org, x_prof_sim, y_prof_sim, pres, x_
     xlabel('height in mm')
     ylabel('gray level (0-255)')
     sgtitle('vertical profil')
-
     saveas(f, fullfile(pres, 'vertical_profil.png'))
     close(f)
 end
@@ -215,7 +192,6 @@ function divid_images(Iorg, Isim, pres, x_axis, z_axis)
 	
 	div = double(Iorg) ./ (double(Isim) + eps);
     div( div > 10) = 10;
-	
 	f = figure('visible', 'off');
 	imagesc(x_axis * 1e3, z_axis * 1e3, div);
 	title('$D = \frac{I_{org}}{I_{sim}}, D(D>10)=10$','Interpreter','latex')
@@ -227,11 +203,11 @@ function divid_images(Iorg, Isim, pres, x_axis, z_axis)
 	close(f)
     
 end
+
 % -------------------------------------------------------------------------
 function difference_images(Iorg, Isim, pres, x_axis, z_axis)
 	
 	diff = Iorg - Isim;
-	
 	f = figure('visible', 'off');
 	imagesc(x_axis * 1e3, z_axis * 1e3, diff);
 	title('$|I_{org} - I_{sim}|$','Interpreter','latex')

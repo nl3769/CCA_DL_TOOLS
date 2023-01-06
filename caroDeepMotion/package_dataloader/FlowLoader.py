@@ -15,17 +15,14 @@ class FlowDataloader(Dataset):
         self.CF_list = []
         self.extra_info = []
 
-        # self.preprocessing = preProcessing(p)
-
     # ------------------------------------------------------------------------------------------------------------------
     def __getitem__(self, index):
+
         # --- modulo, to not be out of the array
         index = index % len(self.image_list)
-
         # --- read data
         OF = self.read_OF(self.flow_list[index][0])
         I1, I2 = self.read_img(self.image_list[index][0], self.image_list[index][1])
-
         # --- get the name of the sequence
         name = self.image_list[index][0].split('/')[-1].split('.')[0]
 
@@ -38,10 +35,8 @@ class FlowDataloader(Dataset):
 
         I1 = np.mean(np.array(Image.open(pI1)), axis=-1)
         I2 = np.mean(np.array(Image.open(pI2)), axis=-1)
-
         I1 = cv2.resize(I1, (256, 256), interpolation=cv2.INTER_LINEAR)
         I2 = cv2.resize(I2, (256, 256), interpolation=cv2.INTER_LINEAR)
-
         I1 = np.expand_dims(I1, axis=0)
         I2 = np.expand_dims(I2, axis=0)
 
@@ -72,7 +67,6 @@ class FlowDataloader(Dataset):
                 z_coef = 256 / OF.shape[0]
                 x_coef = 256 / OF.shape[1]
                 OF = cv2.resize(OF, (256, 256), interpolation=cv2.INTER_LINEAR)
-
                 OF[..., 0] = OF[..., 0] * x_coef
                 OF[..., 1] = OF[..., 1] * z_coef
                 OF = np.moveaxis(OF, -1, 0)
@@ -81,6 +75,7 @@ class FlowDataloader(Dataset):
 
     # ------------------------------------------------------------------------------------------------------------------
     def __rmul__(self, v):
+
         self.flow_list  = v * self.flow_list
         self.image_list = v * self.image_list
 
