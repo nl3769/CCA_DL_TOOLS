@@ -41,7 +41,7 @@ To run the beamforming on GPU, first check your GPU's architecture. For linux us
 ```sh
 nvidia-smi -q | grep Architecture
 ```
-Then you have to compile the '*.cu*' locating in SIMULATION/cuda/bfFullLowResImgRF.cu. For this, for Pascal architecture, run:
+Then you have to compile the '*.cu*' locating in SIMULATION/cuda/*.cu. For this, for Pascal architecture, run:
 ```sh
 bash compile_PASCAL.sh
 ```
