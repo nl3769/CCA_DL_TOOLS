@@ -172,7 +172,11 @@ This function trains model ([RAFT](https://github.com/princeton-vl/RAFT) or [GMA
 ```sh
 python package_cores/run_training_flow.py -param set_parameters_training_RAFT_template.py
 ```
-Note that you can pretrained the architecture based on a different database. A dataloader is already implemented for [flyingChairs](https://lmb.informatik.uni-freiburg.de/resources/datasets/FlyingChairs.en.html).
+Note that you can pretrained the architecture based on a different database. A dataloader is already implemented for [flyingChairs](https://lmb.informatik.uni-freiburg.de/resources/datasets/FlyingChairs.en.html). For most efficient pretraining, you can sort results of *flyingChairs* according to the magnitude of the motion with the script:
+```sh
+package_debug/run_sort_flyingChairs.py
+```
+It allows to sort pairs of images lower than a maximal displacement in norm L2.
 
 # speckleTracking
 
