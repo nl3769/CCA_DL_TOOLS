@@ -113,9 +113,23 @@ For this function only, we do not parse parameters. Please adapt your path to re
 
 ### package_cores/run_training_seg.py
 
+This function launch training process. Run in a terminal:
+```sh
+python package_cores/run_training_seg.py -param set_parameters_training_seg_template.py
+```
+
 ### package_cores/run_segment_full_roi.py
+This function load the trained architecture and apply the full post processing pipeline to segment the intima-media complexe. Run in a terminal:
+```sh
+python package_cores/run_training_seg.py -param set_parameters_training_seg_template.py
+```
 
 ### package_cores/run_evaluation_segmentation_full_roi.py
+This function load the results provided by [CUBS databse](https://data.mendeley.com/datasets/m7ndn58sv6/1). Run in a terminal:
+```sh
+python package_cores/run_evaluation_segmentation_full_roi.py -param set_parameters_evaluation_template.py
+```
+It computes polyline distance, hausdorff distance and save *violin plot*, *box plot* and *cvs*.
 
 # caroDeepMotion
 
