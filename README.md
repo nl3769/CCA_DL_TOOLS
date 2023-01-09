@@ -53,10 +53,9 @@ The cluster uses *PBS Scheduler*. Once your logged to the cluster, each function
 
 #### SIMULATION/run_cluster/run_CLUSTER_mk_phantom.py
 
-Change the parameters in *run_CLUSTER_mk_phantom.py*, and it will make the phantom for each images in the datase. It can *TIFF*, *JPEG*, *DICOM*.
+Change the parameters in *run_CLUSTER_mk_phantom.py*, and it will make the phantom for each image in the database. It can process *TIFF*, *JPEG*, *DICOM*.
 
 #### SIMULATION/run_cluster/run_mk_phantom.m
-
 
 
 #### SIMULATION/run_cluster/run_mk_phantom.m
