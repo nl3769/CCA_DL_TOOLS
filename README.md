@@ -27,10 +27,15 @@ This function call the another function *mtl_cores/fct_run_mk_phantom* which tak
 The output is structured as follow:
 ```sh
 - path_res/img_name/img_name_id_001_extra_info/bmode_result: path to save the bmode data during beamforming
-    |── img_name
-    |   |── img_name_id_001_extra_info
-    |   |   |── bmode_result
-            
+    |── img_name/
+        |── img_name_id_001_extra_info/
+            |── bmode_result/
+                |── results
+            |── parameters
+            |── phantom
+            |── raw_data
+                |── exec_
+                |── raw_
 ```
 
 * path_res/img_name/img_name_id_001_extra_info/bmode_result: path to save the bmode data during beamforming
