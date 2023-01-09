@@ -9,9 +9,9 @@ The following REPO provides codes for the following topics:
 
 # SIMULATION
 All this code run in *matlab* and *cuda*. For one simulation, the process is as follow:
-1. make phantom
-2. simulation
-3. beamforming
+1. Make phantom.
+2. Simulation.
+3. Beamforming.
 
 The whole process can be performed locally, but the simulation step is very time consuming. Therefore, the phantom and simulation are performed on the CREATIS cluster and the beamforming can be performed locally, provided you have a GPU on your computer.
 
@@ -87,10 +87,10 @@ Then you have to beamformed the image one more time and run *run_sort_res.sh*.
 # caroDeepSeg
 
 *caroDeepSeg* is a patch-based approach to segment the intima-media complexe in the far of the common carotid artery. *caroDeepSeg/* contains codes for the following application:
-* generate database for training
-* split patient for generating training/validation/testing subset
-* training
-* evaluation
+* Generate database for training.
+* Split patient for generating training/validation/testing subset.
+* Training.
+* Evaluation.
 
 As before, the code can be run locally and remotly on the cluster. Only locally part will be described, refer to the document for the cluster and/or just look at *caroDeepSeg/run_cluster*.
 
@@ -136,9 +136,10 @@ It computes polyline distance, hausdorff distance and save *violin plot*, *box p
 *caroDeepMotion* is a patch-based approach to estimate de displacement field between a pair of images of the intima-media complexe in the far of the common carotid artery. *caroDeepMotion/* contains codes for the following application:
 * Prepared database based on synthetic sequence of the common carotid artery. It loads results from simulation, remove each unused information for the motion estimation part and save results in *pickle* format.
 * Divide simulated images in patches for data augmentation and save results in *pickle* format. 
-* Split patient for generating training/validation/testing subset
-* Training
-* Evaluation
+* Split patient for generating training/validation/testing subset* Training.
+* Training.
+* Compute the displacement field over a complete image.
+* Evaluation.
 
 # speckleTracking
 
