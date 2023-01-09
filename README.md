@@ -78,10 +78,11 @@ Once RF signals and the B-mode image are generated, to sort success from the com
 run_sort_res.sh
 ```
 
-Sometimes, tx event fails during simulation. It allows to detect simulation error. Once you ran the previous function, you can run the following function, taking care of the directory:
+Sometimes, tx event fails during simulation. It allows to detect simulation error. After executing the previous function, you can execute the following function, specifying the correct directory to re-run failures:
 ```sh
 python SIMULATION/run_cluster/run_CLUSTER_failures.py
 ```
+Then you have to beamformed the image one more time and run *run_sort_res.sh*.
 
 # caroDeepSeg
 
