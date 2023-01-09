@@ -68,7 +68,7 @@ Below an exemple of elastic displacement field applied to jacket:
 <p align="center">
     <img 
         src="./.images/displacement_field_jacket.png"
-        title="id tx example"
+        title="Displacement field example"
         width="600"
         height="500" 
     />
@@ -93,6 +93,15 @@ The simulation applies synthetic aperture. Thus for each id tx, each element of 
 
 #### run_local/run_beamforming.m
 This function has to be run at the end. It calls the function *mtl_cores/fct_run_image_reconstruction.m*. The beamforming is performed on GPU.
+Below an example of a real image convert to B-mode image (a jacket):
+<p align="center">
+    <img 
+        src="./.images/jacket_simulation.png"
+        title="id tx example"
+        width="500"
+        height="300" 
+    />
+</p>
 
 ##### How tu run on GPU?
 To run the beamforming on GPU, first check your GPU's architecture. For linux user, run in a terminal:
