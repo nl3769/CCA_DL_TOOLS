@@ -57,9 +57,20 @@ Change the parameters in *run_CLUSTER_mk_phantom.py*, and it will make the phant
 
 #### SIMULATION/run_cluster/run_mk_phantom.m
 
+Change the parameters in *run_CLUSTER_mk_phantom.py*, and it will make the phantom for each image in the database. It can process *TIFF*, *JPEG*, *DICOM*.
 
-#### SIMULATION/run_cluster/run_mk_phantom.m
+#### SIMULATION/run_cluster/run_CLUSTER_pipeline.py
 
+Change the parameters in *run_CLUSTER_pipeline.py*, and it will run the simulation for each image in the specified directory. It uses a job array, thus each tx element is run in parallel. 
+
+#### SIMULATION/run_cluster/run_CLUSTER_beamforming_folders_sta.py
+
+It runs beamforming using GPU's of the cluster. For this purpose, first compile the *.cu* according to the architecture you plan to use, then adapt the flag in SIMULATION/run_cluster/pbs/beamforming_sta.pbs according to the architecture:
+```sh
+qsub -I -lnodes=1:ppn=1:volta:gpus=1 -qgpu
+qsub -I -lnodes=1:ppn=1:turing:gpus=1 -qgpu
+qsub -I -lnodes=1:ppn=1:ampere:gpus=1 -qgpu
+```
 
 # caroDeepSeg
 
