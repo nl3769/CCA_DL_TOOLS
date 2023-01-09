@@ -63,6 +63,18 @@ Note that depending of the chosen motion, only pair of images can be generated (
 * gaussian &rarr;  as pairs as you want
 * affine transformation &rarr;  as pairs as you want
 
+Below an exemple of elastic displacement field applied to jacket:
+
+<p align="center">
+    <img 
+        src="./.images/displacement_field_jacket.png"
+        title="id tx example"
+        width="600"
+        height="500" 
+    />
+</p>
+
+
 #### run_local/run_simulation.m
 This function has to be run after once the phantom is created. It calls the function *mtl_cores/fct_run_wave_propagation.m*. This one takes as argument the path to the phantom, the path to the parameters and the id of the transmitted element. Then the function writes the radiofrequency(RF) signal in path_res/img_name/img_name_id_001_extra_info/raw_data/_raw. 
 
