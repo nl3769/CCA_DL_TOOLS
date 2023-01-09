@@ -38,8 +38,46 @@ The output is structured as follow:
 |    |    |    |    |── raw_/                   (radio frequency (RF) signals for each tx event)
 ```
 
+Below an example of the generated phantom.
+<p align="center">
+    <img 
+        src="./.images/jacket_phantom_id_000.png"
+        title=" Jacket phantom example"
+        width="800"
+        height="600" 
+    />
+</p>
+
+During the process, a sequence of phantom with a controlled displacement field is applied on the scatterers. The phantom at time *t2* will be stored in:
+```sh
+|── pres/
+|    |── img_name/
+|    |    |── img_name_id_002_extra_info/
+|    |    |    |── bmode_result/               
+|    |    |    |── parameters/
+|    |    |    |── phantom/
+|    |    |    |── raw_data/
+```
+Note that depending of the chosen motion, only pair of images can be generated (modify the .json for this purpose):
+* elastric displacement field  &rarr; pair of images
+* gaussian &rarr;  as pairs as you want
+* affine transformation &rarr;  as pairs as you want
+
 #### run_local/run_simulation.m
 This function has to be run after once the phantom is created. It calls the function *mtl_cores/fct_run_wave_propagation.m*. This one takes as argument the path to the phantom, the path to the parameters and the id of the transmitted element. Then the function writes the radiofrequency(RF) signal in path_res/img_name/img_name_id_001_extra_info/raw_data/_raw. 
+
+Below an example of the generated phantom.
+
+<p align="center">
+    <img 
+        src="./.images/id_tx_example.png"
+        title="id tx example"
+        width="800"
+        height="300" 
+    />
+</p>
+
+The simulation applies synthetic aperture. Thus for each id tx, each element of the probe receives signals. The image above are the reveived signal for id tx=1 (left) and for id_tx = 192 (right) for a probe of 192 elements.
 
 #### run_local/run_beamforming.m
 This function has to be run at the end. It calls the function *mtl_cores/fct_run_image_reconstruction.m*. The beamforming is performed on GPU.
@@ -75,9 +113,10 @@ Change the parameters in *run_CLUSTER_pipeline.py*, and it will run the simulati
 
 It runs beamforming using GPU's of the cluster. For this purpose, first compile the *.cu* according to the architecture you plan to use, then adapt the flag in SIMULATION/run_cluster/pbs/beamforming_sta.pbs according to the architecture:
 ```sh
-qsub -I -lnodes=1:ppn=1:volta:gpus=1 -qgpu
-qsub -I -lnodes=1:ppn=1:turing:gpus=1 -qgpu
-qsub -I -lnodes=1:ppn=1:ampere:gpus=1 -qgpu
+qsub -I -lnodes=1:ppn=1:volta:gpus=1 -qgpu      &rarr;    volta architecture
+qsub -I -lnodes=1:ppn=1:turing:gpus=1 -qgpu     &rarr;    turing architecture
+qsub -I -lnodes=1:ppn=1:ampere:gpus=1 -qgpu     &rarr;    ampere architecture
+
 ```
 
 ## Handle simulation results
@@ -186,7 +225,14 @@ package_cores/run_motion_full_image.py
 ```
 The parameters of this function are directly in *run_motion_full_image.py*, modify them according to your path and preprocessing parameters.
 
+### package_cores/run_evaluation.py
 
+This function compute metrics to assess the quality of the predicted displacement field. It computes motion of the different method:
+* Damien Garcia [method](https://hal.archives-ouvertes.fr/hal-02063547/document) (have to be run before, see speckleTracking section before).
+* Deep learning approach based on patches.
+* Deep learning method based on full images (run *run_motion_full_image.py* before).
+
+As for the previous function, 
 # speckleTracking
 
 # textureImprovment
