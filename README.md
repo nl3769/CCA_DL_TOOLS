@@ -26,15 +26,16 @@ This function call the another function *mtl_cores/fct_run_mk_phantom* which tak
 
 The output is structured as follow:
 ```sh
-|── img_name/
-|   |── img_name_id_001_extra_info/
-|   |   |── bmode_result/               
-|   |   |   |── results/                (bmode images constructed after beamforming)
-|   |   |── parameters/                 (copy of the .json to track the parameters)
-|   |   |── phantom/                    (phantom used for simulation)
-|   |   |── raw_data/
-|   |   |   |── exec_/                  (execution time of tx event)    
-|   |   |   |── raw_/                   (radio frequency (RF) signals for each tx event)
+|── pres/
+|    |── img_name/
+|    |    |── img_name_id_001_extra_info/
+|    |    |    |── bmode_result/               
+|    |    |    |    |── results/                (bmode images constructed after beamforming)
+|    |    |    |── parameters/                  (copy of the .json to track the parameters)
+|    |    |    |── phantom/                     (phantom used for simulation)
+|    |    |    |── raw_data/
+|    |    |    |    |── exec_/                  (execution time of tx event)    
+|    |    |    |    |── raw_/                   (radio frequency (RF) signals for each tx event)
 ```
 
 #### run_local/run_simulation.m
