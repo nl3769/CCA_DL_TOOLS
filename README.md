@@ -141,6 +141,24 @@ It computes polyline distance, hausdorff distance and save *violin plot*, *box p
 * Compute the displacement field over a complete image.
 * Evaluation.
 
+As before, the code can be run locally and remotly on the cluster. Only locally part will be described, refer to the document for the cluster and/or just look at *caroDeepSeg/run_cluster*.
+
+### package_cores/run_database_preparation.py
+
+This function reads the results of the simulation and adapts the results in terms of dimension (it removes some offsets...) and keeps useful information for motion estimation. Run in a terminal:
+```sh
+python package_cores/run_database_preparation.py -param set_parameters_database_preparation.py
+```
+
+### package_cores/run_database_motion.py
+
+This function reads the results of *run_database_preparation.py*. It divides each image into isotropic patches. Run in a terminal:
+```sh
+python package_cores/run_database_motion.py -param set_parameters_database_motion.py
+```
+
+This function generate the data used during training.
+
 # speckleTracking
 
 # textureImprovment
