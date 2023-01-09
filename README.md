@@ -31,7 +31,7 @@ The output is structured as follow:
 * path_res/img_name/img_name_id_001_extra_info/raw_data: path save the raw data during simulation
 
 #### SIMULATION/run_local/run_simulation.m
-This function has to be run after once the phantom is created. It calls the function *mtl_cores/fct_run_wave_propagation.m*. This one takes as argument the path to the phantom, the path to the parameters and the id of the transmitted element. Then the function writes the radiofrequency signal in path_res/img_name/img_name_id_001_extra_info/raw_data/_raw. 
+This function has to be run after once the phantom is created. It calls the function *mtl_cores/fct_run_wave_propagation.m*. This one takes as argument the path to the phantom, the path to the parameters and the id of the transmitted element. Then the function writes the radiofrequency(RF) signal in path_res/img_name/img_name_id_001_extra_info/raw_data/_raw. 
 
 #### SIMULATION/run_local/run_beamforming.m
 This function has to be run at the end. It calls the function *mtl_cores/fct_run_image_reconstruction.m*. The beamforming is performed on GPU.
@@ -70,6 +70,17 @@ It runs beamforming using GPU's of the cluster. For this purpose, first compile 
 qsub -I -lnodes=1:ppn=1:volta:gpus=1 -qgpu
 qsub -I -lnodes=1:ppn=1:turing:gpus=1 -qgpu
 qsub -I -lnodes=1:ppn=1:ampere:gpus=1 -qgpu
+```
+
+## Handle simulation result
+Once RF signals and the B-mode image are generated, to sort success from the computer to another folder, run:
+```sh
+run_sort_res.sh
+```
+
+Sometimes, tx event fails during simulation. It allows to detect simulation error. Once you ran the previous function, you can run the following function, taking care of the directory:
+```sh
+python SIMULATION/run_cluster/run_CLUSTER_failures.py
 ```
 
 # caroDeepSeg
