@@ -178,6 +178,15 @@ package_debug/run_sort_flyingChairs.py
 ```
 It allows to sort pairs of images lower than a maximal displacement in norm L2.
 
+### package_cores/run_motion_full_image.py
+
+The model input is only patches, but it does not predict a full frame dense displacement field. Thus this function divides an image into patches with the adapted proprocessing step (resize image) and infer each patches using the trained model, and reasamble each patches to build the dense displacement field using an average operator. Run in a terminal:
+```sh
+package_cores/run_motion_full_image.py
+```
+The parameters of this function are directly in *run_motion_full_image.py*, modify them according to your path and preprocessing parameters.
+
+
 # speckleTracking
 
 # textureImprovment
