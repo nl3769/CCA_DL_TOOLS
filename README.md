@@ -25,6 +25,14 @@ The functions to run are in *SIMULATION/run_local*. It contains several function
 This function call the another function *mtl_cores/fct_run_mk_phantom* which takes as input the path to the database (path to the images), the path to save the phantom, the path to the simulation parameter (.json file) and some additional information (extra_info) to write in the name of the saved file.
 
 The output is structured as follow:
+```sh
+- path_res/img_name/img_name_id_001_extra_info/bmode_result: path to save the bmode data during beamforming
+    |── img_name
+    |   |── img_name_id_001_extra_info
+    |   |   |── bmode_result
+            
+```
+
 * path_res/img_name/img_name_id_001_extra_info/bmode_result: path to save the bmode data during beamforming
 * path_res/img_name/img_name_id_001_extra_info/parameters: copy of the .json to track the parameters
 * path_res/img_name/img_name_id_001_extra_info/phantom: save the phantom in .mat format
