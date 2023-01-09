@@ -26,22 +26,16 @@ This function call the another function *mtl_cores/fct_run_mk_phantom* which tak
 
 The output is structured as follow:
 ```sh
-- path_res/img_name/img_name_id_001_extra_info/bmode_result: path to save the bmode data during beamforming
-    |── img_name/
-        |── img_name_id_001_extra_info/
-            |── bmode_result/
-                |── results
-            |── parameters
-            |── phantom
-            |── raw_data
-                |── exec_
-                |── raw_
+|── img_name/
+|   |── img_name_id_001_extra_info/
+|   |   |── bmode_result/               
+|   |   |   |── results/                (bmode images constructed after beamforming)
+|   |   |── parameters/                 (copy of the .json to track the parameters)
+|   |   |── phantom/                    (phantom used for simulation)
+|   |   |── raw_data/
+|   |   |   |── exec_/                  (execution time of tx event)    
+|   |   |   |── raw_/                   (radio frequency (RF) signals for each tx event)
 ```
-
-* path_res/img_name/img_name_id_001_extra_info/bmode_result: path to save the bmode data during beamforming
-* path_res/img_name/img_name_id_001_extra_info/parameters: copy of the .json to track the parameters
-* path_res/img_name/img_name_id_001_extra_info/phantom: save the phantom in .mat format
-* path_res/img_name/img_name_id_001_extra_info/raw_data: path save the raw data during simulation
 
 #### run_local/run_simulation.m
 This function has to be run after once the phantom is created. It calls the function *mtl_cores/fct_run_wave_propagation.m*. This one takes as argument the path to the phantom, the path to the parameters and the id of the transmitted element. Then the function writes the radiofrequency(RF) signal in path_res/img_name/img_name_id_001_extra_info/raw_data/_raw. 
