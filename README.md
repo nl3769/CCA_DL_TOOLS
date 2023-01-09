@@ -98,6 +98,24 @@ As before, the code can be run locally and remotly on the cluster. Only locally 
 
 Each function to run is in the folder *package_cores*. Also, each set of parameters is in *package_parameters*. For example, to run the function *package_cores/run_database_CUBS.py*, modify *package_parameters/set_parameters_database_CUBS.py*.
 
+### package_cores/run_database_CUBS.py
+
+This function split patients into patches. Run in a terminal:
+```sh
+python package_cores/run_database_CUBS.py -param set_parameters_database_CUBS.py
+```
+### package_cores/run_database_CUBS.py
+This function split patients into training/validation/testing steps. Note that we split patient and not patches. Run in a terminal:
+```sh
+python package_cores/run_split_data.py
+```
+For this function only, we do not parse parameters. Please adapt your path to read and save results in *package_cores/run_split_data.py* itself.
+
+### package_cores/run_training_seg.py
+
+### package_cores/run_segment_full_roi.py
+
+### package_cores/run_evaluation_segmentation_full_roi.py
 
 # caroDeepMotion
 
