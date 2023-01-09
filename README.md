@@ -88,11 +88,13 @@ Then you have to beamformed the image one more time and run *run_sort_res.sh*.
 
 *caroDeepSeg* is a patch-based approach to segment the intima-media complexe in the far of the common carotid artery. *caroDeepSeg/* contains codes for the following application:
 * generate database for training
-* split patient for generate training/validation/testing subset
+* split patient for generating training/validation/testing subset
 * training
 * evaluation
 
+As before, the code can be run locally and remotly on the cluster. Only locally part will be described, refer to the document for the cluster and/or just look at *caroDeepSeg/run_cluster*.
 
+## run the codelocally
 
 # caroDeepMotion
 
