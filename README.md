@@ -7,7 +7,7 @@ The following REPO provides codes for the following topics:
 * speckleTracking
 * textureImprovment
 
-## SIMULATION
+# SIMULATION
 All this code run in *matlab* and *cuda*. For one simulation, the process is as follow:
 1. make phantom
 2. simulation
@@ -85,6 +85,14 @@ python SIMULATION/run_cluster/run_CLUSTER_failures.py
 Then you have to beamformed the image one more time and run *run_sort_res.sh*.
 
 # caroDeepSeg
+
+*caroDeepSeg* is a patch-based approach to segment the intima-media complexe in the far of the common carotid artery. *caroDeepSeg/* contains codes for the following application:
+* generate database for training
+* split patient for generate training/validation/testing subset
+* training
+* evaluation
+
+
 
 # caroDeepMotion
 
