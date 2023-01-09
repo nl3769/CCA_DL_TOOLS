@@ -1,7 +1,3 @@
-<Head>
-    <meta charSet="utf-8" />
-</Head>
-
 # Overview
 
 The following REPO provides codes for the following topics:
@@ -63,9 +59,9 @@ During the process, a sequence of phantom with a controlled displacement field i
 |    |    |    |── raw_data/
 ```
 Note that depending of the chosen motion, only pair of images can be generated (modify the .json for this purpose):
-* elastric displacement field  &rarr; pair of images
-* gaussian &rarr;  as pairs as you want
-* affine transformation &rarr;  as pairs as you want
+* Elastric displacement field   &rarr;  pair of images.
+* Gaussian                      &rarr;  as many pairs as you want.
+* Affine transformation         &rarr;  as many pairs as you want.
 
 Below an exemple of elastic displacement field applied to jacket:
 
@@ -138,9 +134,9 @@ Change the parameters in *run_CLUSTER_pipeline.py*, and it will run the simulati
 
 It runs beamforming using GPU's of the cluster. For this purpose, first compile the *.cu* according to the architecture you plan to use, then adapt the flag in SIMULATION/run_cluster/pbs/beamforming_sta.pbs according to the architecture:
 ```sh
-qsub -I -lnodes=1:ppn=1:volta:gpus=1 -qgpu      &rarr;    volta architecture
-qsub -I -lnodes=1:ppn=1:turing:gpus=1 -qgpu     &rarr;    turing architecture
-qsub -I -lnodes=1:ppn=1:ampere:gpus=1 -qgpu     &rarr;    ampere architecture
+qsub -I -lnodes=1:ppn=1:volta:gpus=1 -qgpu      (volta architecture)
+qsub -I -lnodes=1:ppn=1:turing:gpus=1 -qgpu     (turing architecture)
+qsub -I -lnodes=1:ppn=1:ampere:gpus=1 -qgpu     (ampere architecture)
 
 ```
 
