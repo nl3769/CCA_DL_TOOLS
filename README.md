@@ -167,6 +167,13 @@ python package_cores/run_database_motion.py -param set_parameters_database_motio
 
 This function generate the data used during training.
 
+### package_cores/run_training_flow.py
+This function trains model ([RAFT](https://github.com/princeton-vl/RAFT) or [GMA](https://github.com/zacjiang/GMA)). Run in a terminal:
+```sh
+python package_cores/run_training_flow.py -param set_parameters_training_RAFT_template.py
+```
+Note that you can pretrained the architecture based on a different database. A dataloader is already implemented for [flyingChairs](https://lmb.informatik.uni-freiburg.de/resources/datasets/FlyingChairs.en.html).
+
 # speckleTracking
 
 # textureImprovment
