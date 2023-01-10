@@ -264,6 +264,7 @@ It computes polyline distance, hausdorff distance and save *violin plot*, *box p
         height="600" 
     />
 </p>
+
 # caroDeepMotion
 
 *caroDeepMotion* is a patch-based approach to estimate de displacement field between a pair of images of the intima-media complexe in the far of the common carotid artery. *caroDeepMotion/* contains codes for the following application:
