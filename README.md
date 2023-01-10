@@ -260,8 +260,8 @@ It computes polyline distance, hausdorff distance and save *violin plot*, *box p
     <img 
         src="./.images/evaluation_seg_example.png"
         title="id tx example"
-        width="1000"
-        height="800" 
+        width="800"
+        height="600" 
     />
 </p>
 # caroDeepMotion
