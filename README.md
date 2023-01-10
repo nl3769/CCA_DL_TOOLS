@@ -218,18 +218,52 @@ Below an example of data save during training:
 </p>
 
 ### *<u> package_cores/run_segment_full_roi.py </u>*
-This function load the trained architecture and apply the full post processing pipeline to segment the intima-media complexe. Run in a terminal:
+This function load the trained architecture and apply the full postprocessing pipeline to segment the intima-media complexe. Run in a terminal:
 ```sh
 python package_cores/run_training_seg.py -param set_parameters_training_seg_template.py
 ```
 
+One mode ise proposed to segment the IMC: a semi-automatic method which means that a homemade GUI is used to detect the far wall of the intima-media complexe. 
+Below are the commands for using the home interface:
+* left click: set a point
+* ctrl+left click: leave the graphical interface
+* scroll click: reset
+
+
+To detect the _FW_, a minimum of four clicks are required:
+1. *First click*: left border of the *ROI* (click midway distance between the *LI* and *MA* interface).
+2. *Second click*: right border of the *ROI* (click midway distance between the *LI* and *MA* interface).
+3. *Third click*: point between the left border of the *ROI* and the left border of the image (click midway distance between the *LI* and *MA* interface).
+4. *Fourth click*: point between the right border of the *ROI* and the right border of the image (click midway distance between the *LI* and *MA* interface).
+5. You can add as many points as you want to shape the curve after those four clicks, cubic spline interpolation is used to adjust the curve.
+
+The _ROI_ is contained between the two red vertical lines and the algorithm segments the _CCA_ between the two bleu vertical lines. This allows for a narrow region to be segmented, this condition is ensured by yourself. 
+An example can be seen in the figure below:
+<p align="center">
+    <img 
+        src="./.images/FW_detection_explanation.png"
+        title="id tx example"
+        width="600"
+        height="400" 
+    />
+</p>
+The function stores the segmentation result in *.txt* file for both *LI* and *MA* interface in two different files.
+
 ### *<u> package_cores/run_evaluation_segmentation_full_roi.py </u>*
-This function load the results provided by [CUBS databse](https://data.mendeley.com/datasets/m7ndn58sv6/1). Run in a terminal:
+This function load the results provided by [CUBS database](https://data.mendeley.com/datasets/m7ndn58sv6/1). Run in a terminal:
 ```sh
 python package_cores/run_evaluation_segmentation_full_roi.py -param set_parameters_evaluation_template.py
 ```
-It computes polyline distance, hausdorff distance and save *violin plot*, *box plot* and *cvs*.
+It computes polyline distance, hausdorff distance and save *violin plot*, *box plot* and *cvs*. Below a box plot of the absolute error on intima-media thickness, *LI* and *MA* prediction compared to A1, for each methods of CUBS:
 
+<p align="center">
+    <img 
+        src="./.images/evaluation_seg_example.png"
+        title="id tx example"
+        width="1000"
+        height="800" 
+    />
+</p>
 # caroDeepMotion
 
 *caroDeepMotion* is a patch-based approach to estimate de displacement field between a pair of images of the intima-media complexe in the far of the common carotid artery. *caroDeepMotion/* contains codes for the following application:
