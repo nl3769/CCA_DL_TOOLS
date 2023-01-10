@@ -330,8 +330,6 @@ Then the model can be fine tune on simulated images. This time, the illustration
     />
 </p>
 
-
-
 Note that you can pretrained the architecture based on a different database. A dataloader is already implemented for [flyingChairs](https://lmb.informatik.uni-freiburg.de/resources/datasets/FlyingChairs.en.html). For most efficient pretraining, you can sort results of *flyingChairs* according to the magnitude of the motion with the script:
 ```sh
 package_debug/run_sort_flyingChairs.py
@@ -340,11 +338,23 @@ It allows to sort pairs of images lower than a maximal displacement in norm L2.
 
 ### *<u> package_cores/run_motion_full_image.py </u>*
 
-The model input is only patches, but it does not predict a full frame dense displacement field. Thus this function divides an image into patches with the adapted proprocessing step (resize image) and infer each patches using the trained model, and reasamble each patches to build the dense displacement field using an average operator. Run in a terminal:
+The model input is only patches, but it does not predict a full frame dense displacement field. To get the dense displacement field in a full image, run in a terminal:
 ```sh
 package_cores/run_motion_full_image.py
 ```
 The parameters of this function are directly in *run_motion_full_image.py*, modify them according to your path and preprocessing parameters.
+
+First the image is preprocessed to get the same pixel size that was used during model' training. Then the image is splitted into patches with overlap.  Using an average operator, patches are reasamble to build the displacement field, as you can see in the following illustration:
+
+<p align="center">
+    <img 
+        src="./.images/overlap_map.png"
+        title="id tx example"
+        width="800"
+        height="650" 
+    />
+</p>
+
 
 ### *<u> package_cores/run_evaluation.py </u>*
 
