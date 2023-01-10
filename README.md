@@ -291,7 +291,17 @@ This function reads the results of *run_database_preparation.py*. It divides eac
 python package_cores/run_database_motion.py -param set_parameters_database_motion.py
 ```
 
-This function generate the data used during training.
+This function generate the data used during training. Below an illustration that explains the process: 
+
+<p align="center">
+    <img 
+        src="./.images/preprocessing_DL_motion.png"
+        title="id tx example"
+        width="800"
+        height="400" 
+    />
+</p>
+
 
 ### *<u> package_cores/run_training_flow.py </u>*
 This function trains model ([RAFT](https://github.com/princeton-vl/RAFT) or [GMA](https://github.com/zacjiang/GMA)). Run in a terminal:
