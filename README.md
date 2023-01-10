@@ -99,7 +99,7 @@ Below an example of a real image convert to B-mode image (a jacket):
         src="./.images/jacket_simulation.png"
         title="id tx example"
         width="500"
-        height="300" 
+        height="400" 
     />
 </p>
 
@@ -302,12 +302,36 @@ This function generate the data used during training. Below an illustration that
     />
 </p>
 
+Each image is splitted into isotropic patches; The size of the patches can be modified in set_parameters_database_motion.py.
 
 ### *<u> package_cores/run_training_flow.py </u>*
 This function trains model ([RAFT](https://github.com/princeton-vl/RAFT) or [GMA](https://github.com/zacjiang/GMA)). Run in a terminal:
 ```sh
 python package_cores/run_training_flow.py -param set_parameters_training_RAFT_template.py
 ```
+
+Below an illustration showing the pretraining in flyingChairs. The pre-training phase uses only the training subset, but the validation subset can be added easily.
+<p align="center">
+    <img 
+        src="./.images/flyingChairs_trn_sample.png"
+        title="id tx example"
+        width="800"
+        height="400" 
+    />
+</p>
+
+Then the model can be fine tune on simulated images. This time, the illustration below shows the prediction at the epoch 0 and 30, as well as training and validation loss.
+<p align="center">
+    <img 
+        src="./.images/fine-tuning_trn_sample.png"
+        title="id tx example"
+        width="800"
+        height="400" 
+    />
+</p>
+
+
+
 Note that you can pretrained the architecture based on a different database. A dataloader is already implemented for [flyingChairs](https://lmb.informatik.uni-freiburg.de/resources/datasets/FlyingChairs.en.html). For most efficient pretraining, you can sort results of *flyingChairs* according to the magnitude of the motion with the script:
 ```sh
 package_debug/run_sort_flyingChairs.py
