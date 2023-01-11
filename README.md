@@ -7,6 +7,8 @@ The following REPO provides codes for the following topics:
 * speckleTracking
 * textureImprovment
 
+The deep learning part has been implemented in pytorch. See the *requirements.txt* file to install all packages.
+
 # SIMULATION
 All this code run in *matlab* and *cuda*. For one simulation, the process is as follow:
 1. Make phantom.
@@ -332,7 +334,7 @@ Then the model can be fine tune on simulated images. This time, the illustration
 
 Note that you can pretrained the architecture based on a different database. A dataloader is already implemented for [flyingChairs](https://lmb.informatik.uni-freiburg.de/resources/datasets/FlyingChairs.en.html). For most efficient pretraining, you can sort results of *flyingChairs* according to the magnitude of the motion with the script:
 ```sh
-package_debug/run_sort_flyingChairs.py
+python package_debug/run_sort_flyingChairs.py
 ```
 It allows to sort pairs of images lower than a maximal displacement in norm L2.
 
@@ -340,7 +342,7 @@ It allows to sort pairs of images lower than a maximal displacement in norm L2.
 
 The model input is only patches, but it does not predict a full frame dense displacement field. To get the dense displacement field in a full image, run in a terminal:
 ```sh
-package_cores/run_motion_full_image.py
+python package_cores/run_motion_full_image.py
 ```
 The parameters of this function are directly in *run_motion_full_image.py*, modify them according to your path and preprocessing parameters.
 
@@ -363,7 +365,18 @@ This function compute metrics to assess the quality of the predicted displacemen
 * Deep learning approach based on patches.
 * Deep learning method based on full images (run *run_motion_full_image.py* before).
 
-As for the previous function, 
+It is still work in progress, but you can run the code as follow:
+```sh
+python package_cores/run_evaluation.py
+```
+ 
 # speckleTracking
 
+Here we use other methods in the literature for motion estimation in ultrasound image sequences. For now, only Damine Garcia [method](https://hal.archives-ouvertes.fr/hal-02063547/document) is implemented. The function to run is:
+```sh
+python run_local/DG_method.m
+```
+
 # textureImprovment
+
+*textureImprovment* is a GAN-based approach in order to increase the texture of simulated images. The code organization is exactly the same as for *caroDeepSeg* and *caroDeepMotion*. 
