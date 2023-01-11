@@ -2,17 +2,12 @@ restoredefaultpath;
 close all; 
 clearvars;
 
-
-if ~isdeployed
-    addpath(fullfile('..', 'mtl_utils'))
-    addpath(fullfile('..', 'mtl_class/'))
-    addpath(fullfile('..', 'mtl_cores'))
-end
- 
-%%%%%%% RUN SIMULATION %%%%%%% 
+addpath(fullfile('..', 'mtl_utils'))
+addpath(fullfile('..', 'mtl_class/'))
+addpath(fullfile('..', 'mtl_cores'))
 
 % --- path to data
-path_data='/home/laine/HDD/PROJECTS_IO/SIMULATION/IMAGENET_STA/n02747177_ashcan';
+path_data='/home/laine/Desktop/MotionAnalysis/tech_001/tech_001_id_001_FIELD';
 % --- get phantom name
 phantom_folder = fct_list_ext_files(path_data, 'mat', 'phantom');
 phantom_names = fct_detect_sub_str(phantom_folder, 'dicom');
@@ -29,17 +24,9 @@ if PARAM.mode(1)
 elseif PARAM.mode(2)
     tx = nb_tx;
 end
-
-stop = false;
+% --- run simulation over tx elements
 parfor (id_tx=1:192, 6)
 % for id_tx=1:1:192
     % --- run simulation
-    stop = fct_run_wave_propagation(fullfile(path_data, 'parameters', parameters_folder{1}), fullfile(path_data, 'phantom', phantom_names{1}), id_tx);
-%     if stop
-%         break;
-%     end
-end
-
-if ~stop
-    fct_run_cluster_RF(fullfile(path_data, 'raw_data'))
+    fct_run_wave_propagation(fullfile(path_data, 'parameters', parameters_folder{1}), fullfile(path_data, 'phantom', phantom_names{1}), id_tx);
 end

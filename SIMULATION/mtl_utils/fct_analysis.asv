@@ -103,9 +103,11 @@ function cluster_profil(x_prof_org, y_prof_org, x_prof_sim, y_prof_sim, pres, x_
     xlabel('width in mm')
     ylabel('gray level (0-255)')
     sgtitle('horizontal profil')
+
     saveas(f, fullfile(pres, 'horizontal_profil.png'))
     close(f)
-    % ---- VERTICAL PROFIL
+
+        % ---- VERTICAL PROFIL
     f = figure('visible', 'off');
     % ---
     subplot(3,1,1)
@@ -126,6 +128,7 @@ function cluster_profil(x_prof_org, y_prof_org, x_prof_sim, y_prof_sim, pres, x_
     xlabel('height in mm')
     ylabel('gray level (0-255)')
     sgtitle('vertical profil')
+
     saveas(f, fullfile(pres, 'vertical_profil.png'))
     close(f)
 end
@@ -192,6 +195,7 @@ function divid_images(Iorg, Isim, pres, x_axis, z_axis)
 	
 	div = double(Iorg) ./ (double(Isim) + eps);
     div( div > 10) = 10;
+	
 	f = figure('visible', 'off');
 	imagesc(x_axis * 1e3, z_axis * 1e3, div);
 	title('$D = \frac{I_{org}}{I_{sim}}, D(D>10)=10$','Interpreter','latex')
@@ -203,11 +207,11 @@ function divid_images(Iorg, Isim, pres, x_axis, z_axis)
 	close(f)
     
 end
-
 % -------------------------------------------------------------------------
 function difference_images(Iorg, Isim, pres, x_axis, z_axis)
 	
 	diff = Iorg - Isim;
+	
 	f = figure('visible', 'off');
 	imagesc(x_axis * 1e3, z_axis * 1e3, diff);
 	title('$|I_{org} - I_{sim}|$','Interpreter','latex')
