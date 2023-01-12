@@ -205,16 +205,19 @@ classdef createPhantom < handle
             MA_val.seg = MA_val.seg - obj.param.remove_top_region / obj.data_img.CF;
             volume = find(obj.data_scatt.y_scatt~=0);
             if isempty(volume)
-                addpath(fullfile('..', 'mtl_utils'));
-                fct_save_scatterers_2D(obj.data_scatt, obj.param, '');
-                fct_save_scatterers_2D(scatt_data_to_save, obj.param, str_scat_id)
+                if ~isdeployed % for VIP
+                    fct_save_scatterers_2D(obj.data_scatt, obj.param, '');
+                    fct_save_scatterers_2D(scatt_data_to_save, obj.param, str_scat_id)
+                end
                 LI_path = fullfile(obj.param.path_res, 'phantom', 'LI.mat');
                 MA_path = fullfile(obj.param.path_res, 'phantom', 'MA.mat');
                 save(MA_path, 'MA_val');
                 save(LI_path, 'LI_val');           
             else
-                fct_save_scatterers_3D(obj.data_scatt, obj.param, '');
-                fct_save_scatterers_3D(scatt_data_to_save, obj.param, str_scat_id)
+                if ~isdeployed % for VIP
+                    fct_save_scatterers_3D(obj.data_scatt, obj.param, '');
+                    fct_save_scatterers_3D(scatt_data_to_save, obj.param, str_scat_id)
+                end
                 LI_path = fullfile(obj.param.path_res, 'phantom', 'LI.mat');
                 MA_path = fullfile(obj.param.path_res, 'phantom', 'MA.mat');
                 save(MA_path, 'MA_val');
