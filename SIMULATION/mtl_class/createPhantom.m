@@ -205,19 +205,18 @@ classdef createPhantom < handle
             MA_val.seg = MA_val.seg - obj.param.remove_top_region / obj.data_img.CF;
             volume = find(obj.data_scatt.y_scatt~=0);
             if isempty(volume)
-                if ~isdeployed % for VIP
-                    fct_save_scatterers_2D(obj.data_scatt, obj.param, '');
-                    fct_save_scatterers_2D(scatt_data_to_save, obj.param, str_scat_id)
-                end
+                fct_save_scatterers_2D(obj.data_scatt, obj.param, '');
+                fct_save_scatterers_2D(scatt_data_to_save, obj.param, str_scat_id)
+
                 LI_path = fullfile(obj.param.path_res, 'phantom', 'LI.mat');
                 MA_path = fullfile(obj.param.path_res, 'phantom', 'MA.mat');
                 save(MA_path, 'MA_val');
                 save(LI_path, 'LI_val');           
             else
-                if ~isdeployed % for VIP
-                    fct_save_scatterers_3D(obj.data_scatt, obj.param, '');
-                    fct_save_scatterers_3D(scatt_data_to_save, obj.param, str_scat_id)
-                end
+                
+                fct_save_scatterers_3D(obj.data_scatt, obj.param, '');
+                fct_save_scatterers_3D(scatt_data_to_save, obj.param, str_scat_id)
+                
                 LI_path = fullfile(obj.param.path_res, 'phantom', 'LI.mat');
                 MA_path = fullfile(obj.param.path_res, 'phantom', 'MA.mat');
                 save(MA_path, 'MA_val');
@@ -675,7 +674,7 @@ classdef createPhantom < handle
                 pixel_size = obj.data_img.CF;
                 displacement_field = displacement_field / pixel_size;
                 % can't be used on VIP platform
-                if ~isdeployed
+                if isdeployed
                     fct_save_scatt_ref(obj.scatt_pos_ref{1}, obj.data_img.height, fullfile(obj.param.path_res, 'phantom', ['scatt_pos_org' num2str(obj.id_seq-1)]));
                     fct_save_scatt_ref(obj.scatt_pos_ref{2}, obj.data_img.height, fullfile(obj.param.path_res, 'phantom', ['scatt_pos_id_' num2str(obj.id_seq-1)]));
                     fct_save_scatt_ref(obj.scatt_pos_ref{3}, obj.data_img.height, fullfile(obj.param.path_res, 'phantom', ['scatt_pos_id_' num2str(obj.id_seq)]));
