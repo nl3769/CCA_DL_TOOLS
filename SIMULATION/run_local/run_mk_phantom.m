@@ -7,7 +7,7 @@ if ~isdeployed
 end
 % --- generate several sets of parameters according to the desired parameters.
 pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images';
-pres = '/home/laine/Desktop/MotionAnalysis';
+pres = '/home/laine/Desktop/SIMULATION_TEST';
 pparam = '/home/laine/Documents/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/parameters/set_parameters_template.json';
 info = '';
 fnames = load_fnames(pdatabase);

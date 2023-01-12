@@ -41,16 +41,7 @@ function fct_run_wave_propagation(varargin)
           case 'SIMUS'
                 simulation_obj.synthetic_aperture_simus(i);
           case 'FIELD'
-              if simulation_obj.param.mode(1)                                                       % run scanline based acquisition
-                  simulation_obj.scanline_based_field(i);
-              elseif simulation_obj.param.mode(2) && simulation_obj.param.dynamic_focusing == 0 && simulation_obj.param.calc_scatt_all_field == 0    % run synthetic-aperture acquisition
-                  simulation_obj.synthetic_aperture_field(i);
-              elseif simulation_obj.param.mode(2) && simulation_obj.param.dynamic_focusing == 1 && simulation_obj.param.calc_scatt_all_field == 0% run dynamic focalisation
-                  simulation_obj.dynamic_focus_field(i);
-              elseif simulation_obj.param.mode(2) && simulation_obj.param.dynamic_focusing == 0 && simulation_obj.param.calc_scatt_all_field == 1 % run calc scatt all field
-                simulation_obj.calc_scatt_all_field();
-                fct_run_cluster_RF_calc_scatt_all(fullfile(simulation_obj.param.path_res, 'raw_data'))
-              end
+                simulation_obj.synthetic_aperture_field(i);
       end
         % --- save RF data and probe
         if simulation_obj.param.save_exec_time == true
