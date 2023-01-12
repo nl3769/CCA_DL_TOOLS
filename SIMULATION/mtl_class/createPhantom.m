@@ -675,12 +675,14 @@ classdef createPhantom < handle
                 pixel_size = obj.data_img.CF;
                 displacement_field = displacement_field / pixel_size;
                 % can't be used on VIP platform
-                fct_save_scatt_ref(obj.scatt_pos_ref{1}, obj.data_img.height, ...
-                                   fullfile(obj.param.path_res, 'phantom', ['scatt_pos_org' num2str(obj.id_seq-1)]));
-                fct_save_scatt_ref(obj.scatt_pos_ref{2}, obj.data_img.height, fullfile(obj.param.path_res, 'phantom', ['scatt_pos_id_' num2str(obj.id_seq-1)]));
-                fct_save_scatt_ref(obj.scatt_pos_ref{3}, obj.data_img.height, fullfile(obj.param.path_res, 'phantom', ['scatt_pos_id_' num2str(obj.id_seq)]));
+                if ~isdeployed
+                    fct_save_scatt_ref(obj.scatt_pos_ref{1}, obj.data_img.height, fullfile(obj.param.path_res, 'phantom', ['scatt_pos_org' num2str(obj.id_seq-1)]));
+                    fct_save_scatt_ref(obj.scatt_pos_ref{2}, obj.data_img.height, fullfile(obj.param.path_res, 'phantom', ['scatt_pos_id_' num2str(obj.id_seq-1)]));
+                    fct_save_scatt_ref(obj.scatt_pos_ref{3}, obj.data_img.height, fullfile(obj.param.path_res, 'phantom', ['scatt_pos_id_' num2str(obj.id_seq)]));
+                    fct_save_flow(displacement_field, fullfile(obj.param.path_res, 'phantom', ['optical_pos_id_', num2str(obj.id_seq)]));
+                end
                 fct_save_OF_GT(displacement_field, fullfile(obj.param.path_res, 'phantom', ['OF_' num2str(obj.id_seq-1) '_' num2str(obj.id_seq)]));
-                fct_save_flow(displacement_field, fullfile(obj.param.path_res, 'phantom', ['optical_pos_id_', num2str(obj.id_seq)]));
+                
             end
         end
         
