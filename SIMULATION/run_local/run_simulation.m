@@ -7,7 +7,7 @@ addpath(fullfile('..', 'mtl_class/'))
 addpath(fullfile('..', 'mtl_cores'))
 
 % --- path to data
-path_data='/home/laine/Desktop/SIMULATION_TEST/tech_001/tech_001_id_001_FIELD';
+path_data='/home/laine/Desktop/SIMULATION_TEST/ANG_DOM/ANG_DOM_id_001_FIELD';
 % --- get phantom name
 phantom_folder = fct_list_ext_files(path_data, 'mat', 'phantom');
 phantom_names = fct_detect_sub_str(phantom_folder, 'dicom');

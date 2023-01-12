@@ -75,7 +75,7 @@ classdef createPhantom < handle
                 case 'JPEG'
                     obj.data_img=load_JPEG(obj.param.path_data, obj.param);
                 case 'DICOM'
-                    obj.data_img=load_dicom(obj.param.path_data, obj.param.sequence);                               
+                    obj.data_img=load_dicom(obj.param.path_data, false);                               
             otherwise
             	disp('Image not found')
             end

@@ -8,7 +8,7 @@ set(0, 'DefaultFigureWindowStyle', 'docked');
 addpath(fullfile('..', 'mtl_cores/'));
 addpath(fullfile('..', 'mtl_utils'));
 % --- path to results
-path_res='/home/laine/Desktop/SIMULATION_TEST/tech_001/';
+path_res='/home/laine/Desktop/SIMULATION_TEST/ANG_DOM/';
 files = list_files(path_res);
 % --- loop over the sequence
 for id=1:1:length(files)

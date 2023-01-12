@@ -6,7 +6,8 @@ if ~isdeployed
     addpath(fullfile('..', 'mtl_cores'))
 end
 % --- generate several sets of parameters according to the desired parameters.
-pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images';
+% pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images';
+pdatabase = '/home/laine/cluster/PROJECTS_IO/DATA/GUILLAUME/corrected/Sequences/HEALTHY_ANDRE_57'
 pres = '/home/laine/Desktop/SIMULATION_TEST';
 pparam = '/home/laine/Documents/REPOSITORIES/CCA_DL_TOOLS/SIMULATION/parameters/set_parameters_template.json';
 info = '';
