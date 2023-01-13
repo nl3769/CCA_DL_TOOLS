@@ -3,10 +3,9 @@
 @Contact :   <nolann.laine@outlook.fr>
 '''
 
-from package_parameters.parameters_lumen_detection import Parameters
+from package_parameters.parameters_get_distribution.py import Parameters
 import os
 from shutil import copyfile
-import package_utils.fold_handler as fh
 
 # ----------------------------------------------------------------------------------------------------------------------
 def setParameters():
