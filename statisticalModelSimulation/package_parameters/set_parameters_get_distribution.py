@@ -3,18 +3,23 @@
 @Contact :   <nolann.laine@outlook.fr>
 '''
 
-from package_parameters.parameters_get_distribution.py import Parameters
+from shutil                                         import copyfile
+from package_parameters.parameters_get_distribution import Parameters
+
 import os
-from shutil import copyfile
+import package_utils.fold_handler                   as fh
 
 # ----------------------------------------------------------------------------------------------------------------------
 def setParameters():
 
     p = Parameters(
-        PIMAGES,
-        PBORDERS,
-        PRES
-)
+        PIMAGES = "/home/laine/Documents/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images",
+        PCF="/home/laine/Documents/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/CF",
+        PLUMEN = "/home/laine/Documents/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/LUMEN_POSITION",
+        PINTERFACES = "/home/laine/Documents/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/SEG",
+        PRES = "/home/laine/Documents/PROJECTS_IO/STATISTICAL_MODEL_SIMULATION",
+
+    )
 
     pparam = os.path.join(p.PRES, 'backup_parameters')
     fh.create_dir(pparam)

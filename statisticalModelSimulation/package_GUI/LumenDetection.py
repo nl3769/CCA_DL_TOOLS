@@ -6,16 +6,13 @@
 import cv2
 import numpy                as np
 import matplotlib.pyplot    as plt
-from scipy.interpolate      import PchipInterpolator
-from scipy                  import interpolate
+from scipy.interpolate      import PchipInterpolator, interp1d
 
 class getLumen:
 
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, windowName: str, image: np.ndarray, id_LI, pos_LI, id_MA, pos_MA):
 
-        mouse_events=[j for  j in dir(cv2) if 'EVENT' in j]
-        print(mouse_events)
         self.org_img = image.copy()
         self.id_LI, self.pos_LI = id_LI, pos_LI
         self.id_MA, self.pos_MA = id_MA, pos_MA

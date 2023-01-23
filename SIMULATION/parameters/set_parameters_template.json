@@ -1,6 +1,6 @@
 {
   "c": 1540,
-  "scat_density": 0.1,
+  "scat_density": 8,
   "probe_name": "L11-5v",
   "fnumber": 1.5,
   "Nactive": 65,
