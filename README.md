@@ -1,6 +1,6 @@
 # Overview
 
-The following REPO is divided into five sub projects:
+The following REPO is divided into five sub-projects:
 * SIMULATION
 * caroDeepSeg
 * caroDeepMotion
