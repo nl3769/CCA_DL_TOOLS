@@ -373,12 +373,10 @@ python package_cores/run_evaluation.py
  
 # speckleTracking
 
-Here we use other methods in the literature for motion estimation in ultrasound image sequences. For now, only Damien Garcia [method](https://hal.archives-ouvertes.fr/hal-02063547/document) is implemented. The function to run is:
+Here we use other methods in the literature for motion estimation in ultrasound image sequences. For now, only Damien Garcia [method](https://hal.archives-ouvertes.fr/hal-02063547/document) is implemented. Run:
 ```sh
 python run_local/DG_method.m
 ```
-
-
 
 # textureImprovment
 
