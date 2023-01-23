@@ -50,7 +50,7 @@ def main():
     optimizerFlow, schedulerFlow = fetch_optimizer(p, netFlow, n_step=math.ceil(len(training_dataloader.dataset.image_list) / p.BATCH_SIZE) * p.NB_EPOCH)
     # --- losses
     flowLoss = plll.lossFlow()
-    # --- store optimizers/schedulers and optimizers
+    # --- store optimizers/schedulers
     networks = {
         "netEncoder": netEncoder,
         "netFlow": netFlow}
@@ -125,9 +125,7 @@ def fetch_optimizer(p, model, n_step):
         'cycle_momentum': False,
         'anneal_strategy': 'linear'}
     scheduler = optim.lr_scheduler.OneCycleLR(optimizer, **param)
-
-    """ Create the optimizer and learning rate scheduler. """
-
+    
     # # --- optimizer
     # beta1, beta2 = 0.9, 0.999
     # optimizer = optim.Adam(model.parameters(), lr=p.LEARNING_RATE, betas=(beta1, beta2))
