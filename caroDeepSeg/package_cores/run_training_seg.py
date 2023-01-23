@@ -47,7 +47,7 @@ def main():
     optimizer, scheduler = fetch_optimizer(p, netSeg)
     # --- loss
     segLoss = plls.lossSeg1Frame()
-    # --- store optimizers/schedulers and optimizers
+    # --- store optimizers/schedulers
     networks = {"netSeg": netSeg}
     optimizers = {"netSeg": optimizer}
     schedulers = {"netSeg": scheduler}
