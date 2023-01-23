@@ -1,13 +1,14 @@
 # Overview
 
-The following REPO provides codes for the following topics:
+The following REPO is divided into five sub projects:
 * SIMULATION
 * caroDeepSeg
 * caroDeepMotion
 * speckleTracking
 * textureImprovment
+* statisticalModelSimulation
 
-The deep learning part has been implemented in pytorch. See the *requirements.txt* file to install all packages.
+Each part is synthetically described below. All requirements are common to python projects and available in the *requirements.txt* file.
 
 # SIMULATION
 All this code run in *matlab* and *cuda*. For one simulation, the process is as follow:
@@ -15,7 +16,7 @@ All this code run in *matlab* and *cuda*. For one simulation, the process is as 
 2. Simulation.
 3. Beamforming.
 
-The whole process can be performed locally, but the simulation step is very time consuming. Therefore, the phantom and simulation are performed on the CREATIS cluster and the beamforming can be performed locally, provided you have a GPU on your computer.
+The whole process can be performed locally, but the simulation step is very time consuming. Therefore the phantom and simulation are performed on CREATIS's cluster and the beamforming can be performed locally, provided you have a GPU on your computer.
 
 ### run the code locally
 The functions to run are in *SIMULATION/run_local*. It contains several functions:
@@ -382,3 +383,8 @@ python run_local/DG_method.m
 # textureImprovment
 
 *textureImprovment* is a GAN-based approach in order to increase the texture of simulated images. The code organization is exactly the same as for *caroDeepSeg* and *caroDeepMotion*. 
+TODO
+
+# statisticalModelSimulation
+
+TODO
