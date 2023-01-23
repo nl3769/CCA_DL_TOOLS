@@ -256,7 +256,7 @@ This function load the results provided by [CUBS database](https://data.mendeley
 ```sh
 python package_cores/run_evaluation_segmentation_full_roi.py -param set_parameters_evaluation_template.py
 ```
-It computes polyline distance, hausdorff distance and save *violin plot*, *box plot* and *cvs*. Below a box plot of the absolute error on intima-media thickness, *LI* and *MA* prediction compared to A1, for each methods of CUBS:
+It computes polyline distance, hausdorff distance and save *violin plot*, *box plot* and *cvs*. Below a box plot of the absolute error on intima-media thickness, *LI* and *MA* prediction compared to A1, for each method of CUBS:
 
 <p align="center">
     <img 
