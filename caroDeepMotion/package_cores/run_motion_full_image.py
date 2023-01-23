@@ -5,7 +5,8 @@ from package_motion.motionFullImageHandler  import motionFullImgHandler
 
 # ----------------------------------------------------------------------------------------------------------------------
 def main():
-
+    
+    # --- TODO -> parse parameters
     class param:
         def __init__(self):
             self.MODEL_NAME = 'raft'
