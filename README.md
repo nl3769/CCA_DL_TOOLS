@@ -18,7 +18,7 @@ All this code run in *matlab* and *cuda*. For one simulation, the process is as 
 
 The whole process can be performed locally, but the simulation step is very time consuming. Therefore the phantom and simulation are performed on CREATIS's cluster and the beamforming can be performed locally, provided you have a GPU on your computer.
 
-### run the code locally
+### Run locally
 The functions to run are in *SIMULATION/run_local*. It contains several functions:
 * run_mk_phantom.m
 * run_simulation.m
@@ -117,7 +117,7 @@ bash compile_PASCAL.sh
 ```
 You can easily create a new compile.sh for a different architecture by modidying the sm_xy number by looking in the following [link](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-compilation).
 
-### run the code on cluster 
+### Run on cluster 
 
 The cluster uses *PBS Scheduler*. Once your logged to the cluster, each function is handle by python scripts in *SIMULATION/run_cluster/*. 
 
@@ -162,7 +162,7 @@ More information about the method can be found [here](https://hal.science/hal-03
 
 As before, the code can be run locally and remotely on the cluster. Only locally part will be described, refer to the document for the cluster and/or just look at *caroDeepSeg/run_cluster*.
 
-## run the code locally
+## Run locally
 
 Each function to run is in the folder *package_cores*. Also, each set of parameters is in *package_parameters*. For example, to run the function *package_cores/run_database_CUBS.py*, modify *package_parameters/set_parameters_database_CUBS.py*.
 
