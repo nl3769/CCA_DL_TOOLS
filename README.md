@@ -381,8 +381,12 @@ python run_local/DG_method.m
 # textureImprovment
 
 *textureImprovment* is a GAN-based approach in order to increase the texture of simulated images. The code organization is exactly the same as for *caroDeepSeg* and *caroDeepMotion*. 
-TODO
+TODO -> complete
 
 # statisticalModelSimulation
 
-TODO
+This part aims to generate a statistical model of the CCA according to anatomical parts. It could be usefull for data augmentation.
+
+The idea is the following: according to the CUBS database, we retrieve the position of the interfaces and then store the greyscale values of the pixels according to their relative depths for each image in the database. We do the same for the pixels belonging to the adventicia, for those belonging to the lumen, without considering the depth information. By plotting histograms, we noticed that the pixels belonging to the lumen follow a Rayleigh distribution while the others follow a Gaussian distribution, with different parameters depending on the relative depth.
+
+TODO -> complete
