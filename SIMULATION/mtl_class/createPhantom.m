@@ -767,6 +767,9 @@ function [struct_image]=load_tiff(path_img)
     image = imread(path_img);
     if size(image, 3) == 3
         image = rgb2gray(image); % we convert in grayscale
+    elseif size(image, 3) == 4
+        image = image(:,:,1:3); % we convert in grayscale
+        image = rgb2gray(image); % we convert in grayscale
     end
     % --- load the size of the pixels
     tmp_ = split(path_img, '/');

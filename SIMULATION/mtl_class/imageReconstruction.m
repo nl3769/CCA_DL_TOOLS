@@ -171,10 +171,12 @@ classdef imageReconstruction < handle
             x_img=obj.image.width * obj.image.CF;
             x_img=linspace(-x_img/2, x_img/2, obj.image.width);
             z_img=obj.image.height * obj.image.CF;
-            z_img=linspace(0, z_img, obj.image.height);                                    
+            z_img=linspace(0, z_img, obj.image.height);        
+            
             % --- interpolation
-            [x_img  z_img]=meshgrid(x_img, z_img);
+            [x_img, z_img]=meshgrid(x_img, z_img);
             obj.in_vivo=interp2(x_img, z_img, double(obj.image.image), obj.x_bmode, obj.z_bmode - obj.param.shift, 'makima', 0);
+            
         end
         
         % ------------------------------------------------------------------
