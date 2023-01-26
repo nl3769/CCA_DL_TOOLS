@@ -389,4 +389,23 @@ This part aims to generate a statistical model of the CCA according to anatomica
 
 The idea is the following: according to the CUBS database, we retrieve the position of the interfaces and then store the greyscale values of the pixels according to their relative depths for each image in the database. We do the same for the pixels belonging to the adventicia, for those belonging to the lumen, without considering the depth information. By plotting histograms, we noticed that the pixels belonging to the lumen follow a Rayleigh distribution while the others follow a Gaussian distribution, with different parameters depending on the relative depth.
 
+## Pixels belonging to the lumen
+
+First we need to detect the lumen into the image. To this end, a GUI can be used. Run:
+
+```sh
+run_lumen_detection.py
+```
+Adapt the path to load and save the data in ** run_lumen_detection.py **.
+
+<p align="center">
+    <img 
+        src="./.images/lumen_detection.png"
+        title="lumen detection using GUI"
+        width="800"
+        height="650" 
+    />
+</p>
+
+
 TODO -> complete
