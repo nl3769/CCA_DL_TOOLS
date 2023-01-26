@@ -419,7 +419,7 @@ Below the command of the GUI:
 
 For pixels belonging the IMC, we just consider the relative depth. This is computed as follow:
 ```math
-SE = \frac{pts{depth}}{IMC_{width}} \cdots 100
+SE = \frac{pts_{depth}}{IMC_{width}} \cdot 100
 ```
 
 TODO -> complete
