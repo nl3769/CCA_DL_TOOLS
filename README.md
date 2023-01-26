@@ -396,7 +396,7 @@ First we need to detect the lumen into the image. To this end, a GUI can be used
 ```sh
 run_lumen_detection.py
 ```
-Adapt the path to load and save the data in ** run_lumen_detection.py **.
+Adapt the path to load and save the data in *run_lumen_detection.py*.
 
 <p align="center">
     <img 
