@@ -402,10 +402,24 @@ Adapt the path to load and save the data in *run_lumen_detection.py*.
     <img 
         src="./.images/lumen_detection.png"
         title="lumen detection using GUI"
-        width="800"
-        height="650" 
+        width="400"
+        height="400" 
     />
 </p>
 
+Below the command of the GUI:
+* left click: detect the lower line of the lumen (red) - 4 clicks minimum
+* middle click: detect the upper line of the lumen (blue) - 4 clicks minimum
+* CTRL + left click: reset
+* SHIFT + left click: save the position of the luemen in *.txt* format
+
+## Get statistical information 
+
+### Pixels belong to the IMC
+
+For pixels belonging the IMC, we just consider the relative depth. This is computed as follow:
+```math
+SE = \frac{pts{depth}}{IMC_{width}} \cdots 100
+```
 
 TODO -> complete
