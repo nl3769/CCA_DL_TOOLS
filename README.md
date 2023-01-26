@@ -417,9 +417,8 @@ Below the command of the GUI:
 
 ### Pixels belong to the IMC
 
-For pixels belonging the IMC, we just consider the relative depth. This is computed as follow:
+For pixels belonging the IMC, we just consider the relative depth per column. This is computed as follow:
 ```math
-SE = \frac{pts_{depth}}{IMC_{width}} \cdot 100
+depth_{rel} = \frac{pts_{depth}}{IMC_{depth}} \cdot 100
 ```
-
-TODO -> complete
+Below an example explaining the formula above
