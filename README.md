@@ -465,3 +465,25 @@ For pixels belonging to the lumen, we do not use the depth information. In the l
     />
 </p>
 
+## Creating statistical images
+
+To generate statistical images, please run the following command:
+```sh
+python package_cores/run_mk_stat_images.py
+```
+
+Add the correct path in *run_mk_stat_images.py*.
+
+The code first open a GUI, which is used to draw the shape of the IMC of the far wall and of the proximal wall. Below the command of the GUI:
+* left click : add control point ;
+* middle click: delete the last control point ;
+* round middle: go to the next step ;
+
+<p align="center">
+    <img 
+        src="./.images/stat_image_explained.png"
+        title="Statistical image"
+        width="500"
+        height="350" 
+    />
+</p>
