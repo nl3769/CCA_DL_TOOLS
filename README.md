@@ -415,10 +415,43 @@ Below the command of the GUI:
 
 ## Get statistical information 
 
+The code has to be run as follow:
+
+```sh
+python package_cores/run_get_distribution.py -param set_parameters_get_distribution.py
+```
+
 ### Pixels belong to the IMC
 
 For pixels belonging the IMC, we just consider the relative depth per column. This is computed as follow:
 ```math
 depth_{rel} = \frac{pts_{depth}}{IMC_{depth}} \cdot 100
 ```
-Below an example explaining the formula above
+Then the relative depth is sample with integrate value from 0 to 100. 
+Below an example explaining the formula above:
+
+<p align="center">
+    <img 
+        src="./.images/relative_position_illustration.png"
+        title="lumen detection using GUI"
+        width="300"
+        height="250" 
+    />
+</p>
+
+For each column, the relative depth is computed and the gray value is stored. 
+Once all images are processed, we plot the histogram depending on the relative depth. We get this below:
+
+<p align="center">
+    <img 
+        src="./.images/histogram_IMC_several_depth.png"
+        title="lumen detection using GUI"
+        width="500"
+        height="350" 
+    />
+</p>
+
+We noticed that each depth corresponds to a gaussian distribution with different parameters. 
+Thus we fit a gaussian for each depth, and save the parameters. 
+
+We apply the same process
