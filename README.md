@@ -433,7 +433,7 @@ Below an example explaining the formula above:
 <p align="center">
     <img 
         src="./.images/relative_position_illustration.png"
-        title="lumen detection using GUI"
+        title="Relative position illustration"
         width="300"
         height="250" 
     />
@@ -445,7 +445,7 @@ Once all images are processed, we plot the histogram depending on the relative d
 <p align="center">
     <img 
         src="./.images/histogram_IMC_several_depth.png"
-        title="lumen detection using GUI"
+        title="Grayscale histogram for pixels pixel to the IMC"
         width="500"
         height="350" 
     />
@@ -454,4 +454,14 @@ Once all images are processed, we plot the histogram depending on the relative d
 We noticed that each depth corresponds to a gaussian distribution with different parameters. 
 Thus we fit a gaussian for each depth, and save the parameters. 
 
-We apply the same process
+We apply the same process for pixels belonging to the adventicia, at the difference that the orgine is located at the media-adventicia (MA) interface, and the maximal relative depth (100%) is 10 mm deeper than the MA interface.
+For pixels belonging to the lumen, we do not use the depth information. In the lumen, the gray level can be appromated by a rayleigh distribution:
+<p align="center">
+    <img 
+        src="./.images/histogram_lumen.png"
+        title="Grayscale histogram for pixels pixel to the lumen"
+        width="500"
+        height="350" 
+    />
+</p>
+
