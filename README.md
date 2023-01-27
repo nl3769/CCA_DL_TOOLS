@@ -87,7 +87,7 @@ Below an example of the generated phantom.
     <img 
         src="./.images/id_tx_example.png"
         title="id tx example"
-        width="800"
+        width="600"
         height="300" 
     />
 </p>
