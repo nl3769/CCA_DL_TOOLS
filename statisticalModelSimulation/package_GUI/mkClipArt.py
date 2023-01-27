@@ -8,7 +8,7 @@ import cv2
 import numpy                as np
 from scipy                  import ndimage
 import matplotlib.pyplot    as plt
-from scipy.interpolate      import PchipInterpolator, interp1d
+from scipy.interpolate      import PchipInterpolator, interp1d, griddata
 import matplotlib.pyplot    as plt
 
 class mkClipArt:
@@ -115,7 +115,7 @@ class mkClipArt:
                         self.current_img[int(z), x] = 255
 
     # ------------------------------------------------------------------------------------------------------------------
-    def getpt(self):
+    def getpts(self):
 
         cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
         cv2.imshow(self.window_name, self.current_img)
@@ -131,8 +131,21 @@ class mkClipArt:
     # ------------------------------------------------------------------------------------------------------------------
     def set_gray_scale(self, IMC_density, adventicia_density, scale_rayleigh):
 
-        x_grid = np.linspace(0, self.org_img.shape[1] * self.CF, self.org_img.shape[1])
-        z_grid = np.linspace(0, self.org_img.shape[0] * self.CF, self.org_img.shape[0])
+        k_factor = 3
+        x_grid = np.linspace(0, self.org_img.shape[1] * self.CF, self.org_img.shape[1] * k_factor)
+        z_grid = np.linspace(0, self.org_img.shape[0] * self.CF, self.org_img.shape[0] * k_factor)
+
+        f = interp1d(np.linspace(0, self.org_img.shape[1] * self.CF, self.org_img.shape[1]), self.interfaces["MA_top"])
+        self.interfaces["MA_top"] = f(x_grid)
+
+        f = interp1d(np.linspace(0, self.org_img.shape[1] * self.CF, self.org_img.shape[1]), self.interfaces["LI_top"])
+        self.interfaces["LI_top"] = f(x_grid)
+
+        f = interp1d(np.linspace(0, self.org_img.shape[1] * self.CF, self.org_img.shape[1]), self.interfaces["MA_bottom"])
+        self.interfaces["MA_bottom"] = f(x_grid)
+
+        f = interp1d(np.linspace(0, self.org_img.shape[1] * self.CF, self.org_img.shape[1]), self.interfaces["LI_bottom"])
+        self.interfaces["LI_bottom"] = f(x_grid)
 
         [X, Z] = np.meshgrid(x_grid, z_grid)
         class_arr = np.zeros(X.shape + (3,))
@@ -196,12 +209,18 @@ class mkClipArt:
                     class_arr[j, i, 2] = np.random.normal(dist['mu'], dist['std'])
 
         I = ndimage.gaussian_filter(class_arr[..., 2], sigma=0.8)
+        x_q = np.linspace(0, self.org_img.shape[1] * self.CF, self.org_img.shape[1])
+        z_q = np.linspace(0, self.org_img.shape[0] * self.CF, self.org_img.shape[0])
+        [Z_q, X_q] = np.meshgrid(x_q, z_q)
+        I = griddata((X.flatten(), Z.flatten()), I.flatten(), (Z_q.flatten(), X_q.flatten()), method='linear', fill_value=0)
+        I = I.reshape(Z_q.shape)
 
         return I
+
     # ------------------------------------------------------------------------------------------------------------------
     def __call__(self, IMC_density, adventicia_density, scale_rayleigh):
 
-        self.getpt()
+        self.getpts()
         I = self.set_gray_scale(IMC_density, adventicia_density, scale_rayleigh)
         I = np.round(I).astype(int)
 

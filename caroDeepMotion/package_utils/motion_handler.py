@@ -3,6 +3,7 @@ from scipy import interpolate
 
 # ----------------------------------------------------------------------------------------------------------------------
 def warpper(OF, I1):
+    ''' Takes an image with a displacement field and warpped the image. '''
 
     xof = OF[..., 0]
     zof = OF[..., 2]

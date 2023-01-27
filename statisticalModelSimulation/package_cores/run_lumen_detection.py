@@ -71,7 +71,7 @@ def main():
     patients.sort()
     seg_files = os.listdir(pdataSeg)
     # --- loop over images
-    for patient in patients[89:95]:
+    for patient in patients:
         wname = patient.split('.')[0]
         seg_name = []
         for key in seg_files:

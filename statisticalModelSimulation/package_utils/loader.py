@@ -3,7 +3,7 @@ from PIL                    import Image, ImageOps
 
 # ----------------------------------------------------------------------------------------------------------------------
 def load_image(fname: str):
-    """Load image. """
+    ''' Takes the name of an image and return the image in numpy format. '''
 
     I = Image.open(fname)
     if I.mode == 'RGB':
@@ -14,6 +14,7 @@ def load_image(fname: str):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def load_pos(path):
+    ''' Takes a filename and return to coordinate in [x, y]. '''
 
     with open(path, 'r') as f:
         data = f.readlines()

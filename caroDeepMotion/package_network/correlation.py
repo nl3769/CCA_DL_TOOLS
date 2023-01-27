@@ -41,30 +41,22 @@ class CorrBlock:
         batch, h1, w1, _ = coords.shape
 
         out_pyramid = []
-        # print(f'{self.num_levels = }')
         for i in range(self.num_levels):
-            corr = self.corr_pyramid[i]  # on récupère la correlation associé à l'étage de la pyramide
+            corr = self.corr_pyramid[i]  # get correlation associates to the stage of the pyramid
 
             dx = torch.linspace(-r, r, 2 * r + 1, device=coords.device)  # points en x
             dy = torch.linspace(-r, r, 2 * r + 1, device=coords.device)  # points en y
-            delta = torch.stack(torch.meshgrid(dy, dx, indexing='ij'), axis=-1)  # on génère la grille (delta.shape = (2*r+1, 2*r+1, 2))
+            delta = torch.stack(torch.meshgrid(dy, dx, indexing='ij'), axis=-1)  # we generate the grid (delta.shape = (2*r+1, 2*r+1, 2))
 
-            centroid_lvl = coords.reshape(batch * h1 * w1, 1, 1, 2) / 2 ** i  # les coordonnées de l'image -> on divise par 2^i
+            centroid_lvl = coords.reshape(batch * h1 * w1, 1, 1, 2) / 2 ** i  # get image coordinate -> divide by 2^i
             delta_lvl = delta.view(1, 2 * r + 1, 2 * r + 1, 2)
             coords_lvl = centroid_lvl + delta_lvl
             coords_lvl = torch.vstack((coords_lvl, coords_lvl)) if '3T' in self.m_name else coords_lvl
             corr = gridHandler.bilinear_sampler(corr, coords_lvl)
-
-            # print(f'{corr.shape = }')
             corr = corr.view(batch, h1, w1, -1)
-            # print(f'{corr.shape = }')
             out_pyramid.append(corr)
-            # print(f'{corr.shape = }')
 
-        # for i in range(len(out_pyramid)):
-        #     print(f'{out_pyramid[i].shape = }')
-
-        out = torch.cat(out_pyramid, dim=-1)  # on concatène tout sur la dernière dimension
+        out = torch.cat(out_pyramid, dim=-1)
 
         return out.permute(0, 3, 1, 2).contiguous().float()
 

@@ -10,7 +10,7 @@ from icecream import ic
 
 # ----------------------------------------------------------------------------------------------------------------------
 def check_segmentation_dim(LI1, LI2, MA1, MA2, iname):
-    """ Check if dimension are consistent. """
+    ''' Check if dimension are consistent. '''
 
     flag = False
 
@@ -31,7 +31,7 @@ def check_segmentation_dim(LI1, LI2, MA1, MA2, iname):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def check_image_dim(I0, I1, pname):
-    """ Check if dimension are consistent. """
+    ''' Check if dimension are consistent. '''
 
     I0height, I0width = I0.shape
     I1height, I1width = I1.shape
@@ -50,7 +50,7 @@ def check_image_dim(I0, I1, pname):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def get_fname(dir: str, sub_str: str, fold = None) -> str:
-    """ Get file name according to substring. """
+    ''' Get file name according to substring. '''
 
     folder = '' if fold is None else fold
     folder = os.path.join(dir, folder)
@@ -74,6 +74,8 @@ def get_fname(dir: str, sub_str: str, fold = None) -> str:
 
 # ----------------------------------------------------------------------------------------------------------------------
 def read_txt(path):
+    ''' Read .txt file. '''
+
     with open(path, 'r') as f:
         data = f.readlines()
 

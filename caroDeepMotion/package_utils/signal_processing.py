@@ -9,7 +9,7 @@ from scipy import interpolate
 
 # ----------------------------------------------------------------------------------------------------------------------
 def image_interp_factor(I, factor):
-    """ Interpolate image in x-direction. """
+    ''' Interpolate image in x-direction. '''
 
     if len(I.shape) == 3:
         _, height, width = I.shape
@@ -27,8 +27,7 @@ def image_interp_factor(I, factor):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def signal_interpolation_1D(s, x_org, x_query, mode = 'linear'):
-    """ 1D signal interpolation. """
-
+    ''' 1D signal interpolation. '''
 
     if mode == "linear":
         F = interpolate.interp1d(x_org, s)
@@ -45,7 +44,7 @@ def signal_interpolation_1D(s, x_org, x_query, mode = 'linear'):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def grid_interpolation_2D(Xq, Zq, V, X, Z):
-    """ Interpolate 2D grid data. """
+    ''' Interpolate 2D grid data. '''
 
     dimsq = Xq.shape
     pointsq = (Xq.flatten(), Zq.flatten())

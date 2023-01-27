@@ -11,7 +11,7 @@ end
 %%%%%%% RUM SIMULATION FOR ONE PHANTOM AND ONE SET OF PARAMETERS %%%%%%% 
 
 % --- path to data
-path = '/home/laine/HDD/PROJECTS_IO/SIMULATION/IMAGENET_STA/n02747177_ashcan';
+path = '/home/laine/Desktop/STATISTICAL_MODEL_TEST/pts_scatt/image_0/';
 frame = list_files(path);
 
 for idp=1:1:length(frame)
@@ -28,15 +28,8 @@ for idp=1:1:length(frame)
     PARAM = fct_load_param(fullfile(path_data, 'parameters', parameters_folder{1}));
     nb_tx = PARAM.Nelements;
     nb_active = PARAM.Nactive;
-    
-    tx = 0;
-    if PARAM.mode(1)
-        tx = nb_tx - nb_active + 1;
-    elseif PARAM.mode(2)
-        tx = nb_tx;
-    end
-    
-    parfor id_tx=1:1:tx
+      
+    parfor id_tx=1:1:nb_tx
 %     for id_tx=1:1:tx
         % --- run simulation
         fct_run_wave_propagation(fullfile(path_data, 'parameters', parameters_folder{1}), fullfile(path_data, 'phantom', phantom_names{1}), id_tx);

@@ -5,7 +5,7 @@ import package_utils.signal_processing      as sp
 
 # ----------------------------------------------------------------------------------------------------------------------
 def compute_real_CF(Odim, Fdim, CF_init):
-    """ Compute the real pixel size as we can't reach the desired value because of rounding. """
+    ''' Compute the real pixel size as we can't reach the desired value because of rounding. '''
 
     zcoef = Fdim[0] / Odim[0]
     zCF = CF_init / zcoef
@@ -20,7 +20,7 @@ def compute_real_CF(Odim, Fdim, CF_init):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def image_interpoland(I, interp_factor):
-    """ Image interpolation x and z direction. """
+    ''' Image interpolation x and z direction. '''
 
     if len(I.shape) == 3:
         I = I.transpose(2, 0, 1)
@@ -34,11 +34,11 @@ def image_interpoland(I, interp_factor):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def get_interpolation_factor(oCF, roi_width, width_pixel):
-    """ Compute interpolation factor to get the desired pixel size:
+    ''' Compute interpolation factor to get the desired pixel size:
     CF_o: CF original
     roi_width: width in mm of the search region
     width_pixel: numbe rof pixels in the roi
-    """
+    '''
 
     dCF = roi_width / width_pixel
     factor = oCF / dCF
@@ -108,7 +108,7 @@ def get_patches(roi_width, roi_height, shift_x, shift_z, dim_img, substr, coordi
 
 # ----------------------------------------------------------------------------------------------------------------------
 def get_coordinates_full_img(shift_x, shift_z, roi_width, roi_height, dim_img):
-    """ Compute patches position. """
+    ''' Compute patches position. '''
 
     coordinates = {}
     substr = 'pos_'
@@ -118,7 +118,7 @@ def get_coordinates_full_img(shift_x, shift_z, roi_width, roi_height, dim_img):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def patches_extraction(I1, I2, OF, coordinates, pixel_width, pixel_height, pairs_name):
-    """ Get patch. """
+    ''' Get patch. '''
 
     data = {
         'I1': [],
@@ -140,3 +140,5 @@ def patches_extraction(I1, I2, OF, coordinates, pixel_width, pixel_height, pairs
             ic('cannot process ' + key)
 
     return data
+
+# ----------------------------------------------------------------------------------------------------------------------

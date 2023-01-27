@@ -32,7 +32,6 @@ def split_data(pdata, pres, training_part, validation_part, testing_part):
             for patient in split[key]:
                 f.write(patient + "\n")
 
-
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
