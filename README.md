@@ -475,7 +475,7 @@ python package_cores/run_mk_stat_images.py
 Add the correct path in *run_mk_stat_images.py*.
 
 The code first open a GUI, which is used to draw the shape of the IMC of the far wall and of the proximal wall. Below the command of the GUI:
-* left click : add control point ;
+* left click: add control point ;
 * middle click: delete the last control point ;
 * round middle: go to the next step ;
 
