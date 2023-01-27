@@ -15,11 +15,11 @@ extern "C" { // ---> [kernel]
     double tof;         // time of flight
     int id_apod_tx;     // tx apodization
     int id_apod_rx;     // rx apodization
-    double rx_dst;      // -> todo
-    double tx_dst;      // -> todo
-    double apod_tx;     // -> todo
-    double apod_rx;     // -> todo
-    double val_sample;  // -> todo
+    double rx_dst;      // pts to rx element in meter
+    double tx_dst;      // pts to tx element in meter
+    double apod_tx;     // apodization in emission
+    double apod_rx;     // apodization in reception
+    double val_sample;  // value of the beamformed pts
 
     int col = blockIdx.x * blockDim.x + threadIdx.x;    // column in the grid image
     int row = blockIdx.y * blockDim.y + threadIdx.y;    // row in the grid image
