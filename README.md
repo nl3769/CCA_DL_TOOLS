@@ -484,6 +484,6 @@ The code first open a GUI, which is used to draw the shape of the IMC of the far
         src="./.images/stat_image_explained.png"
         title="Statistical image"
         width="900"
-        height="900" 
+        height="700" 
     />
 </p>
