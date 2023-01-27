@@ -1,5 +1,6 @@
 # ----------------------------------------------------------------------------------------------------------------------
 def get_param_wandb(p):
+    ''' Set parameters for W&B by using the parsed parameters. '''
 
     # --- convert class attributes to a dictionnary
     param4wandb = p.__dict__.copy()
