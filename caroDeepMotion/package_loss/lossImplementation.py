@@ -31,11 +31,9 @@ class DiceBCELoss(nn.Module):
 
         # --- compute binary cross entropy
         BCE = F.binary_cross_entropy(inputs, targets, reduction='mean')
-
         # --- flatten label and prediction tensors
         inputs = inputs.contiguous().view(-1)
         targets = targets.contiguous().view(-1)
-
         intersection = (inputs * targets).sum()
         dice_loss = 1 - (2. * intersection + smooth) / (inputs.sum() + targets.sum() + smooth)
         Dice_BCE = BCE + dice_loss

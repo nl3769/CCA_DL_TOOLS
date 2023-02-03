@@ -7,9 +7,9 @@ import scipy.io             as io
 
 # ----------------------------------------------------------------------------------------------------------------------
 def load_mat(fname: str):
-    ''' Load .mat file. '''
+    """ Load .mat file. """
+    
     data = io.loadmat(fname)
-    # data = loadmat(fname)
     keys = list(data.keys())
     keys = [key for key in keys if '__' not in key]
 
@@ -17,7 +17,7 @@ def load_mat(fname: str):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def load_image(fname: str):
-    ''' Load image. '''
+    """ Load image. """
 
     I = Image.open(fname)
     if I.mode == 'RGB':
@@ -28,7 +28,7 @@ def load_image(fname: str):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def load_nii(fname: str):
-    ''' Load .nii file. '''
+    """ Load .nii file. """
 
     data = nib.load(fname)
 
@@ -36,7 +36,7 @@ def load_nii(fname: str):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def load_pickle(fname: str):
-    ''' Load .pkl file. '''
+    """ Load .pkl file. """
 
     with open(fname, 'rb') as f:
         data = pkl.load(f)

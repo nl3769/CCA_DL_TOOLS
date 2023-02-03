@@ -24,4 +24,3 @@ def write_pickle(data, pres):
 
     with open(pres, 'wb') as f:
         pkl.dump(data, f)
-

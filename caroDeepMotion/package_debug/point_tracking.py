@@ -6,8 +6,8 @@ import matplotlib.pyplot                    as plt
 
 from tqdm                                   import tqdm
 
+# ----------------------------------------------------------------------------------------------------------------------
 def plot_pts(pts):
-    nb_pts = len(pts.keys())
 
     for id_pts, key in enumerate(pts.keys()):
         x = [val[0] for val in pts[key]]
@@ -15,8 +15,6 @@ def plot_pts(pts):
 
         plt.figure()
         plt.scatter(x, z)
-
-    a=1
 
 # ----------------------------------------------------------------------------------------------------------------------
 def get_new_pos(motion, pos):
@@ -50,7 +48,7 @@ def track_pts(pts, motion):
         # for id_motion in tqdm(range(5)):
 
             xmotion = motion[:, :, 0, id_motion]
-            zmotion = motion[:, :, 2, id_motion]
+                # save = False        zmotion = motion[:, :, 2, id_motion]
             pos = pts_tracking["pt_" + str(id_pts)][-1]
             xmotion_ = get_new_pos(xmotion, pos)
             zmotion_ = get_new_pos(zmotion, pos)
@@ -72,7 +70,9 @@ def main():
     traj = track_pts(pts, motion)
     plot_pts(traj)
     plt.show()
-    a = 1
+
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
     main()
+
+# ----------------------------------------------------------------------------------------------------------------------

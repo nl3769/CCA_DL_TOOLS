@@ -48,16 +48,13 @@ class databaseHandler():
                 p0 = pname + "_0" + str(id)
             else:
                 p0 = pname + "_" + str(id)
-
             if id + 1 < 10:
                 p1 = pname + "_00" + str(id+1)
             elif id + 1 < 100:
                 p1 = pname + "_0" + str(id + 1)
             else:
                 p1 = pname + "_" + str(id + 1)
-
             pairs.append([p0, p1])
-
         for id in range(0, (nb_frame-1)):
             # --- get size of the original image
             LI1, LI2 = LI[..., id].copy(), LI[..., id+1].copy()

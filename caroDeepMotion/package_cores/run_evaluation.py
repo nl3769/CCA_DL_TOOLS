@@ -45,9 +45,15 @@ def main_dl_individual_patches():
     metricsHandler()
 
 # ----------------------------------------------------------------------------------------------------------------------
-if __name__ == "__main__":
-    """ Run evaluation for motion estimation. It computes End point Error and Angle Error. """
-
+def main():
     main_dl_full_image()
     main_dl_individual_patches()
     main_dg()
+
+# ----------------------------------------------------------------------------------------------------------------------
+if __name__ == "__main__":
+    """ 
+    Run evaluation for motion estimation. It computes End point Error and Angle Error. 
+    """
+
+    main()

@@ -13,16 +13,13 @@ def make_figure(I1, I2, M1, M2, I2_warpped, xOF, zOF, argOF, normOF, pres):
 
     rec = [32, 32]
     x_mean, y_mean = int(I1.shape[1]/2), int(I2.shape[0]/2)
-
     I1 = np.array(I1).astype(np.int16)
     I2 = np.array(I2).astype(np.int16)
     M1 = np.array(M1).astype(np.int16)
     M2 = np.array(M2).astype(np.int16)
-
     I2_disp = I2.copy()
     I1_disp = I1.copy()
     I2_warpped_disp = I2_warpped.copy()
-
     for id_x in range(x_mean - rec[0], x_mean + rec[0]):
         I2_disp[y_mean - rec[1], id_x] = 255
         I2_disp[y_mean + rec[1], id_x] = 255
@@ -41,7 +38,6 @@ def make_figure(I1, I2, M1, M2, I2_warpped, xOF, zOF, argOF, normOF, pres):
 
     plt.rcParams['text.usetex'] = True
     plt.figure()
-
     # ------ IMAGE
     plt.subplot2grid((4, 6), (0, 0), colspan=1, rowspan=1)
     plt.imshow(I1_disp, cmap='gray')

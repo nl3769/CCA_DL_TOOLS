@@ -8,10 +8,8 @@ def check_dim(res, patient):
     dim = {}
     for key in res.keys():
         dim[key] = len(res[key])
-
     keys = list(dim.keys())
     init = dim[keys[0]]
-
     for key in keys[1:]:
         if dim[key] != init:
             sys.exit('Error in check_dim in dataHandler: ' + patient)
@@ -38,24 +36,20 @@ class dataHandler(motionDataloader):
                 for subfold in subfolds:
                     path_[subfold] = os.listdir(os.path.join(patient, id_seq, subfold))
                     path_[subfold].sort()
-
                 check_dim(path_, patient)
                 pCF = os.path.join(patient, id_seq, 'CF.txt')
-
                 for fpath in path_['I1']:
                     pI1 = os.path.join(patient, id_seq, 'I1', fpath)
                     pI2 = os.path.join(patient, id_seq, 'I2', fpath)
                     pM1 = os.path.join(patient, id_seq, 'M1', fpath)
                     pM2 = os.path.join(patient, id_seq, 'M2', fpath)
                     pOF = os.path.join(patient, id_seq, 'OF', fpath)
-
                     self.image_list.append([pI1, pI2])
                     self.mask_list.append([pM1, pM2])
                     self.flow_list.append([pOF])
                     self.CF_list.append([pCF])
-
          # --- reduce the amount of data for faster training -> for debugging purpose only
-        self.image_list = self.image_list[::100]
-        self.mask_list = self.mask_list[::100]
-        self.flow_list = self.flow_list[::100]
-        self.CF_list = self.CF_list[::100]
+        # self.image_list = self.image_list[::100]
+        # self.mask_list = self.mask_list[::100]
+        # self.flow_list = self.flow_list[::100]
+        # self.CF_list = self.CF_list[::100]

@@ -22,7 +22,6 @@ def create_dataset(p, simulation):
     nb_process = 8
     id_step = 0
     nb_step = int(np.floor(len(simulation) / nb_process))
-
     for id in range(nb_step):
         process = []
         for id_rel, simu in enumerate(simulation[id_step*nb_process:id_step*nb_process+nb_process]):
@@ -32,13 +31,11 @@ def create_dataset(p, simulation):
             pc = Process(target=call, args=(dataHandler,))
             process.append(pc)
             pc.start()
-
         for i in process:
             i.join()
-
         id_step += 1
-
     process = []
+    # --- we process the last data (because nb_process is probably not a multiple of the number of images)
     for id_rel, simu in enumerate(simulation[id_step * nb_process:]):
         print(str(nb_step * nb_process + id_rel) + ' | ' + simu)
         p.PDATA = os.path.join(pdata, simu)
@@ -55,10 +52,8 @@ def main():
     my_parser.add_argument('--Parameters', '-param', required=True, help='List of parameters required to execute the code.')
     arg = vars(my_parser.parse_args())
     param = importlib.import_module('package_parameters.' + arg['Parameters'].split('.')[0])
-
     # --- get parameters
     p = param.setParameters()
-
     # --- launch process
     simulation = os.listdir(p.PDATA)
     if 'backup_parameters' in simulation:
@@ -68,4 +63,7 @@ def main():
 
 # -----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
+    """
+    This function generates the database for motion: it splits data into isotropic patches with a specific overlap.
+    """
     main()

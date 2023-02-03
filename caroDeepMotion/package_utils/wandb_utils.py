@@ -1,10 +1,9 @@
 # ----------------------------------------------------------------------------------------------------------------------
 def get_param_wandb(p):
-    ''' Set parameters for W&B by using the parsed parameters. '''
+    """ Set parameters for W&B by using the parsed parameters. """
 
     # --- convert class attributes to a dictionnary
     param4wandb = p.__dict__.copy()
-
     # --- select only interesting parameters
     rm_keys = {}
     rm_keys['rm_keys_PATH'] = [key for key in param4wandb.keys() if "PDATA" in key]
@@ -17,13 +16,10 @@ def get_param_wandb(p):
     rm_keys['rm_ENTITY'] = [key for key in param4wandb.keys() if "ENTITY" in key]
     rm_keys['rm_PATH'] = [key for key in param4wandb.keys() if "PATH" in key]
     rm_keys['rm_USER'] = [key for key in param4wandb.keys() if "USER" in key]
-
-
     # --- remove specific keys
     for key in rm_keys.keys():
         for rm in rm_keys[key]:
             del param4wandb[rm]
-
     # --- convert values in string
     for key in param4wandb.keys():
         param4wandb[key] = str(param4wandb[key])

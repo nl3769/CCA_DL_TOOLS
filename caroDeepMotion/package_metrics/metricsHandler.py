@@ -263,7 +263,6 @@ class evaluationDL(evaluation):
         for patient in self.patients.keys():
             with open(self.patients[patient]['cf'], 'r') as f:
                 cf =f.read()
-
             cf_val[patient] = float(cf)
 
         return cf_val
@@ -292,7 +291,6 @@ class evaluationDL(evaluation):
                 lst_I1 += [os.path.join(patient, folder, 'I1', key) for key in I1_]
                 lst_I2 += [os.path.join(patient, folder, 'I2', key) for key in I2_]
                 lst_cf += cf_
-
         patients = {
             'pI1': lst_I1,
             'pI2': lst_I2,
@@ -310,23 +308,16 @@ class evaluationDL(evaluation):
             I1_ -= np.min(I1_)
             I1_ /= np.max(I1_)
             I1.append(I1_[None, ...])
-
             I2_ = pul.load_pickle(path[1])
             I2_ -= np.min(I2_)
             I2_ /= np.max(I2_)
             I2.append(I2_[None, ...])
-
             OF.append(pul.load_pickle(path[2]))
-
             with open(path[3], 'r') as f:
                 data = f.readlines()
             data = [key.split('\n')[0] for key in data]
-            cf_ = {
-                'xCF': float(data[0].split(" ")[-1]),
-                'zCF': float(data[1].split(" ")[-1])}
-
+            cf_ = {'xCF': float(data[0].split(" ")[-1]), 'zCF': float(data[1].split(" ")[-1])}
             CF.append(cf_)
-
         I1 = np.array(I1)
         I2 = np.array(I2)
         OF = np.array(OF)
@@ -339,7 +330,6 @@ class evaluationDL(evaluation):
         I1 = torch.from_numpy(I1).to(self.device)
         I2 = torch.from_numpy(I2).to(self.device)
         mask = torch.ones(I1.shape).to(self.device)
-
         fmap1, skc1, fmap2, skc2 = self.netEncoder(I1, I2)
         flow_pred = self.netFlow(I1, fmap1, fmap2, mask)
         flow_pred = np.array(flow_pred[-1].detach().to('cpu'))
@@ -353,13 +343,11 @@ class evaluationDL(evaluation):
         batch_size = 4
         nb_patients = len(self.patients['pI1'])
         nb_loop = int(np.ceil(nb_patients/batch_size))
-
         self.res_ref = {}
         self.res_pred = {}
         self.CF = {}
 
         for id_loop in tqdm(range(nb_loop)):
-
             if id_loop == (nb_loop-1):
                 nI1 = self.patients['pI1'][id_loop * batch_size:-1]
                 nI2 = self.patients['pI2'][id_loop * batch_size:-1]
@@ -370,10 +358,8 @@ class evaluationDL(evaluation):
                 nI2 = self.patients['pI2'][id_loop*batch_size:id_loop*batch_size + batch_size]
                 nOF = self.patients['pof'][id_loop*batch_size:id_loop*batch_size + batch_size]
                 nCF = self.patients['pcf'][id_loop*batch_size:id_loop*batch_size + batch_size]
-
             I1, I2, OF, CF = self.load_data(nI1, nI2, nOF, nCF)
             pred = self.inference(I1, I2)
-
             # --- fill dictionary to fit with the others functions
             loop_size = batch_size if id_loop < (nb_loop - 1) else len(self.patients['pcf']) - id_loop*batch_size - 1
             for id_batch in range(loop_size):

@@ -30,22 +30,18 @@ class databaseVisualization():
             nb_val = len(files)
         files.sort()
         for id in range(nb_val):
-
             pres_ = os.path.join(pdata, files[id])
             pname = os.listdir(pres_)
-
             # --- get random patient
             dim_seq = len(pname)
             seqID = random.randint(1, dim_seq-1)
             pname = pname[seqID]
-
             # --- get random patch
             pres_ = os.path.join(pres_, pname)
             npatches = os.listdir(os.path.join(pres_, subfolder[0]))
             dim_patches = len(npatches)
             patchID = random.randint(0, dim_patches - 1)
             npatch = npatches[patchID]
-
             # --- get file name
             patient[files[id]] = {}
             for key in subfolder:
@@ -63,24 +59,19 @@ class databaseVisualization():
     def visualization(patients, subfolder, pres):
 
         for patient in patients.keys():
-
             data = {}
             for key in subfolder:
-
                 if "OF" in key:
                     of = pl.load_pickle(patients[patient][key])
                     data[key] = of
                 else:
                     data[key] = pl.load_pickle(patients[patient][key])
-
             xof = data["OF"][..., 0]
             zof = data["OF"][..., 2]
             normOF = np.sqrt(np.power(xof, 2) + np.power(zof, 2))
             argOF = np.arccos(np.divide(xof, normOF))
             argOF = np.rad2deg(argOF)
-
             I2_warpped = pufh.warpper(data["OF"], data["I1"])
-
             tmp = patients[patient][key].split('/')[-1].split('.')[0]
             pres_ = os.path.join(pres, patient + "_" + tmp + ".png")
             pvmf.make_figure(data["I1"], data["I2"], data["M1"], data["M2"], I2_warpped, xof, zof, argOF, normOF, pres_)

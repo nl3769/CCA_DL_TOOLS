@@ -9,10 +9,8 @@ def compute_real_CF(Odim, Fdim, CF_init):
 
     zcoef = Fdim[0] / Odim[0]
     zCF = CF_init / zcoef
-
     xcoef = Fdim[1] / Odim[1]
     xCF = CF_init / xcoef
-
     CF = {"xCF": xCF,
           "zCF": zCF}
 
@@ -24,9 +22,7 @@ def image_interpoland(I, interp_factor):
 
     if len(I.shape) == 3:
         I = I.transpose(2, 0, 1)
-
     I = sp.image_interp_factor(I, interp_factor)
-
     if len(I.shape) == 3:
         I = I.transpose(2, 0, 1)
 
@@ -82,7 +78,6 @@ def get_patches(roi_width, roi_height, shift_x, shift_z, dim_img, substr, coordi
         else:
             pos_x.append(dim_img[1] - roi_width)
             criterium = False
-    condition = True
     # --- compute z-coordinates
     criterium = True
     pos_z = [0]
@@ -92,11 +87,9 @@ def get_patches(roi_width, roi_height, shift_x, shift_z, dim_img, substr, coordi
         else:
             pos_z.append(dim_img[0] - roi_height)
             criterium = False
-
     # --- get coordinates
     pos_x = np.asarray(pos_x)
     pos_z = np.asarray(pos_z)
-
     [X, Z] = np.meshgrid(pos_x, pos_z)
     id_patch = 1
     for id_x in range(X.shape[1]):
@@ -128,7 +121,6 @@ def patches_extraction(I1, I2, OF, coordinates, pixel_width, pixel_height, pairs
         'pname': []}
 
     for key in coordinates.keys():
-
         x, z = coordinates[key]
         if z+pixel_height-1 < I1.shape[0] and x+pixel_width-1 < I1.shape[1]:
             # --- extract on I1/I2

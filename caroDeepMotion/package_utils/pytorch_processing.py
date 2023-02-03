@@ -1,11 +1,11 @@
-'''
+"""
 @Author  :   <Nolann Lainé>
 @Contact :   <nolann.laine@outlook.fr>
-'''
+"""
 
 # ----------------------------------------------------------------------------------------------------------------------
 def treshold_mask(I, tresh=0.5):
-    ''' Binarize predicted. '''
+    """ Binarize predicted. """
 
     I[I > tresh] = 1
     I[I < 1] = 0

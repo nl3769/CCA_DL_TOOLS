@@ -22,14 +22,8 @@ from icecream                               import ic
 def get_path_GIF(path_data, seq, id):
     """ Get path to create GIF. """
     path = {}
-
-    path['I'] = []
-    path['MA'] = []
-    path['LI'] = []
-    path['CF'] = []
-    path['parameters'] = []
+    path['I'], path['MA'], path['LI'], path['CF'], path['parameters'] = [], [], [], [], []
     for id_seq in seq:
-
         path['I'].append(path_data[id_seq]['path_image'])
         path['MA'].append(path_data[id_seq]['path_MA'])
         path['LI'].append(path_data[id_seq]['path_LI'])
@@ -41,8 +35,8 @@ def get_path_GIF(path_data, seq, id):
 # ----------------------------------------------------------------------------------------------------------------------
 def get_path(path_data, pairs, id):
     """ Get path. """
-    path = {}
 
+    path = {}
     path['CF'] = path_data[pairs[id][0]]['image_information']
     path['I1'] = path_data[pairs[id][0]]['path_image']
     path['I2'] = path_data[pairs[id][1]]['path_image']
@@ -132,12 +126,8 @@ def load_cubs_data(paths):
     """ Load data located in path directory. """
 
     I = ld.load_image(paths['path_image'])
-    LI = ld.load_mat(paths['path_LI'])
-    MA = ld.load_mat(paths['path_MA'])
-
-    LI = np.array(LI['seg']).squeeze()
-    MA = np.array(MA['seg']).squeeze()
-
+    LI, MA = ld.load_mat(paths['path_LI']), ld.load_mat(paths['path_MA'])
+    LI, MA = np.array(LI['seg']).squeeze(), np.array(MA['seg']).squeeze()
     with open(paths['image_information'], 'r') as f:
         CF = float(f.read()) * 1e-3
 
@@ -147,11 +137,9 @@ def load_cubs_data(paths):
 def load_prepared_data(paths):
     """ Load data located in path directory. """
 
-    LI = ld.load_pickle(paths['path_LI'])
-    MA = ld.load_pickle(paths['path_MA'])
+    LI, MA = ld.load_pickle(paths['path_LI']), ld.load_pickle(paths['path_MA'])
     OF = ld.load_pickle(paths['path_field'])
     seq = ld.load_pickle(paths['path_image'])
-
     with open(paths['image_information'], 'r') as f:
         CF = float(f.read())
 
@@ -162,12 +150,10 @@ def load_data_GIF(path):
     """ Load data located in path directory. """
 
     I = []
-    LI = []
-    MA = []
+    LI, MA = [], []
     zstart = []
     CF = []
     seg_dim = []
-
     for id_path in path:
         if id_path == 'I':
             for key in path[id_path]:

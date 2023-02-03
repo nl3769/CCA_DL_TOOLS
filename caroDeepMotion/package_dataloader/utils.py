@@ -12,7 +12,6 @@ def fetch_dataloader_flow(p):
     else:
         trn_dataloader = dataHandlerFlowFlyingChair(p, "training")
         val_dataloader = dataHandlerFlowFlyingChair(p, "validation")
-
     args_training = {
         "dataset":      trn_dataloader,
         "batch_size":   p.BATCH_SIZE,
@@ -27,7 +26,6 @@ def fetch_dataloader_flow(p):
         "shuffle":      True,
         "num_workers":  1,
         "drop_last":    True}
-
     if p.SYNTHETIC_DATASET:
         loader_training = DataLoader(**args_training)
         loader_validation = DataLoader(**args_validation)
@@ -44,7 +42,6 @@ def fetch_dataloader(p):
     trn_dataloader = dataHandler(p, "training")
     val_dataloader = dataHandler(p, "validation")
     test_dataloader = dataHandler(p, "testing")
-
     args_training = {
         "dataset":      trn_dataloader,
         "batch_size":   p.BATCH_SIZE,
@@ -69,7 +66,6 @@ def fetch_dataloader(p):
         "num_workers":  1,
         "drop_last":    True
         }
-
     loader_training = DataLoader(**args_training)
     loader_validation = DataLoader(**args_validation)
     loader_testing = DataLoader(**args_testing)

@@ -27,9 +27,7 @@ class databasePreparation():
         """ Store path in dictionary to load patient information. """
 
         frame_id = sorted(os.listdir(self.parameters.PDATA))
-
         for id, nframe in enumerate(frame_id):
-            
             self.path_data[nframe] = {} # dictionary to store path
             p_res = os.path.join(self.parameters.PDATA, nframe) # path to data
             # --- get path
@@ -38,13 +36,11 @@ class databasePreparation():
             path_LI = rd.get_fname(dir=p_res, sub_str='LI.', fold='phantom')
             path_MA = rd.get_fname(dir=p_res, sub_str='MA.', fold='phantom')
             path_parameters = rd.get_fname(dir=p_res, sub_str=['parameters.mat', 'parameters.json'], fold='parameters')
-
             if id > 0:
                 path_flow = rd.get_fname(dir=p_res, sub_str='OF_', fold='phantom')
                 self.path_data[nframe]['path_flow'] = path_flow
             else:
                 self.path_data[nframe]['path_flow'] = ''
-
             self.path_data[nframe]['image_information'] = path_info
             self.path_data[nframe]['path_image'] = path_image
             self.path_data[nframe]['path_LI'] = path_LI
@@ -53,7 +49,6 @@ class databasePreparation():
 
     # ------------------------------------------------------------------------------------------------------------------
     def create_database(self):
-
         # --- we get pairs of images
         pairs = []
         keys = list(self.path_data.keys())
@@ -61,7 +56,6 @@ class databasePreparation():
             p0 = keys[id]
             p1 = keys[id+1]
             pairs.append([p0, p1])
-
         for id in range(0, len(pairs)):
             # --- get path
             path = dbu.get_path(self.path_data, pairs, id)
@@ -80,7 +74,6 @@ class databasePreparation():
                 'CF'          : CF,
                 'zstart'      : z_start}
             I1, I2, OF, LI1, LI2, MA1, MA2 = dbu.data_preparation_preprocessing(**args_preprocessing)
-
             if id == 0:
                 I_seq = np.zeros(I1.shape + (len(pairs) + 1,))
                 OF_seq = np.zeros(OF.shape + (len(pairs),))
@@ -94,7 +87,6 @@ class databasePreparation():
                 I_seq[..., id+1] = I2
                 OF_seq[..., id] = OF
                 LI_seq[:, id+1], MA_seq[:, id+1] = LI2, MA2
-
         dbu.save_data_preparation(I_seq, OF_seq, LI_seq, MA_seq, CF, self.parameters.PRES, self.parameters.PDATA.split('/')[-1])
         dbu.mk_animation(self.parameters.PRES, self.parameters.PDATA.split('/')[-1], CF) # can be commented on, just for visual inspection
 
