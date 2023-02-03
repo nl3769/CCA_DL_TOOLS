@@ -61,8 +61,7 @@ def save_image(path, seq, patient):
 def main():
     # --- use a parser with set_parameters.py
     my_parser = argparse.ArgumentParser(description='Name of set_parameters_*.py')
-    my_parser.add_argument('--Parameters', '-param', required=True,
-                           help='List of package_parameters required to execute the code.')
+    my_parser.add_argument('--Parameters', '-param', required=True, help='List of package_parameters required to execute the code.')
     arg = vars(my_parser.parse_args())
     param = importlib.import_module('package_parameters.' + arg['Parameters'].split('.')[0])
     p = param.setParameters()
@@ -79,12 +78,8 @@ def main():
     nb_patches = open(os.path.join(p.PATH_NB_PATCHES, "nb_patches.txt"), "w")
     # --- launch process
     for id_patient in tqdm(range(len(patient_name_list))):
-    # for id_patient in tqdm(range(210, 211)):
         # --- create the object sequenceClass
-        patientName = patient_name_list[id_patient]
-        seq = sequenceClassIMC(
-            path_seq=os.path.join(p.PDATA, patientName),
-            p=p)
+        seq = sequenceClassIMC(path_seq=os.path.join(p.PDATA, patient_name_list[id_patient]), p=p)
         # --- launch the segmentation
         t = time.time()
         inference_time = seq.sliding_window_vertical_scan()
@@ -93,9 +88,9 @@ def main():
         exec_time.write(str(elapsed) + "\n")
         nb_patches.write(str(len(seq.predictionClass.patches)) + "\n")
         # --- save segmentation results
-        save_seg(p.PATH_SEGMENTATION_RESULTS, seq, patientName)
+        save_seg(p.PATH_SEGMENTATION_RESULTS, seq, patient_name_list[id_patient])
         # --- save image with LI/MA segmentation
-        save_image(p.PATH_SEG_VISUAL, seq, patientName)
+        save_image(p.PATH_SEG_VISUAL, seq, patient_name_list[id_patient])
     # --- close writter
     exec_time.close()
     nb_patches.close()

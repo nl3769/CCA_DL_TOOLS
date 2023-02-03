@@ -157,10 +157,8 @@ def load_data_GIF(path):
     """ Load data located in path directory. """
 
     I = []
-    LI = []
-    MA = []
-    zstart = []
-    CF = []
+    LI, MA = [], []
+    zstart, CF = [], []
     seg_dim = []
 
     for id_path in path:

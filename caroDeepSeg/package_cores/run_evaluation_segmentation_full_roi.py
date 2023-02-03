@@ -1,6 +1,5 @@
 import argparse
 import importlib
-import package_utils.fold_handler                   as fh
 from package_evaluation.evaluationHandler           import evaluationHandler
 
 
@@ -13,11 +12,9 @@ def main():
     arg = vars(my_parser.parse_args())
     param = importlib.import_module('package_parameters.' + arg['Parameters'].split('.')[0])
     p = param.setParameters()
-
     sets = p.SET
 
     for set in sets:
-
         p.SET = set
         eval=evaluationHandler(p)
         eval.get_hausdorff()

@@ -43,11 +43,9 @@ def split_center(patients):
     # --- get clin data
     clin_patients = [patient for patient in patients if 'clin' in patient]
     clin_patients.sort()
-
     # --- get tech data
     tech_patients = [patient for patient in patients if 'tech' in patient]
     tech_patients.sort()
-
     # --- get patients
     sort_patients.append(clin_patients[:1388])
     sort_patients.append(clin_patients[1388:])
@@ -84,7 +82,6 @@ def split_data(pdata, pres, nb_split):
     for id_fol in range(nb_split):
         pres_ = os.path.join(pres, 'fold_' + str(id_fol))
         pfh.create_dir(pres_)
-        a=1
         for nsubset in subset:
             with open(os.path.join(pres_, nsubset + ".txt"), 'w') as f:
                 for subset_ in patient_split:
@@ -109,8 +106,8 @@ def split_data(pdata, pres, nb_split):
 if __name__ == '__main__':
 
     # --- VARIABLES DECLARATION
-    pdata   = '/home/laine/Documents/PROJECTS_IO/CARODEEPSEG/CUBS_DATABASE'
-    pres    = '/home/laine/Documents/PROJECTS_IO/CARODEEPSEG/SPLIT_PATIENT'
+    pdata   = '/run/media/laine/DISK/PROJECTS_IO/SEGMENTATION/REFERENCES'
+    pres    = '/run/media/laine/DISK/PROJECTS_IO/SEGMENTATION/SPLIT_PATIENT'
 
     nb_split = 10
 
