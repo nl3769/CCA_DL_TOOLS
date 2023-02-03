@@ -23,3 +23,4 @@ def get_param_wandb(p):
         param4wandb[key] = str(param4wandb[key])
 
     return param4wandb
+    return param4wandb
