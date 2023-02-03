@@ -14,14 +14,10 @@ def get_param_wandb(p):
     rm_keys['rm_EXPERIMENT_NAME'] = [key for key in param4wandb.keys() if "EXPNAME" in key]
     rm_keys['rm_ENTITY'] = [key for key in param4wandb.keys() if "ENTITY" in key]
     rm_keys['rm_PATH'] = [key for key in param4wandb.keys() if "PATH" in key]
-
-    # rm_keys = rm_keys_PATH + rm_keys_DEVICE + rm_keys_GPU + rm_keys_CUDA + rm_keys_WORKERS + rm_EXPERIMENT_NAME + rm_ENTITY
-
     # --- remove specific keys
     for key in rm_keys.keys():
         for rm in rm_keys[key]:
             del param4wandb[rm]
-
     # --- convert values in string
     for key in param4wandb.keys():
         param4wandb[key] = str(param4wandb[key])

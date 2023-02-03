@@ -72,10 +72,8 @@ class loggerClassSeg():
         if len(self.loss_seg['validation']) != 0:
             y_max.append(max(self.loss_seg['validation']))
         y_max.append(max(self.loss_seg['training']))
-
         y_max = max(y_max)
         y_min = 0
-
         # --- validation
         if len(self.loss_seg['validation']) != 0:
             epoch = list(range(0, len(self.loss_seg['validation'])))
@@ -91,7 +89,6 @@ class loggerClassSeg():
             pufh.create_dir(psave)
             plt.savefig(os.path.join(psave, 'loss_val_BCEDice_seg.png'), dpi=150)
             plt.close()
-
         # --- training
         if len(self.loss_seg['training']) != 0:
             epoch = list(range(0, len(self.loss_seg['training'])))
@@ -107,7 +104,6 @@ class loggerClassSeg():
             pufh.create_dir(psave)
             plt.savefig(os.path.join(psave, 'loss_trn_BCEDice_seg.png'), dpi=150)
             plt.close()
-
         # --- plot both in the same graph
         if len(self.loss_seg['training']) != 0 and len(self.loss_seg['validation']) != 0:
             epoch = list(range(0, len(self.loss_seg['training'])))
@@ -133,7 +129,6 @@ class loggerClassSeg():
         #######################
         # --- SEG METRICS --- #
         #######################
-
         # --- validation
         if len(self.loss_seg['validation']) != 0:
             epoch = list(range(0, len(self.loss_seg['validation'])))
@@ -142,7 +137,6 @@ class loggerClassSeg():
             fig.set_size_inches(8, 6)
             for key in self.metrics_seg['validation'].keys():
                 plt.plot(epoch, self.metrics_seg['validation'][key])
-
             plt.title('Metrics during training (evaluation)')
             plt.xlabel('Epoch')
             plt.ylabel('Metrics')
@@ -151,7 +145,6 @@ class loggerClassSeg():
             plt.legend(legend_)
             plt.savefig(os.path.join(self.p.PATH_SAVE_FIGURE, 'metrics_validation_seg.png'), dpi=150)
             plt.close()
-
         # --- training
         if len(self.loss_seg['training']) != 0:
             epoch = list(range(0, len(self.loss_seg['training'])))
@@ -160,7 +153,6 @@ class loggerClassSeg():
             fig.set_size_inches(8, 6)
             for key in self.metrics_seg['training'].keys():
                 plt.plot(epoch, self.metrics_seg['training'][key])
-
             plt.title('Metrics during training (training)')
             plt.xlabel('Epoch')
             plt.ylabel('Metrics')
@@ -192,14 +184,12 @@ class loggerClassSeg():
             for el in self.history_model[key]:
                 textfile.write(el + "\n")
             textfile.close()
-
         # --- save loss
         keys = self.loss_seg.keys()
         for key in keys:
             textfile = open(os.path.join(self.p.PATH_MODEL_HISTORY, 'loss_' + key + '.txt'), "w")
             for id, val in enumerate(self.loss_seg[key]):
                 textfile.write(str(id) + " " + str(val) + "\n")
-
         # --- save metrics
         key_set = self.metrics_seg.keys()
         for set in key_set:
@@ -212,18 +202,12 @@ class loggerClassSeg():
     # ------------------------------------------------------------------------------------------------------------------
     def save_best_model(self, epoch, models):
         """ Save the best model.
-        Args:
-            TODO
-        Returns:
-            TODO
         """
 
         loss_train = self.loss_seg['training']
-
         # --- save the model which minimize the validation loss
         if self.p.VALIDATION:
             loss_val = self.loss_seg['validation']
-
             if epoch > 0 and loss_val[-1] < np.min(loss_val[:-1]):
                 disp = f'Epoch: {epoch} |  training loss: {loss_train[-1]} | validation loss: {loss_val[-1]} | MODEL_VALIDATION SAVED.'
                 print(disp)
@@ -231,10 +215,8 @@ class loggerClassSeg():
                     psave = os.path.join(self.p.PATH_SAVE_MODEL)
                     torch.save(models[key].state_dict(), os.path.join(psave, key + '_val.pth'))
                 self.model_history(set='validation_based', string=disp)
-
         # --- save the model which minimize the training loss
         if epoch > 0 and loss_train[-1] < np.min(loss_train[:-1]):
-
             if self.p.VALIDATION:
                 disp = f'Epoch: {epoch} | training loss: {loss_train[-1]} | validation loss: {loss_val[-1]} | MODEL_TRAINING SAVED.'
             else:
@@ -250,7 +232,6 @@ class loggerClassSeg():
 
         plt.figure()
         ftsize = 6
-
         # --- image
         plt.subplot2grid((2, 2), (0, 0), colspan=1)
         plt.imshow(I1, cmap='gray')
@@ -282,9 +263,7 @@ class loggerClassSeg():
         plt.colorbar()
         plt.axis('off')
         plt.title('seg. pred', fontsize=ftsize)
-
         # --- save fig and close
-
         plt.savefig(os.path.join(psave, fname.replace('/', '_').replace('pkl', 'png')), bbox_inches='tight', dpi=1000)
         plt.close()
 

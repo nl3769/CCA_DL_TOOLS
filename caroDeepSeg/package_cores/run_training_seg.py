@@ -1,15 +1,12 @@
-'''
+"""
 @Author  :   <Nolann Lainé>
 @Contact :   <nolann.laine@outlook.fr>
-'''
+"""
 
 import argparse
 import importlib
 import torch
-import math
-import random
 import wandb
-
 import torch.optim				                  as optim
 import package_dataloader.utils 		          as pdlu
 import package_network.utils 			          as pnu
@@ -105,6 +102,9 @@ def get_lr(optimizer):
 
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
+    """
+    This function trains model.
+    """
     main()
 
 # ----------------------------------------------------------------------------------------------------------------------

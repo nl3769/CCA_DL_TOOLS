@@ -97,6 +97,9 @@ def main():
 
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
+    """
+    This function segments the intima-media on full roi. The roi can be also adjusted using a home-made GUI. Data are saved accroding to the format of cubs database (https://data.mendeley.com/datasets/m7ndn58sv6/1)
+    """
     main()
 
 # ----------------------------------------------------------------------------------------------------------------------

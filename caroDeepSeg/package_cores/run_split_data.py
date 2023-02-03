@@ -1,10 +1,6 @@
 import os
-import numpy
-import random
-
-import numpy as np
-
-import package_utils.fold_handler as pfh
+import numpy                            as np
+import package_utils.fold_handler       as pfh
 
 # ----------------------------------------------------------------------------------------------------------------------
 def get_permutation_id(k):
@@ -103,13 +99,19 @@ def split_data(pdata, pres, nb_split):
                             f.write(pname + "\n")
 
 # ----------------------------------------------------------------------------------------------------------------------
-if __name__ == '__main__':
-
+def main():
     # --- VARIABLES DECLARATION
     pdata   = '/run/media/laine/DISK/PROJECTS_IO/SEGMENTATION/REFERENCES'
     pres    = '/run/media/laine/DISK/PROJECTS_IO/SEGMENTATION/SPLIT_PATIENT'
-
     nb_split = 10
-
     # --- split data into training/validation/testing part
     split_data(pdata, pres, nb_split)
+
+# ----------------------------------------------------------------------------------------------------------------------
+if __name__ == '__main__':
+    """
+    This function splits patient to apply a k-fold cross-validation.
+    """
+    main()
+
+# ----------------------------------------------------------------------------------------------------------------------

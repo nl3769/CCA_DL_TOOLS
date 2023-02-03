@@ -17,22 +17,18 @@ NEIGHBOURS = 15
 # ----------------------------------------------------------------------------------------------------------------------
 def get_fw_from_gt(path):
 
-    contour_ = []
-    contour = []
+    contour_, contour = [], []
     with open(path, 'r') as f:
         contour_gt = f.readlines()
-
     contour_.append(contour_gt[0].split(' '))
     contour_.append(contour_gt[1].split(' '))
     tmp = [val.split('.')[0] for val in contour_[0]]
     contour.append(tmp)
     contour.append(contour_[1])
-
     dim_val = (2, len(contour_[0])-1)
     val = np.zeros(dim_val)
     for i in range(len(contour[0])-1):
-        val[0, i] = float(contour[0][i]) - 1
-        val[1, i] = float(contour[1][i])
+        val[0, i], val[1, i] = float(contour[0][i]) - 1, float(contour[1][i])
 
     return val
 
@@ -45,8 +41,7 @@ def get_fw_from_pred(path):
     dim_val = (len(contour_gt), 2)
     val = np.zeros(dim_val)
     for i in range(len(contour_gt)-1):
-        val[i, 0] = float(contour_gt[i][0])
-        val[i, 1] = float(contour_gt[i][1])
+        val[i, 0], val[i, 1] = float(contour_gt[i][0]), float(contour_gt[i][1])
 
     return val
 
@@ -59,12 +54,11 @@ def load_borders(borders_path):
     right_b = right_b[0, 0] - 1
     left_b = mat_b['border_left']
     left_b = left_b[0, 0] - 1
-
     # --- we increase the size of the borders if they are not big enough (128 is the width of the patch)
-    if right_b-left_b<128:
-        k=round((right_b-left_b)/2)+1
-        right_b=right_b+k
-        left_b=left_b-k
+    if right_b-left_b < 128:
+        k = round((right_b-left_b)/2)+1
+        right_b = right_b+k
+        left_b = left_b-k
 
     return {"leftBorder": left_b,
             "rightBorder": right_b}
@@ -72,7 +66,6 @@ def load_borders(borders_path):
 # ----------------------------------------------------------------------------------------------------------------------
 def load_FW_prediction(path: str):
     """ Load the far wall prediction. """
-
 
     predN = open(path, "r")
     prediction = predN.readlines()
@@ -120,8 +113,7 @@ class annotationClassIMC():
         """ Computes the position of the LI and MA interfaces according to the predicted mask. """
 
         # --- the algorithm starts from the left to the right
-        x_start = self.borders['leftBorder']
-        x_end = self.borders['rightBorder']
+        x_start, x_end = self.borders['leftBorder'], self.borders['rightBorder']
         # --- dimension of the mask
         dim = previous_mask.shape
         # --- we extract the biggest connected region
@@ -149,20 +141,16 @@ class annotationClassIMC():
             LI_contour_ = get_fw_from_gt(os.path.join(p.PSEG_REF, patient_name.split('.tiff')[0] + "-LI.txt"))
             MA_contour_ = get_fw_from_gt(os.path.join(p.PSEG_REF, patient_name.split('.tiff')[0] + "-MA.txt"))
 
-            LI = np.zeros(img.shape[1])
-            MA = np.zeros(img.shape[1])
+            LI, MA = np.zeros(img.shape[1]), np.zeros(img.shape[1])
             for i in range(LI_contour_.shape[1]):
                 LI[int(LI_contour_[0, i])-1] = LI_contour_[1, i]
             for i in range(MA_contour_.shape[1]):
                 MA[int(MA_contour_[0, i])-1] = MA_contour_[1, i]
-
             borders_ROI = [int(max(MA_contour_[0, 0], LI_contour_[0, 0])), int(min(MA_contour_[0, -1]-1, LI_contour_[0, -1]))]
             borders_seg = borders_ROI
             fw_approx = np.zeros(img.shape[1])
-
             for i in range(borders_seg[0], borders_seg[1]):
                 fw_approx[i] = (MA[i] + LI[i])/2
-
             # --- check if roi is width enought to segment the artery, else we extend the median axis using the same value
             recquired_width = p.ROI_WIDTH
             roi_width = (borders_seg[1] - borders_seg[0]) * CF_org
@@ -184,19 +172,13 @@ class annotationClassIMC():
             borders_ROI = [non_zeros_idx[0], non_zeros_idx[-1]]
             borders_seg = borders_ROI
             fw_approx = fw_approx[:, 1]
-
         elif p.FW_INITIALIZATION == 'GUI':
             img = np.array(img)
             I_ = img
             image = np.zeros(img.shape + (3,))
-
-            image[:, :, 0] = I_.copy()
-            image[:, :, 1] = I_.copy()
-            image[:, :, 2] = I_.copy()
-
+            image[:, :, 0], image[:, :, 1], image[:, :, 2] = I_.copy(), I_.copy(), I_.copy()
             coordinateStore = cv2Annotation("Far wall manual detection", image.astype(np.uint8))
             pos = coordinateStore.getpt()
-
             borders_seg = pos[3]
             borders_ROI = pos[2]
             fw_approx = np.zeros(I_.shape[1])
@@ -208,9 +190,7 @@ class annotationClassIMC():
     def IMT(self):
         """ Compute the IMT. """
 
-        xLeft = self.borders['leftBorder']
-        xRight = self.borders['rightBorder']
-
+        xLeft, xRight = self.borders['leftBorder'], self.borders['rightBorder']
         IMT = self.map_annotation[:, xLeft:xRight, 1] - self.map_annotation[:, xLeft:xRight, 0]
 
         return np.mean(IMT, axis=1), np.median(IMT, axis=1)
@@ -230,17 +210,12 @@ class annotationClassIMC():
         """ Compute the y position on which the current patch will be centered. """
 
         xRight = xLeft + width
-
         # --- we load the position of the LI and MA interfaces
-        posLI = map[:, 0][xLeft:xRight]
-        posMA = map[:, 1][xLeft:xRight]
-
+        posLI, posMA = map[:, 0][xLeft:xRight], map[:, 1][xLeft:xRight]
         # --- we compute the mean value and retrieve the half height of a patch
         concatenation = np.concatenate((posMA, posLI))
         y_mean = round(np.mean(concatenation) - height / 2)
-        y_max = round(np.max(concatenation) - height / 2)
-        y_min = round(np.min(concatenation) - height / 2)
-
+        y_max, y_min = round(np.max(concatenation) - height / 2), round(np.min(concatenation) - height / 2)
         # --- we check if the value is greater than zero to avoid problems
         max_height = map.shape[1] - 1
         if y_mean < 0 and y_mean > max_height or y_min < 0 or y_max < 0:
@@ -260,7 +235,6 @@ class annotationClassIMC():
             # --- if condition while a boundary is found
             condition = True
             while condition == True:
-
                 # --- the boundary is found, while we change the column
                 if (j < dim[0] and previous_mask[j, i] == 1):
                     map_annotation[i, 0] = j + offset
@@ -269,9 +243,7 @@ class annotationClassIMC():
                 elif j == limit:
                     map_annotation[i, 0] = map_annotation[i - 1, 0]
                     condition = False
-
                 j += 1
-
             # --- we initialize the new neighbours windows as well as the new limit value (+1 to compensate j+=1)
             j -= neighbours + 1
             limit = j + 2 * neighbours
@@ -287,7 +259,6 @@ class annotationClassIMC():
             # --- if condition while a boundary is found
             condition = True
             while condition == True:
-
                 # --- the boundary is found, while we change the column
                 if (j < dim[0] and previous_mask[j, i] == 1):
                     map_annotation[i, 0] = j + offset
@@ -297,9 +268,7 @@ class annotationClassIMC():
                     map_annotation[i, 0] = map_annotation[i + 1, 0]
                     condition = False
                     # previous_mask[j, i] = 100 # for debug
-
                 j += 1
-
             # --- we initialize the new neighbours windows as well as the new limit value (+1 to compensate j+=1)
             j -= neighbours + 1
             limit = j + 2 * neighbours
@@ -313,20 +282,15 @@ class annotationClassIMC():
 
         for i in range(seed[1] + 1, x_end):
             condition = True
-
             while condition == True:
-
                 if (j < dim[0] and previous_mask[dim[0] - 1 - j, i] == 1):
                     map_annotation[i, 1] = dim[0] - 1 - j + offset
                     condition = False
-
                 elif j == limit:
                     map_annotation[i, 1] = map_annotation[i - 1, 1]
                     condition = False
                     # previous_mask[j, i] = 100
-
                 j += 1
-
             j -= neighbours + 1
             limit = j + 2 * neighbours
 
@@ -339,18 +303,13 @@ class annotationClassIMC():
 
         for i in range(seed[1], x_start - 1, -1):
             condition = True
-
             while condition == True:
-
                 if (j < dim[0] and previous_mask[dim[0] - 1 - j, i] == 1):
                     map_annotation[i, 1] = dim[0] - 1 - j + offset
                     condition = False
-
                 elif j == limit:
                     map_annotation[i, 1] = map_annotation[i + 1, 1]
                     condition = False
-
                 j += 1
-
             j -= neighbours + 1
             limit = j + 2 * neighbours

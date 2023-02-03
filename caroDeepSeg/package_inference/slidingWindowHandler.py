@@ -56,24 +56,19 @@ class slidingWindowHandler():
             y_pos_list = []
             median = (self.annotationClass.map_annotation[frame_ID, :, 0] + self.annotationClass.map_annotation[frame_ID, :, 1]) / 2
             vertical_scanning = True
-
             # --- condition give the information if the frame is segmented
             while (condition == True):
-
                 if (self.step == 0):  # initialization step
                     x = self.initialization_step()
                     overlay_ = self.overlay
-
                 median_min = np.min(median[x:x+self.patch_width])
                 median_max = np.max(median[x:x+self.patch_width])
-
                 y_mean, _, _ = self.annotationClass.yPosition(
                     xLeft=x,
                     width=self.patch_width,
                     height=self.patch_height,
                     map=self.annotationClass.map_annotation[frame_ID, ])
                 y_pos = y_mean
-
                 # --- by default, we take three patches for a given position x. If this is not enough, the number of patches is dynamically adjusted.
                 if 2*self.patch_height > median_max-median_min:
                     patch = self.extract_patch(x, y_pos, image = self.sequence[frame_ID,])
@@ -83,7 +78,6 @@ class slidingWindowHandler():
                         "Step": self.step,
                         "Overlay": overlay_,
                         "(x, y)": (x, y_pos)})
-
                     y_pos_list.append(self.predictionClass.patches[-1]["(x, y)"][-1])
                     if y_mean - 128 > 0:
                         y_pos = y_mean + 128
@@ -105,47 +99,36 @@ class slidingWindowHandler():
                              "Overlay": overlay_,
                              "(x, y)": (x, y_pos)})
                         y_pos_list.append(self.predictionClass.patches[-1]["(x, y)"][-1])
-
                 # --- if the condition is not verified, the artery wall is not fully considered and a vertical scan is applied
                 else:
                     val_incr = 64
                     y_inc = median_min - 256
                     while(vertical_scanning):
-
                         if y_inc + val_incr > median_max - val_incr:
                             vertical_scanning=False
-
                         self.predictionClass.patches.append(
                             {"patch": self.extract_patch(x, round(y_inc), image=self.sequence[frame_ID,]),
                              "frameID": frame_ID,
                              "Step": self.step,
                              "Overlay": overlay_,
                              "(x, y)": (x, round(y_inc))})
-
                         y_inc+=val_incr
                         y_pos_list.append(self.predictionClass.patches[-1]["(x, y)"][-1])
-
                 self.step += 1
                 vertical_scanning = True
-
                 if ((x + self.patch_width) == self.annotationClass.borders_ROI['rightBorder']):  # if we reach the last position (on the right)
                     condition = False
-
                 elif (x + self.overlay + self.patch_width) < (self.annotationClass.borders_ROI['rightBorder']):  # we move the patch from the left to the right with an overlay
                     x += self.overlay
                     overlay_ = self.overlay
-
                 else:
                     tmp = x + self.patch_width - self.annotationClass.borders_ROI['rightBorder']  # we adjust to reach the right border
                     x -= tmp
                     overlay_ = tmp
-
             condition = True
-
             min_y = min(y_pos_list)
             max_y = max(y_pos_list)
             self.predictionClass.prediction_masks(id=frame_ID, pos={"min": min_y, "max": max_y+self.patch_height})
-
             mask_ = self.predictionClass.map_prediction[str(frame_ID)]["prediction"]
             t = time.time()
             mask_tmp = self.annotationClass.update_annotation(previous_mask=mask_,
@@ -219,7 +202,6 @@ class sequenceClassFW():
                                                  overlay=p.OVERLAPPING,
                                                  patient_name=patient_name,
                                                  p=p)
-
         self.predictionClassFW = predictionClassFW(dimensions=self.sequence.shape,
                                                    p=p,
                                                    img=cv2.resize(self.first_frame.astype(np.float32), (self.first_frame.shape[1], 512), interpolation=cv2.INTER_LINEAR))
@@ -234,22 +216,17 @@ class sequenceClassFW():
         dim = img_tmp.shape
         # --- we first reshape the image to match with the network
         img_tmp = cv2.resize(img_tmp.astype(np.float32), (dim[1], 512), interpolation=cv2.INTER_LINEAR)
-
         # ---  condition give the information if the segmentation of a frame is over
         condition = True
-
         # --- we initialize these variables at the beginning of the image
         self.current_frame = 0
         self.predictionClassFW.patches = []
         self.step = 0
-
         while (condition == True):
-
             # --- initialization step
             if (self.step == 0):
                 x = self.annotationClass.borders_ROI['leftBorder']
                 overlay_ = self.overlay
-
             # --- in self.predictionClass.patches are stored the patches at different (x,y) coordinates
             self.predictionClassFW.patches.append({"patch": self.extract_patch_FW(x, img_tmp),
                                                    "frameID": self.current_frame,
@@ -257,7 +234,6 @@ class sequenceClassFW():
                                                    "Overlay": overlay_,
                                                    "(x)": (x)})
             self.step += 1
-
             # --- if we reach exactly the last position (on the right)
             if ((x + self.patch_width) == self.annotationClass.borders_ROI['rightBorder']):
                 condition = False
@@ -265,13 +241,11 @@ class sequenceClassFW():
             elif (x + self.overlay + self.patch_width) < (self.annotationClass.borders_ROI['rightBorder']):
                 x += self.overlay
                 overlay_ = self.overlay
-
             # --- we adjust the last patch to reach the right border
             else:
                 tmp = x + self.patch_width - self.annotationClass.borders_ROI['rightBorder']
                 x -= tmp
                 overlay_ = tmp
-
         # --- we segment the region under the far wall
         self.predictionClassFW.prediction_masks()
         self.get_far_wall(self.predictionClassFW.map_prediction, p)
