@@ -19,7 +19,7 @@ def check_dim(res, patient):
 # ----------------------------------------------------------------------------------------------------------------------
 class dataHandler(motionDataloader):
 
-
+    # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, param, set):
         super(dataHandler, self).__init__(param)
         fsplit = os.listdir(param.PSPLIT)
@@ -55,7 +55,7 @@ class dataHandler(motionDataloader):
                     self.CF_list.append([pCF])
 
          # --- reduce the amount of data for faster training -> for debugging purpose only
-        # self.image_list = self.image_list[::100]
-        # self.mask_list = self.mask_list[::100]
-        # self.flow_list = self.flow_list[::100]
-        # self.CF_list = self.CF_list[::100]
+        self.image_list = self.image_list[::100]
+        self.mask_list = self.mask_list[::100]
+        self.flow_list = self.flow_list[::100]
+        self.CF_list = self.CF_list[::100]

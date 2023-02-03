@@ -3,7 +3,7 @@
 @Contact :   <nolann.laine@outlook.fr>
 '''
 
-from package_parameters.parameters_training import Parameters
+from package_parameters.parameters_training_GMA import Parameters
 import package_utils.fold_handler as fh
 import os
 from shutil import copyfile
@@ -11,13 +11,13 @@ from shutil import copyfile
 def setParameters():
 
     p = Parameters(
-        MODEL_NAME                  = 'gma',                                                                    # chose gma or raft
-        PDATA                       = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/_DATASET_3MM_00',         # PATH TO LOAD DATA
-        PRES                        = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/TRAINING_001',            # PATH TO SAVE TRAINING RESULTS
-        PSPLIT                      = '/home/laine/Documents/PROJECTS_IO/CARODEEPFLOW/SPLIT_DATA',
-        LEARNING_RATE               = 0.0001,
-        BATCH_SIZE                  = 2,                                                                        # size of a batch
-        NB_EPOCH                    = 80,
+        MODEL_NAME                  = 'gma',                                                                            # chose gma or raft
+        PDATA = '/run/media/laine/DISK/PROJECTS_IO/MOTION/IN_SILICO/REAL_DATA/database_training_IMAGENET',                # PATH TO LOAD DATA
+        PRES = '/run/media/laine/DISK/PROJECTS_IO/MOTION/NETWORK_TRAINING',                                                                           # PATH TO SAVE TRAINING RESULTS
+        PSPLIT = '/run/media/laine/DISK/PROJECTS_IO/MOTION/IN_SILICO/REAL_DATA/SPLIDATA',
+        LEARNING_RATE=0.0001,
+        BATCH_SIZE                  = 1,                                                                        # size of a batch
+        NB_EPOCH                    = 500,
         VALIDATION                  = True,
         DROPOUT                     = 0.0,                                                                      # dropout during training
         GAMMA                       = 0.8,                                                                      # see later what it is
@@ -26,24 +26,26 @@ def setParameters():
         CORRELATION_RADIUS          = 4,                                                                        # see later what it is
         NB_ITERATION                = 12,
         ALTERNATE_COORDINATE        = False,                                                                    # see later what it is
-        WORKERS                     = 4,
+        WORKERS                     = 0,
         POSITION_ONLY               = False,
         POSITION_AND_CONTENT        = False,
-        NUM_HEAD                    = 4,
+        NUM_HEAD                    = 8,
+        CONTEXT_DIM                 = 128,
+        HIDDEN_DIM                  = 128,
         ADVENTICIA_DIM              = 1,                                                                        # part of adventitia in mm
         USER                        = 'LAINE',
-        EXPNAME                     = 'TEST_00',
+        EXPNAME                     = 'GMA_TRAINING_TEST',
         DEVICE                      = 'cuda',                                                                   # cuda/cpu
-        RESTORE_CHECKPOINT          = True,
-        FEATURES                    = 'split',                                                                 # shared or split
-        # --- If feature is split, then chose parameters for Unet
+        RESTORE_CHECKPOINT          = False,                                                      # shared or split
+        SYNTHETIC_DATASET           = True,
         KERNEL_SIZE                 = (3, 3),
         PADDING                     = (1, 1),
         USE_BIAS                    = True,
+        USE_WANDB=False,  # use W&B
         NGF                         = 32,  # number of input features of the Unet
         NB_LAYERS                   = 4)
 
-    pparam = os.path.join(p.PRES, 'backup_parameters')
+    pparam = os.path.join(p.PRES, p.EXPNAME, 'backup_parameters')
     fh.create_dir(pparam)
 
     # --- Print all attributes in the console

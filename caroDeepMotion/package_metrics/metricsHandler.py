@@ -58,7 +58,7 @@ class evaluation():
 
             self.epe += [{'epe abs': np.mean(epe_abs)*1e6, 'epe rel': np.mean(epe_rel)*1e2, 'Method': self.nmethod}]
             self.index += [patient]
-            debug = True
+            debug = False
             if debug:
                 plt.figure(1)
                 plt.subplot2grid((1, 3), (0, 0), colspan=1)

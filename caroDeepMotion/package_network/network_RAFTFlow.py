@@ -68,10 +68,7 @@ class RAFT_NetFlow(nn.Module):
         fmap1 = fmap1.float()
         fmap2 = fmap2.float()
 
-        if self.p.ALTERNATE_COORDINATE:
-            corr_fn = correlation.AlternateCorrBlock(fmap1, fmap2, radius=self.p.CORRELATION_RADIUS)
-        else:
-            corr_fn = correlation.CorrBlock(fmap1, fmap2, radius=self.p.CORRELATION_RADIUS)
+        corr_fn = correlation.CorrBlock(fmap1, fmap2, radius=self.p.CORRELATION_RADIUS)
 
         # --- context network
         cnet, _ = self.cnet(I1)

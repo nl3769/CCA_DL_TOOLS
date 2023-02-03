@@ -35,51 +35,53 @@ class Parameters:
         KERNEL_SIZE,
         PADDING,
         USE_BIAS,
+        USE_WANDB,
         NGF,
         NB_LAYERS
 ):
         
-        self.MODEL_NAME                         = MODEL_NAME
-        self.PDATA                              = PDATA
-        self.PRES                               = PRES
-        self.PSPLIT                             = PSPLIT
-        self.PDATA                              = PDATA
-        self.PRES                               = PRES
-        self.PSPLIT                             = PSPLIT
-        self.LEARNING_RATE                      = LEARNING_RATE
-        self.BATCH_SIZE                         = BATCH_SIZE
-        self.NB_EPOCH                           = NB_EPOCH
-        self.VALIDATION                         = VALIDATION
-        self.DROPOUT                            = DROPOUT
-        self.GAMMA                              = GAMMA
-        self.ADD_NOISE                          = ADD_NOISE
-        self.CORRELATION_LEVEL                  = CORRELATION_LEVEL
-        self.CORRELATION_RADIUS                 = CORRELATION_RADIUS
-        self.NB_ITERATION                       = NB_ITERATION
-        self.ALTERNATE_COORDINATE               = ALTERNATE_COORDINATE
-        self.WORKERS                            = WORKERS
-        self.POSITION_ONLY                      = POSITION_ONLY
-        self.POSITION_AND_CONTENT               = POSITION_AND_CONTENT
-        self.NUM_HEAD                           = NUM_HEAD
-        self.CONTEXT_DIM                        = CONTEXT_DIM
-        self.HIDDEN_DIM                         = HIDDEN_DIM
-        self.ADVENTICIA_DIM                     = ADVENTICIA_DIM
-        self.USER                               = USER
-        self.EXPNAME                            = EXPNAME
-        self.DEVICE                             = DEVICE
-        self.RESTORE_CHECKPOINT                 = RESTORE_CHECKPOINT
-        self.SYNTHETIC_DATASET                  = SYNTHETIC_DATASET
-        self.KERNEL_SIZE                        = KERNEL_SIZE
-        self.PADDING                            = PADDING
-        self.USE_BIAS                           = USE_BIAS
-        self.NGF                                = NGF
-        self.NB_LAYERS                          = NB_LAYERS
-        self.PATH_RANDOM_PRED_TRN               = os.path.join(self.PRES, 'training_pred')
-        self.PATH_PRINT_MODEL                   = os.path.join(self.PRES, 'print_model')
-        self.PATH_SAVE_MODEL                    = os.path.join(self.PRES, 'model')
-        self.PATH_MODEL_HISTORY                 = os.path.join(self.PRES, 'training_history')
-        self.PATH_SAVE_FIGURE                   = os.path.join(self.PRES, 'training_figure')
-        self.PATH_SAVE_PRED_TRAINING            = os.path.join(self.PRES, 'training_pred')
+        self.MODEL_NAME = MODEL_NAME
+        self.PDATA = PDATA
+        self.PRES =  os.path.join(PRES, EXPNAME)
+        self.PSPLIT = PSPLIT
+        self.PDATA = PDATA
+        self.PSPLIT = PSPLIT
+        self.LEARNING_RATE = LEARNING_RATE
+        self.BATCH_SIZE = BATCH_SIZE
+        self.NB_EPOCH = NB_EPOCH
+        self.VALIDATION = VALIDATION
+        self.DROPOUT = DROPOUT
+        self.GAMMA = GAMMA
+        self.ADD_NOISE = ADD_NOISE
+        self.CORRELATION_LEVEL = CORRELATION_LEVEL
+        self.CORRELATION_RADIUS = CORRELATION_RADIUS
+        self.NB_ITERATION = NB_ITERATION
+        self.ALTERNATE_COORDINATE = ALTERNATE_COORDINATE
+        self.WORKERS = WORKERS
+        self.POSITION_ONLY = POSITION_ONLY
+        self.POSITION_AND_CONTENT = POSITION_AND_CONTENT
+        self.NUM_HEAD = NUM_HEAD
+        self.CONTEXT_DIM = CONTEXT_DIM
+        self.HIDDEN_DIM = HIDDEN_DIM
+        self.ADVENTICIA_DIM = ADVENTICIA_DIM
+        self.USER = USER
+        self.EXPNAME = EXPNAME
+        self.DEVICE = DEVICE
+        self.RESTORE_CHECKPOINT = RESTORE_CHECKPOINT
+        self.SYNTHETIC_DATASET = SYNTHETIC_DATASET
+        self.KERNEL_SIZE = KERNEL_SIZE
+        self.PADDING = PADDING
+        self.USE_BIAS = USE_BIAS
+        self.USE_WANDB = USE_WANDB
+        self.NGF = NGF
+        self.NB_LAYERS = NB_LAYERS
+
+        self.PATH_RANDOM_PRED_TRN = os.path.join(self.PRES, 'training_pred')
+        self.PATH_PRINT_MODEL = os.path.join(self.PRES, 'print_model')
+        self.PATH_SAVE_MODEL = os.path.join(self.PRES, 'model')
+        self.PATH_MODEL_HISTORY = os.path.join(self.PRES, 'training_history')
+        self.PATH_SAVE_FIGURE = os.path.join(self.PRES, 'training_figure')
+        self.PATH_SAVE_PRED_TRAINING = os.path.join(self.PRES, 'training_pred')
 
         # --- create directories
         fh.create_dir(self.PATH_RANDOM_PRED_TRN)
