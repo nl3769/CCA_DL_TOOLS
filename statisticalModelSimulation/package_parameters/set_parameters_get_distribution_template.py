@@ -13,11 +13,11 @@ import package_utils.fold_handler                   as fh
 def setParameters():
 
     p = Parameters(
-        PIMAGES = "/home/laine/Documents/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images",
+        PIMAGES="/home/laine/Documents/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images",
         PCF="/home/laine/Documents/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/CF",
         PLUMEN = "/home/laine/Documents/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/LUMEN_POSITION",
-        PINTERFACES = "/home/laine/Documents/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/SEG",
-        PRES = "/home/laine/Documents/PROJECTS_IO/STATISTICAL_MODEL_SIMULATION",
+        PINTERFACES="/home/laine/Documents/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/SEG",
+        PRES="/home/laine/Documents/PROJECTS_IO/STATISTICAL_MODEL_SIMULATION",
 
     )
 

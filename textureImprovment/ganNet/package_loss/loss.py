@@ -16,8 +16,8 @@ class lossClass():
         elif p.LOSS == 'histo_loss':
             self.criterion_pixelwise = lambda org, fake_org: self.compute_histo_loss(org, fake_org)
         
-        self.lambda_GAN = p.lambda_GAN          # Weights criterion_GAN in the generator loss
-        self.lambda_pixel = p.lambda_pixel
+        self.lambda_GAN = p.lambda_GAN          # Weight generator loss
+        self.lambda_pixel = p.lambda_pixel      # Weight discriminator loss
 
     # ------------------------------------------------------------------------------------------------------------------
     def compute_L1(self, org, fake_org):

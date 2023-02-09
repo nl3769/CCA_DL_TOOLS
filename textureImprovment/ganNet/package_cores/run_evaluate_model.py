@@ -17,7 +17,6 @@ def evaluation(set, p):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print('device: ', device)
-
     # --- load model
     _, model = load_model(p)
     path = get_path_model(p.PATH_SAVE_MODEL)
@@ -40,26 +39,20 @@ def evaluation(set, p):
         # --- load data
         org, sim = org.to(device), sim.to(device)
         name = fname[0]
-
         # --- get prediction
         fake_org = model(sim)
-
         # --- compute metrics
         metric_org, metric_pred = compute_EPE(org, sim, fake_org)
         PSNR_org_sim, PSNR_org_fakeOrg = compute_PSNR(org, sim, fake_org, p.IMAGE_NORMALIZATION[1])
-
         test_metrics['EPE_org_vs_sim'].append(metric_org)
         test_metrics['EPE_org_vs_fakeOrg'].append(metric_pred)
         test_metrics['PSNR_org_vs_sim'].append(PSNR_org_sim)
         test_metrics['PSNR_org_vs_fakeOrg'].append(PSNR_org_fakeOrg)
         test_metrics['name'].append(name)
         save_pred(org, fake_org, sim, p.PATH_PRED_EVALUATION, name, set)
-
     df = pd.DataFrame(data=test_metrics)
     df.to_csv(os.path.join(p.PATH_SAVE_CVS, 'res_evaluation_' + set + '.csv'))
-
     save_metrics(p.PATH_SAVE_CVS, set, test_metrics)
-
     return \
         np.mean(np.array(test_metrics['EPE_org_vs_sim'])), \
         np.std(np.array(test_metrics['EPE_org_vs_sim'])), \
@@ -75,7 +68,6 @@ def save_metrics(pres, set, metric):
             values = np.array(metric[key])
             mean = np.mean(values)
             std = np.std(values)
-
             f.write(key + 'n')
             f.write('mean: ' + str(mean) + '\n')
             f.write('std: ' + str(std) + '\n')
@@ -86,12 +78,12 @@ def save_metrics(pres, set, metric):
 if __name__ == "__main__":
     # --- get project parameters
     my_parser = argparse.ArgumentParser(description='Name of set_parameters_*.py')
-    my_parser.add_argument('--Parameters', '-param', required=True,
-                           help='List of parameters required to execute the code.')
+    my_parser.add_argument('--Parameters', '-param', required=True, help='List of parameters required to execute the code.')
     arg = vars(my_parser.parse_args())
     param = importlib.import_module('package_parameters.' + arg['Parameters'].split('.')[0])
     p = param.setParameters()
-
     evaluation('testing', p)
     evaluation('validation', p)
     evaluation('training', p)
+
+# ----------------------------------------------------------------------------------------------------------------------

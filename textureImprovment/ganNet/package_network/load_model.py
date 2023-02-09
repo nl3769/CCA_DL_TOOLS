@@ -13,39 +13,39 @@ def load_model(p):
     if p.MODEL_NAME == 'unet':
         discriminator = Discriminator()
         generator = Unet(
-            input_nc            = 1,
-            output_nc           = 1,
-            n_layers            = p.NB_LAYERS,
-            ngf                 = p.NGF,
-            kernel_size         = p.KERNEL_SIZE,
-            padding             = p.PADDING,
-            use_bias            = p.USE_BIAS,
-            output_activation   = p.OUTPUT_ACTIVATION,
-            upconv              = p.UPCONV
+            input_nc = 1,
+            output_nc = 1,
+            n_layers = p.NB_LAYERS,
+            ngf = p.NGF,
+            kernel_size = p.KERNEL_SIZE,
+            padding = p.PADDING,
+            use_bias = p.USE_BIAS,
+            output_activation = p.OUTPUT_ACTIVATION,
+            upconv = p.UPCONV
             )
 
     if p.MODEL_NAME == 'dilatedUnet':
         discriminator = Discriminator()
         generator = dilatedUnet(
-            input_nc            = 1,
-            output_nc           = 1,
-            n_layers            = p.NB_LAYERS,
-            ngf                 = p.NGF,
-            kernel_size         = p.KERNEL_SIZE,
-            padding             = p.PADDING,
-            use_bias            = p.USE_BIAS,
-            output_activation   = p.OUTPUT_ACTIVATION,
-            upconv              = p.UPCONV
+            input_nc = 1,
+            output_nc = 1,
+            n_layers = p.NB_LAYERS,
+            ngf = p.NGF,
+            kernel_size = p.KERNEL_SIZE,
+            padding = p.PADDING,
+            use_bias = p.USE_BIAS,
+            output_activation = p.OUTPUT_ACTIVATION,
+            upconv = p.UPCONV
             )
 
     if p.MODEL_NAME == 'SRGan':
         discriminator = Discriminator()
         generator = SRGan(
-            input_nc    = 1,
-            output_nc   = 1,
+            input_nc = 1,
+            output_nc = 1,
             kernel_size = p.KERNEL_SIZE,
-            padding     = p.PADDING,
-            use_bias    = p.USE_BIAS,
+            padding = p.PADDING,
+            use_bias = p.USE_BIAS,
             )
 
     if p.RESTORE_CHECKPOINT:
