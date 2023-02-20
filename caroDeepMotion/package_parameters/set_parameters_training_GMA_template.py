@@ -20,12 +20,12 @@ def setParameters():
         NB_EPOCH                    = 500,
         VALIDATION                  = True,
         DROPOUT                     = 0.0,                                                                      # dropout during training
-        GAMMA                       = 0.8,                                                                      # see later what it is
-        ADD_NOISE                   = False,                                                                    # see later what it is
-        CORRELATION_LEVEL           = 4,                                                                        # see later what it is
-        CORRELATION_RADIUS          = 4,                                                                        # see later what it is
+        GAMMA                       = 0.8,
+        ADD_NOISE                   = False,
+        CORRELATION_LEVEL           = 4,
+        CORRELATION_RADIUS          = 4,
         NB_ITERATION                = 12,
-        ALTERNATE_COORDINATE        = False,                                                                    # see later what it is
+        ALTERNATE_COORDINATE        = False,
         WORKERS                     = 0,
         POSITION_ONLY               = False,
         POSITION_AND_CONTENT        = False,
@@ -36,13 +36,13 @@ def setParameters():
         USER                        = 'LAINE',
         EXPNAME                     = 'GMA_TRAINING_TEST',
         DEVICE                      = 'cuda',                                                                   # cuda/cpu
-        RESTORE_CHECKPOINT          = False,                                                      # shared or split
+        RESTORE_CHECKPOINT          = False,                                                                    # shared or split
         SYNTHETIC_DATASET           = True,
         KERNEL_SIZE                 = (3, 3),
         PADDING                     = (1, 1),
         USE_BIAS                    = True,
-        USE_WANDB=False,  # use W&B
-        NGF                         = 32,  # number of input features of the Unet
+        USE_WANDB=False,                                                                                        # use W&B
+        NGF                         = 32,                                                                       # number of input features of the Unet
         NB_LAYERS                   = 4)
 
     pparam = os.path.join(p.PRES, p.EXPNAME, 'backup_parameters')

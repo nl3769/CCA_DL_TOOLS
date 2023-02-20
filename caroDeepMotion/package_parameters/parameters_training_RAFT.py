@@ -33,17 +33,17 @@ class Parameters:
         USE_BIAS
 ):
         
-        self.MODEL_NAME =  MODEL_NAME
-        self.PDATA =  PDATA
-        self.PRES =  os.path.join(PRES, EXPNAME)
-        self.PSPLIT =  PSPLIT
-        self.MAGNITUDE_MOTION =  MAGNITUDE_MOTION
-        self.LEARNING_RATE =  LEARNING_RATE
-        self.BATCH_SIZE =  BATCH_SIZE
-        self.NB_EPOCH =  NB_EPOCH
-        self.VALIDATION =  VALIDATION
-        self.DROPOUT =  DROPOUT
-        self.GAMMA =  GAMMA
+        self.MODEL_NAME = MODEL_NAME
+        self.PDATA = PDATA
+        self.PRES = os.path.join(PRES, EXPNAME)
+        self.PSPLIT = PSPLIT
+        self.MAGNITUDE_MOTION = MAGNITUDE_MOTION
+        self.LEARNING_RATE = LEARNING_RATE
+        self.BATCH_SIZE = BATCH_SIZE
+        self.NB_EPOCH = NB_EPOCH
+        self.VALIDATION = VALIDATION
+        self.DROPOUT = DROPOUT
+        self.GAMMA = GAMMA
         self.ADD_NOISE = ADD_NOISE
         self.CORRELATION_LEVEL = CORRELATION_LEVEL
         self.CORRELATION_RADIUS = CORRELATION_RADIUS

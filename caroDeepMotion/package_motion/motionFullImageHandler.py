@@ -49,25 +49,21 @@ class motionFullImgHandler():
 
         # --- set seq ID to save results
         for id in range(1, nb_frame):
-
             if id < 10:
                 p0 = pname + "_00" + str(id)
             elif id < 100:
                 p0 = pname + "_0" + str(id)
             else:
                 p0 = pname + "_" + str(id)
-
             if id + 1 < 10:
                 p1 = pname + "_00" + str(id+1)
             elif id + 1 < 100:
                 p1 = pname + "_0" + str(id + 1)
             else:
                 p1 = pname + "_" + str(id + 1)
-
             pairs.append([p0, p1])
 
         for id in range(0, (nb_frame-1)):
-
             # --- get size of the original image
             I1 = seq[..., id].copy()
             I2 = seq[..., id + 1].copy()
@@ -114,18 +110,17 @@ class motionFullImgHandler():
             I_ = data['I1'][id].copy()
             I_ -= np.min(I_)
             I_ /= np.max(I_)
-            data['I1'][id] = I_
+            data['I1'][id] = I_.copy()
 
         for id in range(len(data['I2'])):
             I_ = data['I2'][id].copy()
             I_ -= np.min(I_)
             I_ /= np.max(I_)
-            data['I2'][id] = I_
+            data['I2'][id] = I_.copy()
 
         return data
     # ------------------------------------------------------------------------------------------------------------------
     def model_inference(self, data):
-
 
         I1_patches = data['I1']
         I2_patches = data['I2']
