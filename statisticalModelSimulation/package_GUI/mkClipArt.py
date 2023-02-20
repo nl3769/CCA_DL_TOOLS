@@ -47,11 +47,9 @@ class mkClipArt:
     def select_points(self, event, x: int, y: int, flags: int, param):
 
         if flags == cv2.EVENT_FLAG_CTRLKEY + cv2.EVENT_FLAG_LBUTTON:
-
             self.img = self.org_img.copy()
             self.pts_bottom, self.pts_top = [], []
             self.top_val, self.bottom_val = [], []
-
         elif event == cv2.EVENT_LBUTTONUP:
             self.pos[self.keys_interfaces[self.incr]].append([x, y])
             cv2.circle(self.current_img,
@@ -59,16 +57,11 @@ class mkClipArt:
                        self.radius_circle,
                        self.color_cirle_top,
                        self.thickness_circle)
-
             if len(self.pos[self.keys_interfaces[self.incr]]) > 2:
                 z_new = update_val(self.pos[self.keys_interfaces[self.incr]], self.x_new)
-
-                # z_new = get_interp_values(x_pts, z_pts, x_new)
                 self.interfaces[self.keys_interfaces[self.incr]] = z_new
                 self.add_interfaces()
-
         if event == cv2.EVENT_MBUTTONUP:
-
             if len(self.pos[self.keys_interfaces[self.incr]]) > 0:
                 self.pos[self.keys_interfaces[self.incr]].pop(-1)
             elif self.incr > 0:
@@ -77,29 +70,22 @@ class mkClipArt:
                     self.pos[self.keys_interfaces[self.incr]].pop(-1)
             else:
                 raise Exception("can't go back")
-
             if len(self.pos[self.keys_interfaces[self.incr]]) < 2:
                 self.pos[self.keys_interfaces[self.incr]] = []
                 self.interfaces[self.keys_interfaces[self.incr]] = []
             else:
                 z_new = update_val(self.pos[self.keys_interfaces[self.incr]], self.x_new)
                 self.interfaces[self.keys_interfaces[self.incr]] = z_new
-
             self.add_interfaces()
-
         if event == cv2.EVENT_MOUSEWHEEL:
             self.incr += 1
             if self.incr == 1:
                 self.interfaces[self.keys_interfaces[self.incr]] = self.interfaces[self.keys_interfaces[self.incr-1]] + self.nb_pixel
                 self.pos[self.keys_interfaces[self.incr]] = [[key[0], key[1] + self.nb_pixel] for key in self.pos[self.keys_interfaces[self.incr-1]]]
-
-
             elif self.incr == 3:
                 self.interfaces[self.keys_interfaces[self.incr]] = self.interfaces[self.keys_interfaces[self.incr-1]] - self.nb_pixel
                 self.pos[self.keys_interfaces[self.incr]] = [[key[0], key[1] - self.nb_pixel] for key in self.pos[self.keys_interfaces[self.incr-1]]]
-
             self.add_interfaces()
-
         if self.incr == 4:
             self.stop = True
 
@@ -107,7 +93,6 @@ class mkClipArt:
     def add_interfaces(self):
 
         self.current_img = self.org_img.copy()
-
         for key in self.interfaces.keys():
             if len(self.interfaces[key]) > 2:
                 for x, z in enumerate(self.interfaces[key]):
@@ -121,11 +106,9 @@ class mkClipArt:
         cv2.imshow(self.window_name, self.current_img)
         cv2.setMouseCallback(self.window_name, self.select_points)
         self.stop = False
-
         while (not self.stop):
             cv2.imshow(self.window_name, self.current_img)
             k = cv2.waitKey(2)
-
         cv2.destroyWindow(self.window_name)
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -134,26 +117,19 @@ class mkClipArt:
         k_factor = 3
         x_grid = np.linspace(0, self.org_img.shape[1] * self.CF, self.org_img.shape[1] * k_factor)
         z_grid = np.linspace(0, self.org_img.shape[0] * self.CF, self.org_img.shape[0] * k_factor)
-
         f = interp1d(np.linspace(0, self.org_img.shape[1] * self.CF, self.org_img.shape[1]), self.interfaces["MA_top"])
         self.interfaces["MA_top"] = f(x_grid)
-
         f = interp1d(np.linspace(0, self.org_img.shape[1] * self.CF, self.org_img.shape[1]), self.interfaces["LI_top"])
         self.interfaces["LI_top"] = f(x_grid)
-
         f = interp1d(np.linspace(0, self.org_img.shape[1] * self.CF, self.org_img.shape[1]), self.interfaces["MA_bottom"])
         self.interfaces["MA_bottom"] = f(x_grid)
-
         f = interp1d(np.linspace(0, self.org_img.shape[1] * self.CF, self.org_img.shape[1]), self.interfaces["LI_bottom"])
         self.interfaces["LI_bottom"] = f(x_grid)
-
         [X, Z] = np.meshgrid(x_grid, z_grid)
         class_arr = np.zeros(X.shape + (3,))
-
         # --- classify region in the image
         for i in range(X.shape[1]):
             for j in range(X.shape[0]):
-
                 if Z[j, i] <= (self.interfaces["MA_top"][i] * self.CF):
                     class_arr[j, i, 0] = 0
                 elif (self.interfaces["MA_top"][i] * self.CF) < Z[j, i] < (self.interfaces["LI_top"][i] * self.CF):
@@ -164,7 +140,6 @@ class mkClipArt:
                     class_arr[j, i, 0] = 3
                 elif (Z[j, i] >= (self.interfaces["MA_bottom"][i] * self.CF)):
                     class_arr[j, i, 0] = 4
-
         # --- compute relative position for each pixel
         for i in range(X.shape[1]):
             for j in range(X.shape[0]):
@@ -189,7 +164,6 @@ class mkClipArt:
                         class_arr[j, i, 1] = 100
                     else:
                         class_arr[j, i, 1] = 100
-
         # --- set gray value for each pixel
         for i in range(X.shape[1]):
             for j in range(X.shape[0]):

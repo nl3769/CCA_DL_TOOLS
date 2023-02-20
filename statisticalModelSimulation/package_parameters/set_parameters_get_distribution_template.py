@@ -3,10 +3,9 @@
 @Contact :   <nolann.laine@outlook.fr>
 '''
 
+import os
 from shutil                                         import copyfile
 from package_parameters.parameters_get_distribution import Parameters
-
-import os
 import package_utils.fold_handler                   as fh
 
 # ----------------------------------------------------------------------------------------------------------------------

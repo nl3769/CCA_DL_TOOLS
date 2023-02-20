@@ -1,5 +1,9 @@
+'''
+@Author  :   <Nolann Lainé>
+@Contact :   <nolann.laine@outlook.fr>
+'''
+
 import matplotlib.pyplot as plt
-import torch
 import numpy as np
 import os
 

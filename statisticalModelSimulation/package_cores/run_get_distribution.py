@@ -7,16 +7,17 @@ def main():
 
     # --- get project parameters
     my_parser = argparse.ArgumentParser(description='Name of set_parameters_*.py')
-    my_parser.add_argument('--Parameters', '-param', required=True,
-                           help='List of parameters required to execute the code.')
+    my_parser.add_argument('--Parameters', '-param', required=True, help='List of parameters required to execute the code.')
     arg = vars(my_parser.parse_args())
     param = importlib.import_module('package_parameters.' + arg['Parameters'].split('.')[0])
     p = param.setParameters()
-
+    # --- run process
     process = handler(p)
     process()
 
-
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
+    """
+    This function computes distribution over CUBS database.  
+    """
     main()

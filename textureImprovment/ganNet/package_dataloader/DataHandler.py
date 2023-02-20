@@ -1,3 +1,8 @@
+'''
+@Author  :   <Nolann Lainé>
+@Contact :   <nolann.laine@outlook.fr>
+'''
+
 import os
 
 from package_dataloader.GANDataset import GANDataSet
@@ -23,8 +28,8 @@ class DataHandler(GANDataSet):
             sim = sorted(glob(os.path.join(fname, '*simulated.png')))[0]
             self.sim_list += [[sim]]
 
-        self.sim_list = self.sim_list[:2]
-        self.org_list = self.org_list[:2]
+        self.sim_list = self.sim_list[:14]
+        self.org_list = self.org_list[:14]
 
     # ------------------------------------------------------------------------------------------------------------------
 

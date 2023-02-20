@@ -1,3 +1,9 @@
+'''
+@Author  :   <Nolann Lainé>
+@Contact :   <nolann.laine@outlook.fr>
+'''
+
+# ----------------------------------------------------------------------------------------------------------------------
 def get_param_wandb(p, add_config):
 
     # --- convert class attributes to a dictionnary

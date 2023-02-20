@@ -5,6 +5,9 @@
 
 import os
 import torch
+import matplotlib
+matplotlib.use('TkAgg')
+
 import matplotlib.pyplot            as plt
 import numpy                        as np
 from torch.utils.tensorboard        import SummaryWriter

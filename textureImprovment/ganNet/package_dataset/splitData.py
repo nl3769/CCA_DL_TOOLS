@@ -1,8 +1,15 @@
+'''
+@Author  :   <Nolann Lainé>
+@Contact :   <nolann.laine@outlook.fr>
+'''
+
 import os
 import math
 
+# ----------------------------------------------------------------------------------------------------------------------
 class splitData():
 
+    # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, info):
 
         # size in % of the three subset
@@ -21,6 +28,7 @@ class splitData():
                       'validation': [],
                       'testing': []}
 
+    # ------------------------------------------------------------------------------------------------------------------
     def split_data(self):
         """ Split data according to size in %. """
 
@@ -39,6 +47,7 @@ class splitData():
             self.split['validation'].append([os.path.join(subset, key) for key in validation])
             self.split['testing'].append([os.path.join(subset, key) for key in testing])
 
+    # ------------------------------------------------------------------------------------------------------------------
     def save_res(self):
         """ Save result in .txt file. """
 
@@ -47,3 +56,5 @@ class splitData():
                 for id in range(len(self.split[set])):
                     for fname in self.split[set][id]:
                         f.write(fname + '\n')
+
+# ----------------------------------------------------------------------------------------------------------------------

@@ -1,4 +1,8 @@
-import numpy as np
+'''
+@Author  :   <Nolann Lainé>
+@Contact :   <nolann.laine@outlook.fr>
+'''
+
 import torch
 import torch.nn as nn
 import math

@@ -1,6 +1,9 @@
-import torch
-import math
+'''
+@Author  :   <Nolann Lainé>
+@Contact :   <nolann.laine@outlook.fr>
+'''
 
+import torch
 import torch.nn                             as nn
 
 # ----------------------------------------------------------------

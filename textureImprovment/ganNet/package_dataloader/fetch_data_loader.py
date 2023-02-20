@@ -1,5 +1,10 @@
-from package_dataloader.DataHandler import DataHandler
-from torch.utils.data import DataLoader
+'''
+@Author  :   <Nolann Lainé>
+@Contact :   <nolann.laine@outlook.fr>
+'''
+
+from package_dataloader.DataHandler         import DataHandler
+from torch.utils.data                       import DataLoader
 
 def fetch_dataloader(p, set: str, shuffle, evaluation=False, data_aug = False, batch_size = 1):
     """ Create the data loader for the corresponding set """

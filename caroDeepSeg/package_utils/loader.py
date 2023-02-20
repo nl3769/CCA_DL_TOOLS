@@ -1,3 +1,8 @@
+'''
+@Author  :   <Nolann Lainé>
+@Contact :   <nolann.laine@outlook.fr>
+'''
+
 from mat4py                 import loadmat
 from PIL                    import Image
 from PIL                    import ImageOps

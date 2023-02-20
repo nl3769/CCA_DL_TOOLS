@@ -2,9 +2,8 @@
 @Author  :   <Nolann Lainé>
 @Contact :   <nolann.laine@outlook.fr>
 '''
+
 import os
-
-
 import numpy                                as np
 from medpy.metric.binary                    import dc, hd
 from tqdm                                   import tqdm
@@ -42,4 +41,4 @@ def tst_loop_seg(p, networks, segLoss, loader, device, set):
         f.write("# --- LOSS (LOSS DICE + BCE) \n")
         f.write("mean=" + str(seg_loss.mean()) + " / std=" + str(seg_loss.std()))
 
-
+# ----------------------------------------------------------------------------------------------------------------------

@@ -1,15 +1,13 @@
 import os
 
 from package_GUI.mkClipArt          import mkClipArt
-from PIL import Image
-import numpy                        as np
 import matplotlib.pyplot            as plt
 import pickle                       as pck
 import package_utils.fold_handler   as pufh
 
 # ----------------------------------------------------------------------------------------------------------------------
 def load_info(path):
-    '''Takes path with .pkl extension and return data.'''
+    """Takes path with .pkl extension and return data."""
     with open(path, 'rb') as f:
         loaded_dict = pck.load(f)
 
@@ -42,7 +40,6 @@ def main():
     for i in range(nb_images):
         img = mkClipArt(window_name='test', clip_size=(450, 620, 3))
         I, cf, interfaces = img(IMC_density, adventicia_density, scale_rayleigh)
-
         # --- save results
         plt.imsave(os.path.join(p_img, 'image_' + str(i) + '.tiff'), I, cmap='gray')
         with open(os.path.join(p_cf, 'image_' + str(i) + '_CF.txt'), 'w') as f:
@@ -56,6 +53,10 @@ def main():
 
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
+    """
+    This function is used to create statistical images.
+    """
+
     main()
 
 

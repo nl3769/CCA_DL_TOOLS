@@ -1,7 +1,11 @@
+"""
+@Author  :   <Nolann Lainé>
+@Contact :   <nolann.laine@outlook.fr>
+"""
+
 import argparse
 import importlib
 from package_evaluation.evaluationHandler           import evaluationHandler
-
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 def main():

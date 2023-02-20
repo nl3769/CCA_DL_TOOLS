@@ -26,7 +26,6 @@ class handler():
         self.adventicia_distribution = {}
         self.interfaces_distribution = {}
         self.CF = {}
-
         self.images, self.pos_lumen, self.pos_interfaces = {}, {}, {}
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -79,7 +78,6 @@ class handler():
                     pname += ("_" + key)
                 else:
                     pname += key
-
             self.pos_interfaces[pname] = {}
             self.pos_interfaces[pname]["LI"] = pul.load_pos(os.path.join(self.path_pos_interfaces, LI))
             self.pos_interfaces[pname]["MA"] = pul.load_pos(os.path.join(self.path_pos_interfaces, MA))
@@ -111,16 +109,12 @@ class handler():
             idx_top = np.where((np.asarray(x_top) >= intersection[0]) & (np.asarray(x_top) <= intersection[-1]))
             x_top, z_top = np.asarray(x_top)[idx_top], np.asarray(z_top)[idx_top]
             x_bottom, z_bottom = np.asarray(x_bottom)[idx_bottom], np.asarray(z_bottom)[idx_bottom]
-
             x_top, z_top = list(x_top), list(z_top)
             x_bottom, z_bottom = list(x_bottom), list(z_bottom)
-
             for id_rel, (id_x, z_start) in enumerate(zip(x_top, z_top)):
-
                 pos_z = int(z_start)
                 pos_z_max = int(np.round(z_bottom[id_rel]))
                 patches_np.append(list(self.images[patient][pos_z:pos_z_max, id_x]))
-
         patches_np = [x for sublist in patches_np for x in sublist]
         random.shuffle(patches_np)
         # --- we get the closest square
@@ -138,18 +132,14 @@ class handler():
     def get_gray_values_IMC(self):
 
         store_val = {}
-
         for id in range(101):
             store_val[str(id)] = []
-
         for patient in list(self.images.keys()):
             non_zeros_LI = np.where(np.asarray(self.pos_interfaces[patient]["LI"][1]) > 0)[0]
             non_zeros_MA = np.where(np.asarray(self.pos_interfaces[patient]["MA"][1]) > 0)[0]
             intersection = list(set.intersection(*map(set, [non_zeros_LI, non_zeros_MA])))
-
             LI = np.asarray(self.pos_interfaces[patient]["LI"][1])
             MA = np.asarray(self.pos_interfaces[patient]["MA"][1])
-
             # --- interpolation to be in the range 0/100%
             for id in intersection:
                 y_org = self.images[patient][int(LI[id]):int(MA[id]), id]
@@ -160,7 +150,6 @@ class handler():
                     y_q = f(pos_q)
                     for pos in range(101):
                         store_val[str(pos)].append(y_q[pos])
-
         # --- convert to numpy and apply filter
         for key in store_val.keys():
             random.shuffle(store_val[key])
@@ -172,7 +161,6 @@ class handler():
             arr = np.round(medfilt2d(arr, k_size))
             arr = arr[k_size:-k_size, k_size:-k_size]
             store_val[key] = arr.flatten()
-
         self.interfaces_distribution = store_val
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -185,7 +173,6 @@ class handler():
         for patient in list(self.images.keys()):
             non_zeros_MA = np.where(np.asarray(self.pos_interfaces[patient]["MA"][1]) > 0)[0]
             MA = np.asarray(self.pos_interfaces[patient]["MA"][1])
-
             # --- interpolation to be in the range 0/100%
             for id in non_zeros_MA:
                 nb_pxl = int(np.round(self.adventicia_depth/self.CF[patient]))
@@ -199,7 +186,6 @@ class handler():
                         y_q = f(pos_q)
                         for pos in range(101):
                             store_val[str(pos)].append(y_q[pos])
-
         # --- convert to numpy and apply filter
         for key in store_val.keys():
             random.shuffle(store_val[key])
@@ -219,13 +205,11 @@ class handler():
 
         histo = np.histogram(data, bins=np.arange(0, 256))
         val = histo[0]/float(np.max(histo[0]))
-
         plt.figure()
         plt.title("Grayscale histogram (lumen).")
         plt.plot(val)
         plt.savefig(os.path.join(pres, 'histogram_' + interest + ".png"))
         plt.close()
-
         patches = data[:resolution ** 2]
         patches = np.reshape(patches, (resolution, resolution))
         plt.figure()
@@ -238,15 +222,12 @@ class handler():
     def disp_IMC(self, pres, split):
 
         knames = list(self.interfaces_distribution.keys())[::split]
-
         plt.figure()
         plt.title("Grayscale histogram (IMC).")
-
         for key in knames:
             histo = np.histogram(self.interfaces_distribution[key], bins=np.arange(0, 256))
             val = histo[0] / float(np.max(histo[0]))
             plt.plot(val, label=key)
-
         plt.legend()
         plt.savefig(os.path.join(pres, "histogram_IMC_several_depth.png"))
         plt.close()
@@ -259,7 +240,6 @@ class handler():
         self.load_CF()
         self.load_images()
         self.image_normalization()
-
         # --- compute histogram for lumen
         self.get_gray_values_lumen()
         for key in self.lumen_distribution.keys():
@@ -270,7 +250,6 @@ class handler():
         fit_gaussian(self.adventicia_distribution, self.PIMAGE, self.PGAUSS, 'adventicia', 10)
         # for key in self.adventicia_distribution.keys():
         #     self.disp_distribution(self.adventicia_distribution[key], self.PIMAGE, 'AVD_' + key, 128)
-
         # --- compute histogram for IMC
         self.get_gray_values_IMC()
         self.disp_IMC(self.PIMAGE, 10)
@@ -287,7 +266,6 @@ def fit_gaussian(distribution, pres_img, pres_gauss, ROI, split):
         histo = np.histogram(distribution[key], bins=np.arange(0, 256))
         val = histo[0] / float(np.max(histo[0]))
         mu, std = norm.fit(distribution[key])
-
         x = np.linspace(0, 255, 256)
         p = norm.pdf(x, mu, std)
         p = p / np.max(p)
@@ -319,9 +297,7 @@ def fit_rayleigh(distribution, pres_img, pres_gauss, ROI):
 
 
     rayleigh = {}
-
     for key in distribution.keys():
-
         # --- compute scale parameters
         x = np.arange(256)
         mu = np.mean(distribution[key])
@@ -330,15 +306,12 @@ def fit_rayleigh(distribution, pres_img, pres_gauss, ROI):
         y = y/np.max(y)
         histo = np.histogram(distribution[key], bins=np.arange(0, 256))
         val = histo[0] / float(np.max(histo[0]))
-
         plt.figure()
         plt.plot(val, label="histogram")
         plt.plot(y, label="distribution")
         plt.savefig(os.path.join(pres_img, "rayleigh_" + ROI + ".png"))
 
-        rayleigh[key] = {
-            "scale_parameters": scale_param
-        }
+        rayleigh[key] = {"scale_parameters": scale_param}
 
         with open(os.path.join(pres_gauss, ROI + '.pkl'), 'wb') as f:
             pck.dump(rayleigh, f)
