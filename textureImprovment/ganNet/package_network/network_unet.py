@@ -17,8 +17,7 @@ class encoder(nn.Module):
     kernel_size,
     padding,
     use_bias,
-    dropout=None
-    ):
+    dropout=None):
 
     super(encoder, self).__init__()
     self.enc        = nn.ModuleDict({})
@@ -33,12 +32,9 @@ class encoder(nn.Module):
             nn.PReLU(),
             nn.Conv2d(ngf, ngf, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate'),
             nn.BatchNorm2d(ngf),
-            nn.PReLU()
-            )
-
-
+            nn.PReLU())
       else:
-        ch_in_  = ngf * 2 ** (i-1)
+        ch_in_ = ngf * 2 ** (i-1)
         ch_out_ = ngf * 2 ** i
         self.enc["layers_" + str(i + 1)] = nn.Sequential(
             nn.Conv2d(ch_in_, ch_out_, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate'),
@@ -46,8 +42,7 @@ class encoder(nn.Module):
             nn.PReLU(),
             nn.Conv2d(ch_out_, ch_out_, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate'),
             nn.BatchNorm2d(ch_out_),
-            nn.PReLU()
-            )
+            nn.PReLU())
 
   # ---------------------------------------------------------------------------------------------------------------------
   def forward(self, x):
@@ -74,24 +69,20 @@ class decoder(nn.Module):
     padding,
     use_bias,
     upconv,
-    dropout=None
-    ):
+    dropout=None):
 
     super(decoder, self).__init__()
-    self.dec      = nn.ModuleDict({})
+    self.dec = nn.ModuleDict({})
     self.upscale = nn.ModuleDict({})
-    self.nb_skip    = n_layers
+    self.nb_skip = n_layers
 
     for i in range(n_layers-1, 0, -1):
-
         ch_out_ = ngf * 2 ** (i-1)
         ch_in_  = ngf * 2 ** i + ngf * 2 ** (i-1)
-        
         if upconv == True:
             self.upscale["layers_" + str(i - 1)] = nn.ConvTranspose2d(ngf * 2 ** i, ngf * 2 ** i, kernel_size=4, stride=2, padding=1)
         else:
             self.upscale["layers_" + str(i - 1)] = nn.Upsample(scale_factor=2)
-
         if i == 1:
             self.dec["layers_" + str(i - 1)] = nn.Sequential(
                 nn.Conv2d(ch_in_, ch_out_, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate'),
@@ -100,8 +91,7 @@ class decoder(nn.Module):
                 nn.Conv2d(ch_out_, ch_out_, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias,  padding_mode='replicate'),
                 nn.BatchNorm2d(ch_out_),
                 nn.PReLU(),
-                nn.Conv2d(ch_out_, output_nc, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias,  padding_mode='replicate')
-                )
+                nn.Conv2d(ch_out_, output_nc, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias,  padding_mode='replicate'))
         else:
             self.dec["layers_" + str(i - 1)] = nn.Sequential(
                 nn.Conv2d(ch_in_, ch_out_, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate'),
@@ -109,8 +99,7 @@ class decoder(nn.Module):
                 nn.PReLU(),
                 nn.Conv2d(ch_out_, ch_out_, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias, padding_mode='replicate'),
                 nn.BatchNorm2d(ch_out_),
-                nn.PReLU()
-                )
+                nn.PReLU())
 
   # --------------------------------------------------------------------------------------------------------------------
   def forward(self, x, skip):
@@ -136,39 +125,35 @@ class Unet(nn.Module):
         use_bias,
         output_activation,
         upconv,
-        dropout             = None
-        ):
+        dropout = None):
 
         super(Unet, self).__init__()
         self.output_activation = output_activation
         # --- encoder part of the Unet
         self.enc = encoder(
-          input_nc      = input_nc,
-          n_layers      = n_layers,
-          ngf           = ngf,
-          kernel_size   = kernel_size,
-          padding       = padding,
-          use_bias      = use_bias
-          )
+          input_nc = input_nc,
+          n_layers = n_layers,
+          ngf = ngf,
+          kernel_size = kernel_size,
+          padding = padding,
+          use_bias = use_bias)
 
         # --- decoder part of the Unet
         self.dec = decoder(
-          output_nc         = output_nc,
-          n_layers          = n_layers,
-          ngf               = ngf,
-          kernel_size       = kernel_size,
-          padding           = padding,
-          use_bias          = use_bias,
-          upconv            = upconv
-          )
+          output_nc = output_nc,
+          n_layers = n_layers,
+          ngf = ngf,
+          kernel_size = kernel_size,
+          padding = padding,
+          use_bias = use_bias,
+          upconv = upconv)
           
         # ---------------------------------------------------------------------------------------------------------------------
     def forward(self, I):
-    
-    
+
         # --- Unet forward pass
         x, skip = self.enc(I)
-        x       = self.dec(x, skip)
+        x = self.dec(x, skip)
         if self.output_activation is not None:
             x = self.output_activation(x)
 

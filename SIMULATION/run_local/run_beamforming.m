@@ -8,7 +8,7 @@ set(0, 'DefaultFigureWindowStyle', 'docked');
 addpath(fullfile('..', 'mtl_cores/'));
 addpath(fullfile('..', 'mtl_utils'));
 % --- path to results
-path_res='/home/laine/Desktop/SIMULATION_TEST/ANG_DOM/';
+path_res='/home/laine/cluster/PROJECTS_IO/SIMULATION/GAN_DATA/tech_001';
 files = list_files(path_res);
 % --- loop over the sequence
 for id=1:1:length(files)
@@ -18,7 +18,7 @@ end
 
 % -------------------------------------------------------------------------
 function [files] = list_files(path)
-    % todo -> comment
+    
     listing = dir(path);
     incr=1;
     for id=1:1:length(listing)

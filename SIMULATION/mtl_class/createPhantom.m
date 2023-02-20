@@ -213,10 +213,8 @@ classdef createPhantom < handle
                 save(MA_path, 'MA_val');
                 save(LI_path, 'LI_val');           
             else
-                
                 fct_save_scatterers_3D(obj.data_scatt, obj.param, '');
                 fct_save_scatterers_3D(scatt_data_to_save, obj.param, str_scat_id)
-                
                 LI_path = fullfile(obj.param.path_res, 'phantom', 'LI.mat');
                 MA_path = fullfile(obj.param.path_res, 'phantom', 'MA.mat');
                 save(MA_path, 'MA_val');

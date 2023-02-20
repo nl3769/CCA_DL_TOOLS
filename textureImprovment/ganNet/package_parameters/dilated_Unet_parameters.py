@@ -2,7 +2,7 @@ import os
 
 import torch.nn                         as nn
 
-from package_parameters.parameters      import Parameters
+from package_parameters.inference_parameters      import Parameters
 from shutil                             import copyfile
 from package_utils.utils                import check_dir
 

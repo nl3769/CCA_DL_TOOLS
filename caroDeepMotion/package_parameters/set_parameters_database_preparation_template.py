@@ -15,7 +15,7 @@ def setParameters():
 
     p = Parameters(
         PDATA           = '/run/media/laine/DISK/PROJECTS_IO/SIMULATION/IMAGENET',                                      # PATH TO LOAD DATA
-        PRES            = '/run/media/laine/DISK/PROJECTS_IO/MOTION/IN_SILICO/REAL_DATA/prepared_data_IMAGENET',        # PATH TO SAVE DATABASE
+        PRES            = '/run/media/laine/DISK/PROJECTS_IO/caroSegMotion/IN_SILICO/REAL_DATA/prepared_data_IMAGENET',        # PATH TO SAVE DATABASE
         )
 
     pparam = os.path.join(p.PRES, 'backup_parameters')

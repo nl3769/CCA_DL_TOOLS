@@ -81,8 +81,7 @@ def main():
                 'val_loss_GAN': val_out[1],
                 'val_loss_pxl': val_out[2],
                 'val_l1':       val_out[3],
-                'val_l2':       val_out[4],
-            })
+                'val_l2':       val_out[4],})
         save_loss('trn', epoch_abs, trn_out[0], p.PATH_MODEL_HISTORY, 'loss_gen')
         save_loss('trn', epoch_abs, trn_out[1], p.PATH_MODEL_HISTORY, 'loss_GAN')
         save_loss('trn', epoch_abs, trn_out[2], p.PATH_MODEL_HISTORY, 'loss_pxl')
@@ -116,8 +115,7 @@ def main():
             'trn_eval_EPE_mean':    trn_eval[0],
             'trn_eval_EPE_std':     trn_eval[1],
             'trn_eval_PSNR_mean':    trn_eval[2],
-            'trn_eval_PSNR_std':     trn_eval[3],
-        })
+            'trn_eval_PSNR_std':     trn_eval[3],})
 
 # ----------------------------------------------------------------------------------------------------------------------
 def display_loss(validation: bool, epoch: int, loss_training: float, loss_org_train: float,  loss_val: float, loss_org_val: float):

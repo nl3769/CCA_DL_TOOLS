@@ -12,9 +12,9 @@ def setParameters():
 
     p = Parameters(
         MODEL_NAME                  = 'gma',                                                                            # chose gma or raft
-        PDATA = '/run/media/laine/DISK/PROJECTS_IO/MOTION/IN_SILICO/REAL_DATA/database_training_IMAGENET',                # PATH TO LOAD DATA
-        PRES = '/run/media/laine/DISK/PROJECTS_IO/MOTION/NETWORK_TRAINING',                                                                           # PATH TO SAVE TRAINING RESULTS
-        PSPLIT = '/run/media/laine/DISK/PROJECTS_IO/MOTION/IN_SILICO/REAL_DATA/SPLIDATA',
+        PDATA = '/run/media/laine/DISK/PROJECTS_IO/caroSegMotion/IN_SILICO/REAL_DATA/database_training_IMAGENET',                # PATH TO LOAD DATA
+        PRES = '/run/media/laine/DISK/PROJECTS_IO/caroSegMotion/NETWORK_TRAINING',                                                                           # PATH TO SAVE TRAINING RESULTS
+        PSPLIT = '/run/media/laine/DISK/PROJECTS_IO/caroSegMotion/IN_SILICO/REAL_DATA/SPLIDATA',
         LEARNING_RATE=0.0001,
         BATCH_SIZE                  = 1,                                                                        # size of a batch
         NB_EPOCH                    = 500,

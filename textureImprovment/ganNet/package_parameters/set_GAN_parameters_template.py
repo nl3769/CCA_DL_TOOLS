@@ -1,19 +1,18 @@
 import os
 import torch.nn                         as nn
-from package_parameters.parameters      import Parameters
+from package_parameters.inference_parameters      import Parameters
 from shutil                             import copyfile
 from package_utils.utils                import check_dir
 
 def setParameters():
 
   p = Parameters(
-    MODEL_NAME                 = 'SRGan',                                                                               # name of the model (unet/SGan/dilatedUnet)
-    PDATA                      = '/home/laine/Documents/PROJECTS_IO/DATA/GAN',                                          # path to load data
-    DATABASE                   = {                                                                                      # path to .txt containing patients' names for training/validation/test
+    MODEL_NAME = 'dilatedUnet',                                                                                               # name of the model (unet/SGan/dilatedUnet)
+    PDATA = '/home/laine/Documents/PROJECTS_IO/DATA/GAN',                                                               # path to load data
+    DATABASE = {                                                                                                        # path to .txt containing patients' names for training/validation/test
         'training': '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_v01/training.txt',
         'validation': '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_v01/validation.txt',
-        'testing': '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_v01/testing.txt'
-        },
+        'testing': '/home/laine/Documents/PROJECTS_IO/DATA/GAN/split_v01/testing.txt'},
     VALIDATION = True,                                                                                                  # use validation subset
     RESTORE_CHECKPOINT = False,                                                                                         # restore checkpoint (true/false)
     LOSS = 'L2',                                                                                                        # loss (L1/L2/L1L2/histo_loss)
