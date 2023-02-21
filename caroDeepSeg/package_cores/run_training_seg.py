@@ -23,7 +23,6 @@ import package_utils.wandb_utils                  as puwu
 
 # ----------------------------------------------------------------------------------------------------------------------
 def main():
-
     # --- get project parameters
     my_parser = argparse.ArgumentParser(description='Name of set_parameters_*.py')
     my_parser.add_argument('--Parameters', '-param', required=True, help='List of parameters required to execute the code.')
