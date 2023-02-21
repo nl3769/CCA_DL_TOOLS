@@ -1,15 +1,17 @@
 import package_utils.fold_handler as fh
+import os
 
 # ----------------------------------------------------------------------------------------------------------------------
 class Parameters:
 
     def __init__(
             self,
-            PIMAGES,
-            PDATASEG,
-            PRES
-    ):
+            PIMC,
+            PADVENTICIA,
+            PLUMEN,
+            PSAVE):
 
-        self.PIMAGES = PIMAGES
-        self.PDATASEG = PDATASEG
-        self.PRES = PRES
+        self.PIMC = PIMC
+        self.PADVENTICIA = PADVENTICIA
+        self.PLUMEN = PLUMEN
+        self.PSAVE = PSAVE

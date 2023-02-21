@@ -1,3 +1,5 @@
+import argparse
+import importlib
 import os
 import numpy                        as np
 import package_utils.fold_handler   as fh
@@ -59,17 +61,18 @@ def load_seg(path):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def main():
-
-    pimg = '/home/laine/cluster/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/images'
-    pdataSeg = '/home/laine/cluster/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/SEG'
-    pres = '/home/laine/cluster/PROJECTS_IO/DATA/SIMULATION/MEIBURGER/LUMEN_POSITION'
-
+    # --- get project parameters
+    my_parser = argparse.ArgumentParser(description='Name of set_parameters_*.py')
+    my_parser.add_argument('--Parameters', '-param', required=True, help='List of parameters required to execute the code.')
+    arg = vars(my_parser.parse_args())
+    param = importlib.import_module('package_parameters.' + arg['Parameters'].split('.')[0])
+    p = param.setParameters()
     # --- create pres
-    fh.create_dir(pres)
+    fh.create_dir(p.PRES)
     # --- list files
-    patients = os.listdir(pimg)
+    patients = os.listdir(p.PIMAGES)
     patients.sort()
-    seg_files = os.listdir(pdataSeg)
+    seg_files = os.listdir(p.PDATASEG)
     # --- loop over images
     for patient in patients:
         wname = patient.split('.')[0]
@@ -78,17 +81,17 @@ def main():
             if wname in key:
                 seg_name.append(key)
 
-        I = data_loader(os.path.join(pimg, patient))
-        id_LI, pos_LI = load_seg(os.path.join(pdataSeg, seg_name[0]))
-        id_MA, pos_MA = load_seg(os.path.join(pdataSeg, seg_name[1]))
+        I = data_loader(os.path.join(p.PIMAGES, patient))
+        id_LI, pos_LI = load_seg(os.path.join(p.PDATASEG, seg_name[0]))
+        id_MA, pos_MA = load_seg(os.path.join(p.PDATASEG, seg_name[1]))
         I = np.repeat(I[:, :, np.newaxis], 3, axis=2)
         handler = getLumen(wname, I, id_LI, pos_LI, id_MA, pos_MA)
         top_val, bottom_val = handler()
 
         if len(top_val) > 0:
             patient_name = patient.split('.')[0]
-            save_seg(top_val, os.path.join(pres, patient_name + '_lumen_top.txt'))
-            save_seg(bottom_val, os.path.join(pres, patient_name + '_lumen_bottom.txt'))
+            save_seg(top_val, os.path.join(p.PES, patient_name + '_lumen_top.txt'))
+            save_seg(bottom_val, os.path.join(p.PES, patient_name + '_lumen_bottom.txt'))
 
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':

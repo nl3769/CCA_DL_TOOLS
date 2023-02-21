@@ -1,4 +1,6 @@
 import os
+import argparse
+import importlib
 
 from package_GUI.mkClipArt          import mkClipArt
 import matplotlib.pyplot            as plt
@@ -16,24 +18,25 @@ def load_info(path):
 # ----------------------------------------------------------------------------------------------------------------------
 def main():
 
-    # --- set parameters and create directories
-    p_IMC = "/home/laine/Documents/PROJECTS_IO/STATISTICAL_MODEL_SIMULATION/stat_model/IMC.pkl"
-    p_adventicia = "/home/laine/Documents/PROJECTS_IO/STATISTICAL_MODEL_SIMULATION/stat_model/IMC.pkl"
-    p_lumen = "/home/laine/Documents/PROJECTS_IO/STATISTICAL_MODEL_SIMULATION/stat_model/lumen.pkl"
-    psave = "/home/laine/Desktop/statistical_images"
+    # --- get project parameters
+    my_parser = argparse.ArgumentParser(description='Name of set_parameters_*.py')
+    my_parser.add_argument('--Parameters', '-param', required=True, help='List of parameters required to execute the code.')
+    arg = vars(my_parser.parse_args())
+    param = importlib.import_module('package_parameters.' + arg['Parameters'].split('.')[0])
+    p = param.setParameters()
 
-    p_img = os.path.join(psave, 'images') # path to save the statistical image
-    p_cf = os.path.join(psave, 'CF') # path to save the calibration factor (pixel size) of the statistical image
-    p_seg = os.path.join(psave, 'SEG') # path the save the position of the interfaces
+    p_img = os.path.join(p.PSAVE, 'images') # path to save the statistical image
+    p_cf = os.path.join(p.PSAVE, 'CF') # path to save the calibration factor (pixel size) of the statistical image
+    p_seg = os.path.join(p.PSAVE, 'SEG') # path the save the position of the interfaces
 
     pufh.create_dir(p_img)
     pufh.create_dir(p_cf)
     pufh.create_dir(p_seg)
 
     # --- make manual clip art
-    IMC_density = load_info(p_IMC)
-    adventicia_density = load_info(p_adventicia)
-    lumen_rayleigh = load_info(p_lumen)
+    IMC_density = load_info(p.PIMC)
+    adventicia_density = load_info(p.PADVENTICIA)
+    lumen_rayleigh = load_info(p.PLUMEN)
     scale_rayleigh = lumen_rayleigh['full']['scale_parameters']
 
     nb_images = 10 # number of images to process

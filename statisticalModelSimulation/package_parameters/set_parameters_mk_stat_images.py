@@ -3,7 +3,7 @@
 @Contact :   <nolann.laine@outlook.fr>
 '''
 
-from package_parameters.parameters_lumen_detection import Parameters
+from package_parameters.parameters_mk_stat_images import Parameters
 import os
 from shutil import copyfile
 import package_utils.fold_handler as fh
@@ -12,10 +12,12 @@ import package_utils.fold_handler as fh
 def setParameters():
 
     p = Parameters(
-        PIMAGES = "/run/media/laine/DISK/PROJECTS_IO/DATA/CORRECTED_CUBS/images",
-        PDATASEG = "/run/media/laine/DISK/PROJECTS_IO/DATA/CORRECTED_CUBS/SEG",
-        PRES = "/run/media/laine/DISK/PROJECTS_IO/DATA/CORRECTED_CUBS/LUMEN_POSITION")
-    pparam = os.path.join(p.PRES, 'backup_parameters')
+        PIMC="/run/media/laine/DISK/PROJECTS_IO/STATISTICAL_MODEL_SIMULATION/MK_MODEL/stat_model/IMC.pkl",
+        PADVENTICIA="/run/media/laine/DISK/PROJECTS_IO/STATISTICAL_MODEL_SIMULATION/MK_MODEL/stat_model/IMC.pkl",
+        PLUMEN="/run/media/laine/DISK/PROJECTS_IO/STATISTICAL_MODEL_SIMULATION/MK_MODEL/stat_model/lumen.pkl",
+        PSAVE="/run/media/laine/DISK/PROJECTS_IO/STATISTICAL_MODEL_SIMULATION/STATISTICAL_IMAGES")
+
+    pparam = os.path.join(p.PSAVE, 'backup_parameters')
     fh.create_dir(pparam)
     # --- Print all attributes in the console
     attrs = vars(p)
