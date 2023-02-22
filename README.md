@@ -66,7 +66,7 @@ Note that depending of the chosen motion, only pair of images can be generated (
 * Gaussian                      &rarr;  as many pairs as you want.
 * Affine transformation         &rarr;  as many pairs as you want.
 
-Below an exemple of elastic displacement field applied to jacket:
+Below an example of elastic displacement field applied to a jacket:
 
 <p align="center">
     <img 
